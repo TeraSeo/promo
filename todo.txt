@@ -1,0 +1,5 @@
+1. Adding firebase to android 
+2. to IOS
+3. to Web
+4. firebase initialize ios / android 
+5. firebase initialize web also
