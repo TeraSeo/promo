@@ -135,10 +135,10 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(borderCircular),
-                      topLeft: Radius.circular(borderCircular),
-                    ),
+                    // borderRadius: BorderRadius.only(
+                    //   topRight: Radius.circular(borderCircular),
+                    //   topLeft: Radius.circular(borderCircular),
+                    // ),
                   ),
                   child: Center(
                     child: _widgetOptions.elementAt(selectedIndex),
@@ -201,22 +201,26 @@ class _HomePageState extends State<HomePage> {
 
   Future getImages() async {
     selectedImages = [];
-    final pickedFile = await picker.pickMultiImage(
+    try {
+      final pickedFile = await picker.pickMultiImage(
         imageQuality: 50, maxHeight: 1000, maxWidth: 1000);
-    List<XFile> xfilePick = pickedFile;
- 
-    setState(
-      () {
-        if (xfilePick.isNotEmpty) {
-          for (var i = 0; i < xfilePick.length; i++) {
-            selectedImages.add(File(xfilePick[i].path));
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Nothing is selected')));
-        }
-      },
-    );
+        List<XFile> xfilePick = pickedFile;
+        setState(
+          () {
+            if (xfilePick.isNotEmpty) {
+              for (var i = 0; i < xfilePick.length; i++) {
+                selectedImages.add(File(xfilePick[i].path));
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Nothing is selected')));
+            }
+          },
+        );
+
+    } catch (e) {
+      print(e);
+    }
   }
 
   void _showPicMenu() {

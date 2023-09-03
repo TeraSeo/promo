@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PostDB {
 
   String? postId;
@@ -29,6 +31,8 @@ class PostDB {
     this.postNumber,
     this.profileFileName
   });
+
+
 
   factory PostDB.fromJson(Map<String, dynamic> data) {
 

@@ -41,8 +41,6 @@ class _HomeState extends State<Home> {
        Column(
         children: List.generate(posts!.length, (index) {
           return Container(
-            margin: const EdgeInsets.only(left: 8.0, top: 15),
-            // padding: const EdgeInsets.all(3.0),
             child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],),
           );
         })

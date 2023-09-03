@@ -64,4 +64,8 @@ class PostService {
 
   }
 
+  Future updatePostComment(String postId) async {
+
+  }
+
 }
