@@ -9,7 +9,7 @@ class PostDB {
   String? writer;   // email
   String? category;
   List<String>? tags;
-  Map<String, dynamic>? comments;
+  List<String>? comments;
   int? likes;
   String? posted; // date
   bool? withComment;
@@ -43,7 +43,7 @@ class PostDB {
     String writer = data['writer'] as String;
     String category = data['category'] as String;
     List<String> tags = data['tags'] as List<String>;
-    Map<String, dynamic> comments = data['comments'] as Map<String, dynamic>;
+    List<String> comments = data['comments'] as List<String>;
     int likes = data['likes'] as int;
     String posted = data['posted'] as String;
     bool withComment = data['withComment'] as bool;

@@ -60,7 +60,7 @@ class _PostWidgetState extends State<PostWidget> {
     }
     else {
       isTablet = false;
-      logoSpaceBetween = MediaQuery.of(context).size.width * 0.62;
+      logoSpaceBetween = MediaQuery.of(context).size.width * 0.6;
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
       logoSize = MediaQuery.of(context).size.width * 0.06;
     }

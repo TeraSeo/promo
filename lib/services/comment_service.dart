@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:collection';
-import 'dart:js_interop';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/datas/postDB.dart';
 import 'package:like_app/helper/helper_function.dart';
@@ -36,12 +34,8 @@ class CommentService {
       final post = FirebaseFirestore.instance.collection("post").doc(postId);
 
       post.get().then((value) {
-        Map<String, dynamic> comments = value["comments"];
-        comments.addAll(
-          {
-            commentId : name
-          }
-        );
+        List<dynamic> comments = value["comments"];
+        comments.add(commentId);
         
         post.update({
           "comments" : comments
@@ -55,6 +49,19 @@ class CommentService {
       return e; 
     }
 
+  }
+
+  Future<List<dynamic>> getComments() async {
+
+    List<dynamic> comments = [];
+
+    final post = FirebaseFirestore.instance.collection("post").doc(postId);
+    await post.get().then((value) {
+      comments = value["comments"];
+    });
+    
+    return comments;
+   
   }
 
 }

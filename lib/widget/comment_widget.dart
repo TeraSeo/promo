@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
+import 'package:like_app/widgets/widgets.dart';
 
 class CommentWidget extends StatefulWidget {
 
@@ -16,6 +18,25 @@ class CommentWidget extends StatefulWidget {
 class _CommentWidgetState extends State<CommentWidget> {
 
   String? content = "";
+  List<dynamic>? comments = [];
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    getComments();
+  }
+
+  getComments() async {
+    CommentService commentService = new CommentService(postId: widget.postId);
+    await commentService.getComments().then((value) => {
+      comments = value,
+      setState(() {
+        isLoading = false;
+      })
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,17 +45,19 @@ class _CommentWidgetState extends State<CommentWidget> {
         backgroundColor: Constants().primaryColor,
         title: Text("Comments", style: TextStyle(fontSize: 17),),
       ),
-      body: Container(
+      body: 
+      comments!.length > 0 ? 
+      Container(
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
-          itemCount: 2,
+          itemCount: comments!.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              child: CommentCard(),
+              child: CommentCard(commentId: comments![index],),
             );
           }
         )
-      ),
+      ) : Container(),
       bottomNavigationBar: SafeArea(
         child: Container(
           height: kToolbarHeight,
@@ -75,6 +98,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         onPressed: () async {
                           CommentService commnetService = new CommentService(description: content, postId: widget.postId);
                           await commnetService.postComment();
+                          nextScreen(context, HomePage());
                         },
                         icon: Icon(Icons.post_add_rounded)
                       )
@@ -82,29 +106,6 @@ class _CommentWidgetState extends State<CommentWidget> {
                   )
                 )
               ),
-              // Padding(
-              //   padding: EdgeInsets.only(left: 26),
-              //   child: Column(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       RichText(text: 
-              //         TextSpan(
-              //           children: [
-              //             TextSpan(
-              //               text: "username",
-              //               style: TextStyle(fontWeight: FontWeight.bold)
-              //             ),
-              //             TextSpan(
-              //               text: "some description to insert",
-              //               style: TextStyle(fontWeight: FontWeight.bold)
-              //             )
-              //           ]
-              //         )
-              //       )
-              //     ]
-              //   ),
-              // ),
             ],
           ),
         )),

@@ -25,7 +25,7 @@ class PostDBService {
       storage.uploadPostImage(filePaths[i], fileNames[i], email!, postId);
     }  
 
-    Map<String, dynamic> comments = {};
+    List<String> comments = [];
     return await postCollection.doc(postId).set({
       "postId" : postId,
       "email" : email,
