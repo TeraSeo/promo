@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/database_service.dart';
 import 'package:like_app/services/postDB_service.dart';
@@ -66,6 +67,97 @@ class PostService {
 
   Future updatePostComment(String postId) async {
 
+  }
+
+  Future postAddLike(String postId) async {
+
+      try {
+        
+        String? uId; 
+        await HelperFunctions.getUserUIdFromSF().then((value) => {
+          uId = value
+        });
+
+        final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+        post.get().then((value) {
+          List<dynamic> likes = value["likes"];
+          if (!likes.contains(uId)) {
+            likes.add(uId!);
+          }
+          
+          post.update({
+            "likes" : likes
+          });
+
+        });
+
+        return true;
+
+      } catch(e) {
+        return e;
+      }
+    
+  }
+
+  Future postRemoveLike(String postId) async {
+
+      try {
+        
+        String? uId; 
+        await HelperFunctions.getUserUIdFromSF().then((value) => {
+          uId = value
+        });
+
+        final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+        post.get().then((value) {
+          List<dynamic> likes = value["likes"];
+          if (likes.contains(uId)) {
+            likes.remove(uId);
+          }
+          
+          post.update({
+            "likes" : likes
+          });
+
+        });
+
+        return true;
+
+      } catch(e) {
+        return e;
+      }
+    
+  }
+
+  Future<bool> checkUserLike(String postId) async {
+    try {
+
+      String? uId; 
+      await HelperFunctions.getUserUIdFromSF().then((value) => {
+        uId = value
+      });
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      post.get().then((value) {
+        List<dynamic> likes = value["likes"];
+        if (likes.contains(uId)) {
+          return true;
+        }
+        else {
+          return false;
+        }
+
+      });
+
+      return false;
+
+    } catch(e) {
+      print(e);
+      return false;
+    }
   }
 
 }

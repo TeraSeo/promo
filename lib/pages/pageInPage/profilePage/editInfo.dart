@@ -129,6 +129,12 @@ class _EditInfoState extends State<EditInfo> {
                           nextScreen(context, HomePage());
                         });
                         }
+                      else {
+                        print("not");
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Unavailable Name"))
+                        );
+                      }
                       });
                     }
                   }, 

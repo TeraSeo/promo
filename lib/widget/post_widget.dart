@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:like_app/animation/likeAnimation.dart';
+import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
@@ -11,8 +13,9 @@ class PostWidget extends StatefulWidget {
   final String? name;
   final List<dynamic>? image;
   final String? description;
+  final bool? isLike;
   
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description});
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -20,6 +23,9 @@ class PostWidget extends StatefulWidget {
 
 class _PostWidgetState extends State<PostWidget> {
 
+  bool isLikeAnimation = false;
+  bool? isLike;
+  
   List<String>? images;
 
   bool isLoading = true;
@@ -33,6 +39,9 @@ class _PostWidgetState extends State<PostWidget> {
   void initState() {
     super.initState();
     getImages();
+    setState(() {
+      isLike = widget.isLike;
+    });
   }
 
   void getImages() async {
@@ -51,26 +60,30 @@ class _PostWidgetState extends State<PostWidget> {
     double logoSize; 
     double logoSpaceBetween;
     double descriptionSize;
+    double iconWidth;
 
     if(Device.get().isTablet) {
       isTablet = true;
-      logoSpaceBetween = MediaQuery.of(context).size.width * 0.7;
+      logoSpaceBetween = MediaQuery.of(context).size.width * 0.65;
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
-      logoSize = MediaQuery.of(context).size.width * 0.053;
+      logoSize = MediaQuery.of(context).size.width * 0.035;
+      iconWidth = MediaQuery.of(context).size.width * 0.07;
     }
     else {
       isTablet = false;
-      logoSpaceBetween = MediaQuery.of(context).size.width * 0.6;
+      logoSpaceBetween = MediaQuery.of(context).size.width * 0.585;
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
-      logoSize = MediaQuery.of(context).size.width * 0.06;
+      logoSize = MediaQuery.of(context).size.width * 0.053;
+      iconWidth = MediaQuery.of(context).size.width * 0.093;
     }
+
+    PostService postService = new PostService();
+
 
     return isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
     children: [
       SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
       Container(
-        // padding: EdgeInsets.all(5),
-        // decoration: BoxDecoration(border: Border.all(width: 2, color: Colors.grey), borderRadius: BorderRadius.all(Radius.circular(10))),
         child: Column(
           children: [
             isTablet ? 
@@ -98,7 +111,9 @@ class _PostWidgetState extends State<PostWidget> {
                 SizedBox(width: MediaQuery.of(context).size.height * 0.013,),
                 Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.026, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400)),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.73),
-                Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.045)
+                IconButton(onPressed: () {}, 
+                  icon: Icon(Icons.more_vert_rounded, size: logoSize)
+                )
               ],
             )) : 
             (Row(
@@ -108,7 +123,7 @@ class _PostWidgetState extends State<PostWidget> {
                 ),
                 Container(
                   width: MediaQuery.of(context).size.height * 0.045,
-                  height: MediaQuery.of(context).size.height * 0.045,
+                  height: MediaQuery.of(context).size.height * 0.05,
                   decoration: BoxDecoration(
                     color: const Color(0xff7c94b6),
                     image: DecorationImage(
@@ -125,7 +140,9 @@ class _PostWidgetState extends State<PostWidget> {
                 SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
                 Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
                 SizedBox(width: MediaQuery.of(context).size.width * 0.655),
-                Icon(Icons.more_vert_rounded, size: logoSize)
+                IconButton(onPressed: () {}, 
+                  icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.057)
+                )
               ],
             )),
             SizedBox(
@@ -147,24 +164,56 @@ class _PostWidgetState extends State<PostWidget> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.04,
+                        width: MediaQuery.of(context).size.width * 0.02,
                       ),
-                      Icon(Icons.favorite_outline, size: logoSize),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.013,
+                        width: iconWidth,
+                        child: LikeAnimation(
+                          isAnimating: true,
+                          smallLike: false,
+                          child: IconButton(
+                          onPressed: () async {
+                            setState(()  {
+                              if (!isLike!) {
+                                isLikeAnimation = true;
+                                isLike = true;
+                              }
+                              else {
+                                isLike = false;
+                              }
+                            });
+                            if (isLike!) {
+                              await postService.postAddLike(widget.postID!);
+                            }
+                            else {
+                              await postService.postRemoveLike(widget.postID!);
+                            }
+                          }, 
+                            icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
+                          ),
+                        )
                       ),
-                      IconButton(onPressed: () {
-                        nextScreen(context, CommentWidget(postId: widget.postID));
-                      }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.013,
+                        width: iconWidth,
+                        child: IconButton(onPressed: () {
+                          nextScreen(context, CommentWidget(postId: widget.postID));
+                        }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                       ),
-                      Icon(Icons.send_outlined, size: logoSize),
+                      SizedBox(
+                        width: iconWidth,
+                          child: IconButton(onPressed: () {}, 
+                          icon: Icon(Icons.send_outlined, size: logoSize),
+                        ),
+                      ),
                       SizedBox(
                         width: logoSpaceBetween
                       ),
-                      Icon(Icons.bookmark_outline, size: logoSize),
-
+                      SizedBox(
+                        width: iconWidth,
+                          child: IconButton(onPressed: () {},
+                        icon: Icon(Icons.bookmark_outline, size: logoSize),
+                        )
+                      ),
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
@@ -172,23 +221,63 @@ class _PostWidgetState extends State<PostWidget> {
             ) :
             Column(
               children: [
-                Container(
-                    height: MediaQuery.of(context).size.height * 0.38,
-                    child: PageView.builder(
-                      controller: pageController,
-                      itemBuilder: (_, index) {
-                        return AnimatedBuilder(
-                          animation: pageController,
-                          builder: (ctx, child) {
-                            return SizedBox(
-                            child: Image(
-                              image: NetworkImage(images![index]),fit: BoxFit.fill
-                            ));
-                          }
-                        );
-                      },
-                      itemCount: images!.length
-                    )
+                  GestureDetector(
+                    onDoubleTap: () async {
+                      setState(()  {
+                        if (!isLike!) {
+                          isLikeAnimation = true;
+                          isLike = true;
+                        }
+                        else {
+                          isLikeAnimation = true;
+                        }
+                      });
+                      if (isLike!) {
+                        await postService.postAddLike(widget.postID!);
+                      }
+                      else {
+                        await postService.postRemoveLike(widget.postID!);
+                      }
+                    }, 
+                    child: Stack(
+                      alignment: Alignment.center ,
+                      children: [
+                        Container(
+                          height: MediaQuery.of(context).size.height * 0.38,
+                          child: PageView.builder(
+                            controller: pageController,
+                            itemBuilder: (_, index) {
+                              return AnimatedBuilder(
+                                animation: pageController,
+                                builder: (ctx, child) {
+                                  return SizedBox(
+                                    child: Image(
+                                      image: NetworkImage(images![index]),fit: BoxFit.fill
+                                    ));
+                                }
+                              );
+                            },
+                            itemCount: images!.length
+                          )
+                        ),
+                        AnimatedOpacity(
+                          opacity: isLikeAnimation? 1: 0, 
+                          duration: const Duration(milliseconds: 200),
+                          child: LikeAnimation(
+                            child: const Icon(Icons.favorite, color: Colors.white, size: 100), 
+                            isAnimating: isLikeAnimation,
+                            duration: const Duration(
+                              milliseconds: 400
+                            ),
+                            onEnd: () {
+                              setState(() {
+                                isLikeAnimation = false;
+                              });
+                            },
+                          )  
+                        )
+                      ],
+                    ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.012,),
                   images!.length == 1 ? Container(height: 0,) :  
@@ -209,24 +298,57 @@ class _PostWidgetState extends State<PostWidget> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.04,
+                        width: MediaQuery.of(context).size.width * 0.02,
                       ),
-                      Icon(Icons.favorite_outline, size: logoSize),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.013,
+                        width: iconWidth,
+                        child: LikeAnimation(
+                          isAnimating: true,
+                          smallLike: false,
+                          child: IconButton(
+                          onPressed: () async {
+                            setState(()  {
+                              if (!isLike!) {
+                                isLikeAnimation = true;
+                                isLike = true;
+                              }
+                              else {
+                                isLike = false;
+                              }
+                            });
+                            if (isLike!) {
+                              await postService.postAddLike(widget.postID!);
+                            }
+                            else {
+                              await postService.postRemoveLike(widget.postID!);
+                            }
+                          }, 
+                            icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
+                          ),
+                        )
                       ),
-                      IconButton(onPressed: () {
-                        nextScreen(context, CommentWidget(postId: widget.postID,));
-                      }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.013,
+                        width: iconWidth,
+                        child: IconButton(onPressed: () {
+                          nextScreen(context, CommentWidget(postId: widget.postID));
+                        }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                       ),
-                      Icon(Icons.send_outlined, size: logoSize),
+                      SizedBox(
+                        width: iconWidth,
+                          child: IconButton(onPressed: () {
+                          }, 
+                          icon: Icon(Icons.send_outlined, size: logoSize),
+                        ),
+                      ),
                       SizedBox(
                         width: logoSpaceBetween
                       ),
-                      Icon(Icons.bookmark_outline, size: logoSize),
-
+                      SizedBox(
+                        width: iconWidth,
+                          child: IconButton(onPressed: () {},
+                        icon: Icon(Icons.bookmark_outline, size: logoSize),
+                        )
+                      ),
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.019,),

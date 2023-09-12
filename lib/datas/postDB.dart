@@ -10,7 +10,7 @@ class PostDB {
   String? category;
   List<String>? tags;
   List<String>? comments;
-  int? likes;
+  List<dynamic>? likes;
   String? posted; // date
   bool? withComment;
   int? postNumber;
@@ -44,7 +44,7 @@ class PostDB {
     String category = data['category'] as String;
     List<String> tags = data['tags'] as List<String>;
     List<String> comments = data['comments'] as List<String>;
-    int likes = data['likes'] as int;
+    List<dynamic> likes = data['likes'] as List<dynamic>;
     String posted = data['posted'] as String;
     bool withComment = data['withComment'] as bool;
     int postNumber = data['postNumber'] as int;

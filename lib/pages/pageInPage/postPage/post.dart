@@ -44,6 +44,8 @@ class _PostState extends State<Post> {
   List<String> tags = [];
   bool withComment = false;
 
+  bool postAble = true;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -270,16 +272,19 @@ class _PostState extends State<Post> {
                 height: MediaQuery.of(context).size.height * 0.057,
                 child: ElevatedButton(
                   onPressed: () async{
-                    if (formKey.currentState!.validate()) {
+                    if (formKey.currentState!.validate() && postAble) {
+                      setState(() {
+                        postAble = false;
+                      });
                       tags = _controllerTag.getTags!;
                       PostService postService = new PostService();
                       await postService.post(widget.files, description, category, tags, withComment);
-                      Future.delayed(Duration(seconds: 1)).then((value) => {
+                      Future.delayed(Duration(seconds: 2)).then((value) => {
                         nextScreen(context, HomePage())
                       });
                     }
                   }, 
-                  child: Text("Edit Profile"),
+                  child: Text("Post"),
                   style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
                   elevation: 3,
                   shape: RoundedRectangleBorder(

@@ -12,7 +12,7 @@ class NumbersWidget extends StatelessWidget {
         children: <Widget>[
           buildButton(context, likeUser.ranking.toString(), 'Ranking'),
           buildDivider(context),
-          buildButton(context, likeUser.likes.toString(), 'Likes'),
+          buildButton(context, likeUser.likes!.length.toString(), 'Likes'),
           buildDivider(context),
           buildButton(context, likeUser.posts!.length.toString(), 'Posts'),
         ],

@@ -35,7 +35,7 @@ class PostDBService {
       "category" :  category,
       "tags" : tags,
       "comments" : comments,
-      "likes" : 0,
+      "likes" : [],
       "posted" : datetime,
       "withComment" : withComment,
       'postNumber' : size,

@@ -4,7 +4,7 @@ class LikeUser {
   String? profilePic;
   String? backgroundPic;
   String? uid;
-  int? likes;
+  List<dynamic>? likes;
   String? registered;
   String? intro;
   int? ranking;
@@ -31,7 +31,7 @@ class LikeUser {
     String profilePic = data['profilePic'] as String;
     String backgroundPic = data['backgroundPic'] as String;
     String uid = data['uid'] as String;
-    int likes = data['likes'] as int;
+    List<dynamic> likes = data['likes'] as List<dynamic>;
     String registered = data['registered'] as String;
     String intro = data['intro'] as String;
     int ranking = data['ranking'] as int;

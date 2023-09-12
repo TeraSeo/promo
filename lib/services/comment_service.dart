@@ -10,8 +10,9 @@ class CommentService {
 
   final String? description;
   final String? postId;
+  final String? commentId;
 
-  CommentService({this.description, this.postId});
+  CommentService({this.description, this.postId, this.commentId});
 
   String? name = ""; 
 
@@ -62,6 +63,15 @@ class CommentService {
     
     return comments;
    
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getCommentInfo() async {
+    
+    final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
+    DocumentSnapshot<Map<String, dynamic>> commentInfo = await comment.get();
+
+    return commentInfo;
+    
   }
 
 }

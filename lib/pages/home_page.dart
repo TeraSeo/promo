@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/login_page.dart';
@@ -76,8 +77,19 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
 
     double toolbarHeight = MediaQuery.of(context).size.height * 0.08;
-    double sizedBox = MediaQuery.of(context).size.height * 0.047;
-    double borderCircular = MediaQuery.of(context).size.height * 0.04;
+    double sizedBox;
+    double iconSize = MediaQuery.of(context).size.height * 0.023;
+
+    bool isTablet;
+
+    if(Device.get().isTablet) {
+      isTablet = true;
+      sizedBox = MediaQuery.of(context).size.height * 0.00;
+    }
+    else {
+      isTablet = false;
+      sizedBox = MediaQuery.of(context).size.height * 0.047;
+    }
     
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -149,34 +161,81 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       
-      bottomNavigationBar: SalomonBottomBar(
+      bottomNavigationBar: isTablet?
+        SalomonBottomBar(
         items: [
           SalomonBottomBarItem(
-            icon: const Icon(Icons.home_outlined),
+            icon: Icon(Icons.home_outlined, size: iconSize,),
             title: Text("home"),
             selectedColor:
                 Theme.of(context).primaryColor
           ),
           SalomonBottomBarItem(
-            icon: const Icon(Icons.favorite_border),
+            icon: Icon(Icons.favorite_border, size: iconSize,),
             title: Text("likes"),
             selectedColor:
                 Theme.of(context).primaryColor
           ),
           SalomonBottomBarItem(
-            icon: const Icon(Icons.post_add_outlined),
+            icon: Icon(Icons.post_add_outlined, size: iconSize,),
             title: Text("post"),
             selectedColor:
                 Theme.of(context).primaryColor
           ),
           SalomonBottomBarItem(
-            icon: const Icon(Icons.search),
+            icon: Icon(Icons.search, size: iconSize,),
             title: Text("search"),
             selectedColor:
                 Theme.of(context).primaryColor
           ),
           SalomonBottomBarItem(
-            icon: const Icon(Icons.person_2_outlined),
+            icon: Icon(Icons.person_2_outlined, size: iconSize,),
+            title: Text("profile"),
+            selectedColor:
+                Theme.of(context).primaryColor
+          ),
+        ],
+        currentIndex: selectedIndex,
+        selectedItemColor: Colors.amber[800],
+          onTap: (index) {
+          setState(() {
+            if (index == 2) {
+              _showPicMenu();
+            }
+            else {
+              selectedIndex = index;
+            }
+          });
+        },
+      ) :
+      SalomonBottomBar(
+        items: [
+          SalomonBottomBarItem(
+            icon: Icon(Icons.home_outlined),
+            title: Text("home"),
+            selectedColor:
+                Theme.of(context).primaryColor
+          ),
+          SalomonBottomBarItem(
+            icon: Icon(Icons.favorite_border),
+            title: Text("likes"),
+            selectedColor:
+                Theme.of(context).primaryColor
+          ),
+          SalomonBottomBarItem(
+            icon: Icon(Icons.post_add_outlined),
+            title: Text("post"),
+            selectedColor:
+                Theme.of(context).primaryColor
+          ),
+          SalomonBottomBarItem(
+            icon: Icon(Icons.search),
+            title: Text("search"),
+            selectedColor:
+                Theme.of(context).primaryColor
+          ),
+          SalomonBottomBarItem(
+            icon: Icon(Icons.person_2_outlined),
             title: Text("profile"),
             selectedColor:
                 Theme.of(context).primaryColor
@@ -195,7 +254,6 @@ class _HomePageState extends State<HomePage> {
           });
         },
       ),
-      
     );
   }
 

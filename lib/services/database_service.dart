@@ -25,7 +25,7 @@ class DatabaseService {
       "profilePic" : "",
       "backgroundPic" : "",
       "uid" : uid,
-      "likes" : 0,
+      "likes" : [],
       "registered" : datetime,
       "intro" : "",
       "ranking" : size + 1,
