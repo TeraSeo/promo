@@ -1,6 +1,3 @@
-import 'dart:collection';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/post_service.dart';
@@ -19,8 +16,10 @@ class _HomeState extends State<Home> {
   Map<dynamic, dynamic>? posts;
   bool isLoading = true;
   bool isUIdLoading = true;
+  bool isCurrnetUserNameLoading = true;
 
   String? uId; 
+  String? currentUserName;
 
   PostService postService = new PostService();
 
@@ -29,6 +28,7 @@ class _HomeState extends State<Home> {
     super.initState();
     getPosts();
     getUId();
+    getCurrentUserName();
   }
 
   void getPosts() async {
@@ -50,21 +50,24 @@ class _HomeState extends State<Home> {
     });
   }
 
+  void getCurrentUserName() async{
+    await HelperFunctions.getUserNameFromSF().then((value) => {
+      currentUserName = value,
+      setState(() {
+        isCurrnetUserNameLoading = false;
+      })
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return (isLoading || isUIdLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : SingleChildScrollView(
+    return (isLoading || isUIdLoading || isCurrnetUserNameLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : SingleChildScrollView(
        child: 
        Column(
         children: 
-        // FutureBuilder(
-        //   future: future, 
-        //   builder: builder
-        // )
-        
         List.generate(posts!.length, (index) {
           return Container(
-            child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId)),
+            child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, currentUserName: currentUserName!,),
           );
         })
       )

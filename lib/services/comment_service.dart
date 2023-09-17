@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/datas/postDB.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/commentDB_service.dart';
-import 'package:like_app/services/database_service.dart';
+import 'package:like_app/services/userService.dart';
 import 'package:uuid/uuid.dart';
 
 class CommentService {

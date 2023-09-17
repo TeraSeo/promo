@@ -3,6 +3,7 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
+import 'package:like_app/services/userService.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -14,8 +15,11 @@ class PostWidget extends StatefulWidget {
   final List<dynamic>? image;
   final String? description;
   final bool? isLike;
+  final int? likes;
+  final String? uId;
+  final String? currentUserName;
   
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike});
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.currentUserName});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -25,6 +29,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   bool isLikeAnimation = false;
   bool? isLike;
+  int? likes;
   
   List<String>? images;
 
@@ -41,6 +46,7 @@ class _PostWidgetState extends State<PostWidget> {
     getImages();
     setState(() {
       isLike = widget.isLike;
+      likes = widget.likes;
     });
   }
 
@@ -48,11 +54,15 @@ class _PostWidgetState extends State<PostWidget> {
     Storage storage = new Storage();
     await storage.loadPostImages(widget.email!, widget.postID!, widget.image!).then((value) => {
       images = value,
-      setState(() {
-        isLoading = false;
-      })
+      if (this.mounted) {
+        setState(() {
+          isLoading = false;
+        })
+      }
     });
   }
+
+  PostService postService = new PostService();
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +71,8 @@ class _PostWidgetState extends State<PostWidget> {
     double logoSpaceBetween;
     double descriptionSize;
     double iconWidth;
+
+    DatabaseService databaseService = DatabaseService(uid: widget.uId);
 
     if(Device.get().isTablet) {
       isTablet = true;
@@ -77,7 +89,6 @@ class _PostWidgetState extends State<PostWidget> {
       iconWidth = MediaQuery.of(context).size.width * 0.093;
     }
 
-    PostService postService = new PostService();
 
 
     return isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
@@ -108,43 +119,53 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                   ),
                 ),
-                SizedBox(width: MediaQuery.of(context).size.height * 0.013,),
-                Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.026, fontStyle: FontStyle.normal, fontWeight: FontWeight.w400)),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.73),
-                IconButton(onPressed: () {}, 
-                  icon: Icon(Icons.more_vert_rounded, size: logoSize)
-                )
-              ],
-            )) : 
-            (Row(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.height * 0.016,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.height * 0.045,
-                  height: MediaQuery.of(context).size.height * 0.05,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff7c94b6),
-                    image: DecorationImage(
-                      image: NetworkImage("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
-                      fit: BoxFit.cover,
-                    ),
-                    borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: MediaQuery.of(context).size.height * 0.005,
-                    ),
-                  ),
-                ),
                 SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
                 Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.655),
-                IconButton(onPressed: () {}, 
+                SizedBox(width: MediaQuery.of(context).size.width * 0.6),
+                IconButton(onPressed: () {
+                  _showOptionMenu();
+                }, 
                   icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.057)
                 )
               ],
-            )),
+            )) : 
+            Stack(
+              children: [
+                (Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.height * 0.016,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.height * 0.045,
+                      height: MediaQuery.of(context).size.height * 0.05,
+                      decoration: BoxDecoration(
+                        color: const Color(0xff7c94b6),
+                        image: DecorationImage(
+                          image: NetworkImage("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
+                          fit: BoxFit.cover,
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
+                        border: Border.all(
+                          color: Colors.white,
+                          width: MediaQuery.of(context).size.height * 0.005,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
+                    Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.6),
+                  ],
+                )), 
+                Positioned(child: IconButton(onPressed: () {
+                      _showOptionMenu();
+                    }, 
+                      icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.057)
+                    ), 
+                  left: MediaQuery.of(context).size.width * 0.85,
+                )
+              ],
+            ),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.013
             ),
@@ -154,7 +175,7 @@ class _PostWidgetState extends State<PostWidget> {
                   Row(
                     children: [
                       SizedBox(
-                        width: MediaQuery.of(context).size.height * 0.037,
+                        width: MediaQuery.of(context).size.width * 0.06,
                       ),
                       Text(widget.description.toString(), style: TextStyle(fontSize: descriptionSize),)
                     ],
@@ -177,16 +198,20 @@ class _PostWidgetState extends State<PostWidget> {
                               if (!isLike!) {
                                 isLikeAnimation = true;
                                 isLike = true;
+                                likes = likes! + 1;
                               }
                               else {
                                 isLike = false;
+                                likes = likes! - 1;
                               }
                             });
                             if (isLike!) {
                               await postService.postAddLike(widget.postID!);
+                              await databaseService.addUserLike(widget.postID!);
                             }
                             else {
                               await postService.postRemoveLike(widget.postID!);
+                              await databaseService.removeUserLike(widget.postID!);
                             }
                           }, 
                             icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -216,6 +241,14 @@ class _PostWidgetState extends State<PostWidget> {
                       ),
                     ],
                   ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.8, fontWeight: FontWeight.bold),)
+                    ],
+                  ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
               ],
             ) :
@@ -225,19 +258,23 @@ class _PostWidgetState extends State<PostWidget> {
                     onDoubleTap: () async {
                       setState(()  {
                         if (!isLike!) {
-                          isLikeAnimation = true;
-                          isLike = true;
+                            isLikeAnimation = true;
+                            isLike = true;
+                            likes = likes! + 1;
+                          }
+                          else {
+                            isLike = false;
+                            likes = likes! - 1;
+                          }
+                        });
+                        if (isLike!) {
+                          await postService.postAddLike(widget.postID!);
+                          await databaseService.addUserLike(widget.postID!);
                         }
                         else {
-                          isLikeAnimation = true;
+                          await postService.postRemoveLike(widget.postID!);
+                          await databaseService.removeUserLike(widget.postID!);
                         }
-                      });
-                      if (isLike!) {
-                        await postService.postAddLike(widget.postID!);
-                      }
-                      else {
-                        await postService.postRemoveLike(widget.postID!);
-                      }
                     }, 
                     child: Stack(
                       alignment: Alignment.center ,
@@ -311,16 +348,20 @@ class _PostWidgetState extends State<PostWidget> {
                               if (!isLike!) {
                                 isLikeAnimation = true;
                                 isLike = true;
+                                likes = likes! + 1;
                               }
                               else {
                                 isLike = false;
+                                likes = likes! - 1;
                               }
                             });
                             if (isLike!) {
                               await postService.postAddLike(widget.postID!);
+                              await databaseService.addUserLike(widget.postID!);
                             }
                             else {
                               await postService.postRemoveLike(widget.postID!);
+                              await databaseService.removeUserLike(widget.postID!);
                             }
                           }, 
                             icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -351,7 +392,16 @@ class _PostWidgetState extends State<PostWidget> {
                       ),
                     ],
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.019,),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.9, fontWeight: FontWeight.bold),)
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.003,),
                   Row(
                     children: [
                       SizedBox(
@@ -368,5 +418,105 @@ class _PostWidgetState extends State<PostWidget> {
       )
     ]
   );
+  }
+
+  void _showOptionMenu() {
+    if (widget.name! == widget.currentUserName!) {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0)
+          )
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.edit),
+                  title: Text('Edit this post'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.remove_circle),
+                  title: Text('Remove this post'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
+              ],
+            ),
+          );
+        }
+      );
+    }
+    else {
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0)
+          )
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.favorite),
+                  title: Text('Like this post'),
+                  onTap: () async{
+                    DatabaseService databaseService = DatabaseService(uid: widget.uId);
+                    setState(()  {
+                        if (!isLike!) {
+                            isLikeAnimation = true;
+                            isLike = true;
+                            likes = likes! + 1;
+                          }
+                          else {
+                            isLike = false;
+                            likes = likes! - 1;
+                          }
+                        });
+                        if (isLike!) {
+                          await postService.postAddLike(widget.postID!);
+                          await databaseService.addUserLike(widget.postID!);
+                        }
+                        else {
+                          await postService.postRemoveLike(widget.postID!);
+                          await databaseService.removeUserLike(widget.postID!);
+                        }
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.person),
+                  title: Text('About this account'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.report, color: Colors.red,),
+                  title: Text('Report this account'),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
+              ],
+            ),
+          );
+        }
+      );
+    }
   }
 }

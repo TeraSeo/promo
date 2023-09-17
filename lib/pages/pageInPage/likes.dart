@@ -43,13 +43,7 @@ class _LikesState extends State<Likes> {
                 ]
               )
             );
-            // return ListTile(
-            //   title: Text(index.toString()),
-            // );
           },
-          // separatorBuilder: (BuildContext context, int index) => const Divider(
-            
-          // )
         ),
         ),
       ],

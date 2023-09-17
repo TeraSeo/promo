@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
-import 'package:like_app/services/database_service.dart';
+import 'package:like_app/services/userService.dart';
 import 'package:like_app/services/postDB_service.dart';
 
 class PostService {
@@ -40,6 +40,7 @@ class PostService {
       if (filePaths.length == fileNames.length) {
         PostDBService postDBService = new PostDBService(email: email, profileFileName: snapshot.docs[0]['profilePic'], userName: name);
         await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames);
+        
       }
 
       return true;
@@ -63,6 +64,26 @@ class PostService {
 
     return posts;
 
+  }
+
+  Future<List<DocumentSnapshot<Map<String, dynamic>>>> getProfilePosts(List<dynamic> postIds) async {
+    List<DocumentSnapshot<Map<String, dynamic>>> posts = [];
+    int i = 0;
+
+    for (int i = 0; i < postIds.length; i++) {
+      // await postCollection.where("postNumber", isEqualTo: postIds[i].toString()).orderBy("postNumber", descending: true).limit(18).get().then((value) => {
+      //   value.docs.forEach((element) {
+      //     Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+      //     posts[i] = post;
+      //     i += 1;
+      //   })
+      // });
+      final post = postCollection.doc(postIds[i].toString());
+      DocumentSnapshot<Map<String, dynamic>> p = await post.get() as DocumentSnapshot<Map<String, dynamic>>;
+      posts.add(p);
+    }
+    
+    return posts;
   }
 
   Future updatePostComment(String postId) async {

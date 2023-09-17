@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
+import 'package:like_app/services/userService.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:textfield_tags/textfield_tags.dart';
@@ -17,11 +19,15 @@ class Post extends StatefulWidget {
 
 class _PostState extends State<Post> {
 
+  DatabaseService? databaseService;
+  String? uId;
+
   @override
   void initState() {
     super.initState();
 
   }
+
 
   final formKey = GlobalKey<FormState>();
 

@@ -8,7 +8,7 @@ class LikeUser {
   String? registered;
   String? intro;
   int? ranking;
-  Map<String, dynamic>? posts;
+  List<dynamic>? posts;
   
   LikeUser(
       {
@@ -35,7 +35,7 @@ class LikeUser {
     String registered = data['registered'] as String;
     String intro = data['intro'] as String;
     int ranking = data['ranking'] as int;
-    Map<String, dynamic> posts = data['posts'] as Map<String, dynamic>;
+    List<dynamic> posts = data['posts'] as List<dynamic>;
 
     return LikeUser(name: name, email: email, profilePic: profilePic,backgroundPic: backgroundPic,
                     uid: uid, likes: likes, registered: registered,

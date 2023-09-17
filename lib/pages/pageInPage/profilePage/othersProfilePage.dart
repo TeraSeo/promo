@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/datas/users.dart';
-import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editInfo.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editProfile.dart';
@@ -18,17 +17,17 @@ import 'package:like_app/services/RestApi.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 
-class ProfilePage extends StatefulWidget {
+class OthersProfilePages extends StatefulWidget {
 
-  const ProfilePage({super.key});
+  final String uId;
+
+  const OthersProfilePages({super.key, required this.uId});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<OthersProfilePages> createState() => _OthersProfilePagesState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-
-  String uId = "";
+class _OthersProfilePagesState extends State<OthersProfilePages> {
   String introduction = "";
 
   DatabaseService databaseService = new DatabaseService();
@@ -57,6 +56,7 @@ class _ProfilePageState extends State<ProfilePage> {
       final image = await ImagePicker().pickImage(source: source);
       if (image == null) return;
 
+      // final imageTemporary = File(image.path);
       final imageTemporary = await storage.compressImage(File(image.path));
 
       setState(() {
@@ -77,20 +77,7 @@ class _ProfilePageState extends State<ProfilePage> {
       await getUserProfile();
       await getUserBackground();
       await getPosts();
-      getCurrentUserName();
      });
-  }
-
-  String? currentUserName = "";
-  bool isCurrnetUserNameLoading = true;
-
-  void getCurrentUserName() async{
-    await HelperFunctions.getUserNameFromSF().then((value) => {
-      currentUserName = value,
-      setState(() {
-        isCurrnetUserNameLoading = false;
-      })
-    });
   }
 
   getPosts() async {
@@ -106,15 +93,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   gettingUserData() async {
-    await HelperFunctions.getUserUIdFromSF().then((value) => {
-      if (this.mounted) {
-        setState(() {
-          uId = value!;
-        })
-      }
-    });
     
-    await restApi.getUser(uId).then((value) => {
+    await restApi.getUser(widget.uId).then((value) => {
       likeUser = value,
       if (this.mounted) {
         setState(() {
@@ -177,7 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
     double top = MediaQuery.of(context).size.height * 0.026;
 
-    return (_isLoading || _isImg || _isBackground || isPostLoading || isCurrnetUserNameLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+    return (_isLoading || _isImg || _isBackground || isPostLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
     Container(
       child: Column(
         children: [
@@ -266,7 +246,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Column(
             children: 
                 List.generate(posts!.length, (index) {
-                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, currentUserName: currentUserName,);
+                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, currentUserName: "");
                 }
             )
           ),

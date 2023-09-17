@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:like_app/datas/users.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/RestApi.dart';
-import 'package:like_app/services/database_service.dart';
+import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 
 class EditInfo extends StatefulWidget {

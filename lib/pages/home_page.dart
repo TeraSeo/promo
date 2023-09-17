@@ -63,15 +63,15 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  static List<Widget> _widgetOptions = <Widget>[
+  int selectedIndex = 0;
+
+  List<Widget> _widgetOptions = <Widget>[
     Home(),
     Likes(),
-    Post(files: selectedImages),    // renew widget Options !!!!!! // the imags problem
+    Post(files: selectedImages),
     Search(),
     ProfilePage()
   ];
-
-  int selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {

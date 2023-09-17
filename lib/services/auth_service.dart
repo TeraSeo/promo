@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:like_app/datas/users.dart';
 import 'package:like_app/helper/helper_function.dart';
-import 'package:like_app/services/database_service.dart';
+import 'package:like_app/services/userService.dart';
 
 class AuthServie {
 

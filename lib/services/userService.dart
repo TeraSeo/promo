@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class DatabaseService {
@@ -7,8 +9,6 @@ class DatabaseService {
   // reference for our collections
   final CollectionReference userCollection = 
         FirebaseFirestore.instance.collection("user");
-        final CollectionReference groupCollection =
-            FirebaseFirestore.instance.collection("groups");
 
   // updating the user data
   Future savingeUserData(String name, String email) async {
@@ -18,7 +18,6 @@ class DatabaseService {
     int size = await userCollection.get()
         .then((value) => value.size);  // collection 크기 받기
 
-    Map<String, dynamic> posts = {};
     return await userCollection.doc(uid).set({
       "name" : name,
       "email" : email,
@@ -29,7 +28,7 @@ class DatabaseService {
       "registered" : datetime,
       "intro" : "",
       "ranking" : size + 1,
-      "posts" : posts,
+      "posts" : [],
     });
   }
 
@@ -46,6 +45,70 @@ class DatabaseService {
     }
     else {
       return false;
+    }
+  }
+
+  Future addUserPost(String postId) async {
+
+    try {
+      final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      user.get().then((value) {
+        List<dynamic> posts = value['posts'];
+
+        posts.add(postId);
+
+        user.update({
+          "posts" : posts
+        });
+
+      });
+
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  Future addUserLike(String postId) async {
+    try {
+      final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      user.get().then((value) {
+        List<dynamic> likes = value['likes'];
+
+        likes.add(postId);
+
+        user.update({
+          "likes" : likes
+        });
+
+      });
+
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  Future removeUserLike(String postId) async {
+    try {
+      final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      user.get().then((value) {
+        
+        List<dynamic> likes = value['likes'];
+
+        if (likes.contains(postId)) {
+          likes.remove(postId);
+        }
+
+        user.update({
+          "likes" : likes
+        });
+
+      });
+
+    } catch(e) {
+      print(e);
     }
   }
 
