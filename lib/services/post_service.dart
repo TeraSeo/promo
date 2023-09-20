@@ -2,9 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
-import 'package:like_app/services/userService.dart';
 import 'package:like_app/services/postDB_service.dart';
 
 class PostService {
@@ -26,9 +24,6 @@ class PostService {
         name = value
       });
 
-      DatabaseService databaseService = new DatabaseService();
-      QuerySnapshot snapshot = await databaseService.gettingUserData(email!);
-
       List<String> filePaths = [];
       List<String> fileNames = [];
 
@@ -36,9 +31,9 @@ class PostService {
         filePaths.add(images[i].path.toString());
         fileNames.add(images[i].path.split('/').last);
       }
-      // storage -> image 저장 + images 저장 + user 저장
+
       if (filePaths.length == fileNames.length) {
-        PostDBService postDBService = new PostDBService(email: email, profileFileName: snapshot.docs[0]['profilePic'], userName: name);
+        PostDBService postDBService = new PostDBService(email: email, userName: name);
         await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames);
         
       }
@@ -71,13 +66,6 @@ class PostService {
     int i = 0;
 
     for (int i = 0; i < postIds.length; i++) {
-      // await postCollection.where("postNumber", isEqualTo: postIds[i].toString()).orderBy("postNumber", descending: true).limit(18).get().then((value) => {
-      //   value.docs.forEach((element) {
-      //     Map<String, dynamic> post = element.data() as Map<String, dynamic>;
-      //     posts[i] = post;
-      //     i += 1;
-      //   })
-      // });
       final post = postCollection.doc(postIds[i].toString());
       DocumentSnapshot<Map<String, dynamic>> p = await post.get() as DocumentSnapshot<Map<String, dynamic>>;
       posts.add(p);
@@ -179,6 +167,42 @@ class PostService {
       print(e);
       return false;
     }
+  }
+
+  Future addUserBookMark(String postId, bool isBookMark) async {
+
+    try {
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      post.update({
+        "isBookMark" : isBookMark
+      });
+
+      return true;
+
+    } catch(e) {
+      return e;
+    }
+
+  }
+
+  Future removeUserMark(String postId, bool isBookMark) async {
+    
+    try {
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      post.update({
+        "isBookMark" : isBookMark
+      });
+
+      return true;
+
+    } catch(e) {
+      return e;
+    }
+
   }
 
 }

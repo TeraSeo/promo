@@ -11,7 +11,7 @@ import 'package:like_app/pages/pageInPage/profilePage/editProfile.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widget/background_widget.dart';
-import 'package:like_app/widget/numbers_widget.dart';
+import 'package:like_app/widget/numbers_widget_profile.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/RestApi.dart';
@@ -74,8 +74,6 @@ class _ProfilePageState extends State<ProfilePage> {
     super.initState();
     Future.delayed(Duration.zero,() async {
       await gettingUserData();
-      await getUserProfile();
-      await getUserBackground();
       await getPosts();
       getCurrentUserName();
      });
@@ -130,6 +128,9 @@ class _ProfilePageState extends State<ProfilePage> {
       }
       
     });
+
+    await getUserProfile();
+    await getUserBackground();
   }
 
   getUserProfile() async {
@@ -199,7 +200,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     buildName(likeUser),
                     SizedBox(height: sizedBoxinCard),
                     SizedBox(height: sizedBoxinCard),
-                    NumbersWidget(likeUser),
+                    NumbersWidgetProfile(likeUser),
                     SizedBox(height: sizedBoxinCard * 2),
                   ],
                 ),
@@ -266,7 +267,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Column(
             children: 
                 List.generate(posts!.length, (index) {
-                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, currentUserName: currentUserName,);
+                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId']);
                 }
             )
           ),

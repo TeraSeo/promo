@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:like_app/datas/users.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/userService.dart';
 
@@ -7,7 +6,6 @@ class AuthServie {
 
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
 
-  // login
   Future loginWithUserNameandPassword(String email, String password) async {
 
     try {
@@ -16,7 +14,6 @@ class AuthServie {
       )).user!;
 
       if (user != null) {
-        // call our database service to update the user data.
          return true;
       }
 
@@ -36,7 +33,6 @@ class AuthServie {
       )).user!;
 
       if (user != null) {
-        // call our database service to update the user data.
         await DatabaseService(uid: user.uid).savingeUserData(name, email);
 
         return true;

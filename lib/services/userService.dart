@@ -29,6 +29,7 @@ class DatabaseService {
       "intro" : "",
       "ranking" : size + 1,
       "posts" : [],
+      "bookmarks" : []
     });
   }
 
@@ -103,6 +104,52 @@ class DatabaseService {
 
         user.update({
           "likes" : likes
+        });
+
+      });
+
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  Future addUserBookMark(String postId) async {
+
+    try {
+      final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      user.get().then((value) {
+        
+        List<dynamic> bookmarks = value['bookmarks'];
+
+        bookmarks.add(postId);
+
+        user.update({
+          "bookmarks" : bookmarks
+        });
+
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future removeUserBookMark(String postId) async {
+    try {
+      final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      user.get().then((value) {
+        
+        List<dynamic> bookmarks = value['bookmarks'];
+
+        if (bookmarks.contains(postId)) {
+          bookmarks.remove(postId);
+        }
+
+        user.update({
+          "bookmarks" : bookmarks
         });
 
       });

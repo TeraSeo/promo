@@ -7,9 +7,8 @@ import 'package:uuid/uuid.dart';
 class PostDBService {
   
   final String? email;
-  final String? profileFileName;
   final String? userName;
-  PostDBService({this.email, this.profileFileName, this.userName});
+  PostDBService({this.email, this.userName});
 
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("post");
@@ -50,7 +49,8 @@ class PostDBService {
       "posted" : datetime,
       "withComment" : withComment,
       'postNumber' : size,
-      'profileFileName' : profileFileName
+      'uId' : uId,
+      'isBookMark' : false
     });
   }
 }

@@ -16,11 +16,6 @@ class ProfileWidget extends StatelessWidget {
       child: Stack(
         children: [
           buildImage(context),
-          // Positioned(
-          //   bottom: 0,
-          //   right: sizedBox / 7,
-          //   child: buildEditIcon(color, context),
-          // ),
         ],
       ),
     );
@@ -46,31 +41,4 @@ class ProfileWidget extends StatelessWidget {
       ),
     );
   }
-
-  // Widget buildEditIcon(Color color, BuildContext context) => buildCircle(
-  //       color: Colors.white,
-  //       all: MediaQuery.of(context).size.height * 0.002,
-  //       child: buildCircle(
-  //         color: color,
-  //         all: MediaQuery.of(context).size.height * 0.008,
-  //         child: Icon(
-  //           Icons.edit,
-  //           color: Colors.white,
-  //           size: MediaQuery.of(context).size.height * 0.022,
-  //         ),
-  //       ),
-  //     );
-
-  // Widget buildCircle({
-  //   required Widget child,
-  //   required double all,
-  //   required Color color,
-  // }) =>
-  //     ClipOval(
-  //       child: Container(
-  //         padding: EdgeInsets.all(all),
-  //         color: color,
-  //         child: child,
-  //       ),
-  //     );
 }

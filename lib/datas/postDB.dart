@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class PostDB {
 
   String? postId;
@@ -14,7 +12,8 @@ class PostDB {
   String? posted; // date
   bool? withComment;
   int? postNumber;
-  String? profileFileName;
+  String? uId;
+  bool? isBookMark;
 
   PostDB({
     this.postId,
@@ -29,7 +28,8 @@ class PostDB {
     this.posted,
     this.withComment,
     this.postNumber,
-    this.profileFileName
+    this.uId,
+    this.isBookMark
   });
 
 
@@ -48,12 +48,13 @@ class PostDB {
     String posted = data['posted'] as String;
     bool withComment = data['withComment'] as bool;
     int postNumber = data['postNumber'] as int;
-    String profileFileName = data['profileFileName'] as String;
-
+    String uId = data['uId'] as String;
+    bool isBookMark = data['isBookMark'] as bool;
+ 
     return PostDB(postId: postId, description: description, category: category, comments: comments,
-                  profileFileName: profileFileName, posted: posted, tags: tags,
+                  posted: posted, tags: tags,
                   likes: likes, postNumber: postNumber, images: images, writer: writer,
-                  withComment: withComment, email: email);
+                  withComment: withComment, email: email, uId: uId, isBookMark: isBookMark);
 
   }
 }

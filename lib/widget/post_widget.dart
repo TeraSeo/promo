@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
+import 'package:like_app/helper/logger.dart';
+import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
@@ -17,9 +20,9 @@ class PostWidget extends StatefulWidget {
   final bool? isLike;
   final int? likes;
   final String? uId;
-  final String? currentUserName;
+  final String? postOwnerUId;
   
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.currentUserName});
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -29,11 +32,16 @@ class _PostWidgetState extends State<PostWidget> {
 
   bool isLikeAnimation = false;
   bool? isLike;
+  bool isProfileLoading = true;
   int? likes;
+  String? profileFileName = "";
+  String? profileUrl = "";
+  Logging logging = new Logging();
   
   List<String>? images;
 
   bool isLoading = true;
+  bool isBookMark = false;
 
   final pageController = PageController(
     initialPage: 0,
@@ -48,6 +56,32 @@ class _PostWidgetState extends State<PostWidget> {
       isLike = widget.isLike;
       likes = widget.likes;
     });
+    getOwnerProfile();
+  }
+
+  getOwnerProfile() async {
+
+    QuerySnapshot snapshot =
+        await DatabaseService().gettingUserData(widget.email!);
+
+    Storage storage = new Storage();
+    try {
+      await storage.loadProfileFile(widget.email.toString(), snapshot.docs[0]["profilePic"].toString()).then((value) => {
+        profileUrl = value,
+        if (this.mounted) {
+          setState(() {
+            isProfileLoading = false;
+          })
+        }
+      });
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isProfileLoading = false;
+        });
+      }
+      logging.message_error(widget.name.toString() + "'s error " + e.toString());
+    }
   }
 
   void getImages() async {
@@ -68,64 +102,75 @@ class _PostWidgetState extends State<PostWidget> {
   Widget build(BuildContext context) {
     bool isTablet;
     double logoSize; 
-    double logoSpaceBetween;
+    double bookMarkLeft;
     double descriptionSize;
     double iconWidth;
+
 
     DatabaseService databaseService = DatabaseService(uid: widget.uId);
 
     if(Device.get().isTablet) {
       isTablet = true;
-      logoSpaceBetween = MediaQuery.of(context).size.width * 0.65;
+      bookMarkLeft = MediaQuery.of(context).size.width * 0.90;
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
       logoSize = MediaQuery.of(context).size.width * 0.035;
       iconWidth = MediaQuery.of(context).size.width * 0.07;
     }
     else {
       isTablet = false;
-      logoSpaceBetween = MediaQuery.of(context).size.width * 0.585;
+      bookMarkLeft = MediaQuery.of(context).size.width * 0.87;
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
       logoSize = MediaQuery.of(context).size.width * 0.053;
       iconWidth = MediaQuery.of(context).size.width * 0.093;
     }
 
 
-
-    return isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
+    return (isLoading || isProfileLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
     children: [
       SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
       Container(
         child: Column(
           children: [
             isTablet ? 
-            (Row(
+            (Stack(
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.height * 0.026,
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.height * 0.04,
-                  height: MediaQuery.of(context).size.height * 0.04,
-                  decoration: BoxDecoration(
-                    color: const Color(0xff7c94b6),
-                    image: DecorationImage(
-                      image: NetworkImage("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
-                      fit: BoxFit.cover,
+                (Row(
+                  children: [
+                    SizedBox(
+                      width: MediaQuery.of(context).size.height * 0.016,
                     ),
-                    borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
-                    border: Border.all(
-                      color: Colors.white,
-                      width: MediaQuery.of(context).size.height * 0.05,
+                    InkWell(
+                      onTap: () {
+                        nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.height * 0.05,
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff7c94b6),
+                          image: DecorationImage(
+                            image: NetworkImage(profileUrl!),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
+                          border: Border.all(
+                            color: Colors.white,
+                            width: MediaQuery.of(context).size.height * 0.005,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
-                Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
-                SizedBox(width: MediaQuery.of(context).size.width * 0.6),
-                IconButton(onPressed: () {
-                  _showOptionMenu();
-                }, 
-                  icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.057)
+                    SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
+                    Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
+                    SizedBox(width: MediaQuery.of(context).size.width * 0.6),
+                  ],
+                )), 
+                Positioned(child: IconButton(onPressed: () {
+                      _showOptionMenu();
+                    }, 
+                      icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.04)
+                    ), 
+                  left: MediaQuery.of(context).size.width * 0.9,
                 )
               ],
             )) : 
@@ -136,19 +181,24 @@ class _PostWidgetState extends State<PostWidget> {
                     SizedBox(
                       width: MediaQuery.of(context).size.height * 0.016,
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.height * 0.045,
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      decoration: BoxDecoration(
-                        color: const Color(0xff7c94b6),
-                        image: DecorationImage(
-                          image: NetworkImage("https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"),
-                          fit: BoxFit.cover,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: MediaQuery.of(context).size.height * 0.005,
+                    InkWell(
+                      onTap: () {
+                        nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.height * 0.05,
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        decoration: BoxDecoration(
+                          color: const Color(0xff7c94b6),
+                          image: DecorationImage(
+                            image: NetworkImage(profileUrl!),
+                            fit: BoxFit.cover,
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
+                          border: Border.all(
+                            color: Colors.white,
+                            width: MediaQuery.of(context).size.height * 0.005,
+                          ),
                         ),
                       ),
                     ),
@@ -181,7 +231,9 @@ class _PostWidgetState extends State<PostWidget> {
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
-                  Row(
+                  Stack(
+                    children: [
+                      Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
@@ -224,21 +276,38 @@ class _PostWidgetState extends State<PostWidget> {
                           nextScreen(context, CommentWidget(postId: widget.postID));
                         }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                       ),
-                      SizedBox(
+                    ],
+                  ),
+                  Positioned(
+                        left: bookMarkLeft,
+
+                        child: SizedBox(
                         width: iconWidth,
-                          child: IconButton(onPressed: () {}, 
-                          icon: Icon(Icons.send_outlined, size: logoSize),
-                        ),
-                      ),
-                      SizedBox(
-                        width: logoSpaceBetween
-                      ),
-                      SizedBox(
-                        width: iconWidth,
-                          child: IconButton(onPressed: () {},
-                        icon: Icon(Icons.bookmark_outline, size: logoSize),
+                          child: IconButton(onPressed: () async {
+                            setState(() {
+                              if (isBookMark) {
+                                isBookMark = false;
+                              }
+                              else {
+                                isBookMark = true;
+                              }
+                            });
+
+                            if (isBookMark) {
+
+                              await databaseService.addUserBookMark(widget.postID!);
+                              await postService.addUserBookMark(widget.postID!, isBookMark);
+
+                            } else {
+                              await databaseService.removeUserBookMark(widget.postID!);
+                              await postService.removeUserMark(widget.postID!, isBookMark);
+                            }
+
+                          },
+                          icon: isBookMark? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
                         )
                       ),
+                      )
                     ],
                   ),
                   Row(
@@ -331,7 +400,9 @@ class _PostWidgetState extends State<PostWidget> {
                       ),
                     ),
                   ],),
-                  Row(
+                  Stack(
+                    children: [
+                      Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
@@ -374,22 +445,38 @@ class _PostWidgetState extends State<PostWidget> {
                           nextScreen(context, CommentWidget(postId: widget.postID));
                         }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                       ),
-                      SizedBox(
+                    ],
+                  ),
+                  Positioned(
+                        left: bookMarkLeft,
+
+                        child: SizedBox(
                         width: iconWidth,
-                          child: IconButton(onPressed: () {
-                          }, 
-                          icon: Icon(Icons.send_outlined, size: logoSize),
-                        ),
-                      ),
-                      SizedBox(
-                        width: logoSpaceBetween
-                      ),
-                      SizedBox(
-                        width: iconWidth,
-                          child: IconButton(onPressed: () {},
-                        icon: Icon(Icons.bookmark_outline, size: logoSize),
+                          child: IconButton(onPressed: () async {
+                            setState(() {
+                              if (isBookMark) {
+                                isBookMark = false;
+                              }
+                              else {
+                                isBookMark = true;
+                              }
+                            });
+
+                            if (isBookMark) {
+
+                              await databaseService.addUserBookMark(widget.postID!);
+                              await postService.addUserBookMark(widget.postID!, isBookMark);
+
+                            } else {
+                              await databaseService.removeUserBookMark(widget.postID!);
+                              await postService.removeUserMark(widget.postID!, isBookMark);
+                            }
+
+                          },
+                          icon: isBookMark? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
                         )
                       ),
+                      )
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
@@ -421,7 +508,7 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   void _showOptionMenu() {
-    if (widget.name! == widget.currentUserName!) {
+    if (widget.uId! == widget.postOwnerUId!) {
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -498,10 +585,37 @@ class _PostWidgetState extends State<PostWidget> {
                   },
                 ),
                 ListTile(
+                  leading: Icon(Icons.favorite),
+                  title: Text('Bookmark this post'),
+                  onTap: () async{
+                    DatabaseService databaseService = DatabaseService(uid: widget.uId);
+                    setState(()  {
+
+                        if (isBookMark) {
+                          isBookMark = false;
+                        }
+                        else {
+                          isBookMark = true;
+                        }
+                      });
+
+                      if (isBookMark) {
+
+                        await databaseService.addUserBookMark(widget.postID!);
+                        await postService.addUserBookMark(widget.postID!, isBookMark);
+
+                      } else {
+                        await databaseService.removeUserBookMark(widget.postID!);
+                        await postService.removeUserMark(widget.postID!, isBookMark);
+                      }
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
                   leading: Icon(Icons.person),
                   title: Text('About this account'),
                   onTap: () {
-                    Navigator.pop(context);
+                    nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
                   },
                 ),
                 ListTile(
