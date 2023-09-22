@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/postDB_service.dart';
+import 'package:like_app/services/storage.dart';
 
 class PostService {
   String? email = ""; 
@@ -42,6 +43,71 @@ class PostService {
 
     } catch(e) {
       return e; 
+    }
+
+  }
+
+  Future updatePost(List<File> images, String description, String category, List<String> tags, bool withComment, String postId, String email) async {
+
+    try {
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+      String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+
+      List<String> filePaths = [];
+      List<String> fileNames = [];
+
+      for (int i = 0; i < images.length; i++) {
+        filePaths.add(images[i].path.toString());
+        fileNames.add(images[i].path.split('/').last);
+      }
+
+      if (filePaths.length == fileNames.length) {
+        Storage storage = new Storage();
+        await storage.deletePostImages(email, postId);
+        for (int i = 0; i < filePaths.length; i++) {
+          await storage.uploadPostImage(filePaths[i], fileNames[i], email, postId);
+        }          
+      }
+
+      post.update({
+        "images" : fileNames,
+        "description" : description,
+        "category" : category,
+        "tags" : tags,
+        "withComment" : withComment,
+        "posted" : datetime
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future updatePostWithOutImages(String description, String category, List<String> tags, bool withComment, String postId) async {
+
+    try {
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+      String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+
+      post.update({
+        "description" : description,
+        "category" : category,
+        "tags" : tags,
+        "withComment" : withComment,
+        "posted" : datetime
+      });
+
+    } catch(e) {
+      print(e);
     }
 
   }
@@ -202,6 +268,15 @@ class PostService {
     } catch(e) {
       return e;
     }
+
+  }
+
+  Future<DocumentSnapshot<Map<String, dynamic>>> getSpecificPost(String postId) async {
+
+    final post = FirebaseFirestore.instance.collection("post").doc(postId);
+    DocumentSnapshot<Map<String, dynamic>> thePost = await post.get();
+
+    return thePost;
 
   }
 

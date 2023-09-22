@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
 import 'package:like_app/helper/logger.dart';
+import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
@@ -52,10 +53,13 @@ class _PostWidgetState extends State<PostWidget> {
   void initState() {
     super.initState();
     getImages();
-    setState(() {
-      isLike = widget.isLike;
-      likes = widget.likes;
-    });
+    if (this.mounted) {
+      setState(() {
+        isLike = widget.isLike;
+        likes = widget.likes;
+      });
+    }
+    
     getOwnerProfile();
   }
 
@@ -526,7 +530,7 @@ class _PostWidgetState extends State<PostWidget> {
                   leading: Icon(Icons.edit),
                   title: Text('Edit this post'),
                   onTap: () {
-                    Navigator.pop(context);
+                    nextScreen(context, EditPost(postId: widget.postID!, email: widget.email!,));
                   },
                 ),
                 ListTile(

@@ -35,27 +35,33 @@ class _HomeState extends State<Home> {
     PostService postService = new PostService();
      await postService.getPosts().then((value) => {
       posts = value,
-      setState(() {
-          isLoading = false;
-      })
+      if (this.mounted) {
+          setState(() {
+            isLoading = false;
+          })
+      }
     });
   }
 
    void getUId() async{
     await HelperFunctions.getUserUIdFromSF().then((value) => {
       uId = value,
-      setState(() {
-        isUIdLoading = false;
-      })
+      if (this.mounted) {
+        setState(() {
+          isUIdLoading = false;
+        })
+      }
     });
   }
 
   void getCurrentUserName() async{
     await HelperFunctions.getUserNameFromSF().then((value) => {
       currentUserName = value,
-      setState(() {
-        isCurrnetUserNameLoading = false;
-      })
+      if (this.mounted) {
+        setState(() {
+          isCurrnetUserNameLoading = false;
+        })
+      }
     });
   }
 

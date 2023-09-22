@@ -72,11 +72,6 @@ class Storage {
 
 
   Future<void> uploadPostImage(String filePath, String fileName, String email, String postID) async {
-
-    // print(filePath);
-    // print(fileName);
-    // print(email);
-    // print(postID);
     File file = File(filePath);
 
     try {

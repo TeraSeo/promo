@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:like_app/datas/users.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editInfo.dart';
@@ -11,7 +10,7 @@ import 'package:like_app/pages/pageInPage/profilePage/editProfile.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widget/background_widget.dart';
-import 'package:like_app/widget/numbers_widget_profile.dart';
+import 'package:like_app/widget/numbers_widget.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/RestApi.dart';
@@ -28,18 +27,16 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
 
-  String uId = "";
-  String introduction = "";
+  DocumentSnapshot<Map<String, dynamic>>? postUser;
 
   DatabaseService databaseService = new DatabaseService();
   RestApi restApi = new RestApi();
-  LikeUser likeUser = new LikeUser();
   Storage storage = new Storage();
 
-  bool _isLoading = true;
   bool _isImg = true;
   bool _isBackground = true;
   bool isPostLoading = true;
+  bool isUIdLoading = true;
 
   Logging logging = new Logging();
 
@@ -47,6 +44,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String img_url = "";
   String background_url = "";
+
+  String? uID; 
 
   NetworkImage backgroundImg = NetworkImage("");
 
@@ -73,27 +72,34 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero,() async {
-      await gettingUserData();
-      await getPosts();
-      getCurrentUserName();
-     });
+      await getUser();
+    });
   }
 
-  String? currentUserName = "";
-  bool isCurrnetUserNameLoading = true;
+  Future getUser() async {
 
-  void getCurrentUserName() async{
-    await HelperFunctions.getUserNameFromSF().then((value) => {
-      currentUserName = value,
-      setState(() {
-        isCurrnetUserNameLoading = false;
-      })
-    });
+    await HelperFunctions.getUserUIdFromSF().then((value) => {
+        uID = value,
+        if (this.mounted) {
+          setState(() {
+            isUIdLoading = false;
+          })
+        }
+      });
+
+    final CollectionReference userCollection = 
+        FirebaseFirestore.instance.collection("user");
+
+    final user = userCollection.doc(uID);
+    postUser = await user.get() as DocumentSnapshot<Map<String, dynamic>>;
+    await getPosts();
+    await getUserProfile();
+    await getUserBackground();
   }
 
   getPosts() async {
     PostService postService = new PostService();
-     await postService.getProfilePosts(likeUser.posts!).then((value) => {
+     await postService.getProfilePosts(postUser!["posts"]).then((value) => {
       posts = value,
       if (this.mounted) {
         setState(() {
@@ -103,39 +109,9 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
-  gettingUserData() async {
-    await HelperFunctions.getUserUIdFromSF().then((value) => {
-      if (this.mounted) {
-        setState(() {
-          uId = value!;
-        })
-      }
-    });
-    
-    await restApi.getUser(uId).then((value) => {
-      likeUser = value,
-      if (this.mounted) {
-        setState(() {
-        _isLoading = false;
-        
-        if (likeUser.intro.toString().length == 0) {
-          introduction = "Write your introduction!";
-        }
-        else {
-          introduction = likeUser.intro.toString();
-        }
-      }),
-      }
-      
-    });
-
-    await getUserProfile();
-    await getUserBackground();
-  }
-
   getUserProfile() async {
     try {
-      await storage.loadProfileFile(likeUser.email.toString(), likeUser.profilePic.toString()).then((value) => {
+      await storage.loadProfileFile(postUser!["email"].toString(), postUser!["profilePic"].toString()).then((value) => {
         img_url = value,
         if (this.mounted) {
           setState(() {
@@ -149,13 +125,13 @@ class _ProfilePageState extends State<ProfilePage> {
           _isImg = false;
         });
       }
-      logging.message_error(likeUser.name.toString() + "'s error " + e.toString());
+      logging.message_error(postUser!["name"].toString() + "'s error " + e.toString());
     }
   }
 
   getUserBackground() async {
     try {
-      await storage.loadProfileBackground(likeUser.email.toString(), likeUser.backgroundPic.toString()).then((value) => {
+      await storage.loadProfileBackground(postUser!["email"].toString(), postUser!["backgroundPic"].toString()).then((value) => {
         background_url = value,
         if (this.mounted) {
           setState(() {
@@ -169,7 +145,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _isBackground = false;
         });
       }
-      logging.message_error(likeUser.name.toString() + "'s error " + e.toString());
+      logging.message_error(postUser!["name"].toString() + "'s error " + e.toString());
     }
   }
 
@@ -178,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
     double top = MediaQuery.of(context).size.height * 0.026;
 
-    return (_isLoading || _isImg || _isBackground || isPostLoading || isCurrnetUserNameLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+    return (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
     Container(
       child: Column(
         children: [
@@ -197,10 +173,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     onClicked: () async {},
                     ),
                     SizedBox(height: sizedBoxinCard),
-                    buildName(likeUser),
+                    buildName(postUser!),
                     SizedBox(height: sizedBoxinCard),
                     SizedBox(height: sizedBoxinCard),
-                    NumbersWidgetProfile(likeUser),
+                    NumbersWidget(postUser!),
                     SizedBox(height: sizedBoxinCard * 2),
                   ],
                 ),
@@ -218,7 +194,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       elevation: (MediaQuery.of(context).size.height * 0.026) / 6, 
                       child: Column(
                         children: [
-                          buildAbout(likeUser),
+                          buildAbout(postUser!),
                           SizedBox(height: MediaQuery.of(context).size.height * 0.1, width: MediaQuery.of(context).size.width,)
                         ]
                       ),
@@ -262,12 +238,13 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.5,),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.05 * likeUser.intro.toString().split("\n").length,),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.05 * postUser!["intro"].toString().split("\n").length,),
+
 
           Column(
             children: 
                 List.generate(posts!.length, (index) {
-                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId']);
+                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId']);
                 }
             )
           ),
@@ -276,21 +253,21 @@ class _ProfilePageState extends State<ProfilePage> {
     ); 
   }
 
-  Widget buildName(LikeUser likeUser) => Column(
+   Widget buildName(DocumentSnapshot<Map<String, dynamic>> user) => Column(
         children: [
           Text(
-            likeUser.name.toString(),
+            user["name"].toString(),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.026),
           ),
           SizedBox(height: (MediaQuery.of(context).size.height * 0.026) / 6),
           Text(
-            likeUser.email.toString(),
+            user["email"].toString(),
             style: TextStyle(color: Colors.grey),
           )
         ],
       );
 
-  Widget buildAbout(LikeUser likeUser) => Container(
+  Widget buildAbout(DocumentSnapshot<Map<String, dynamic>> user) => Container(
         padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.height * 0.052),
         alignment: Alignment.topLeft,
         child: Column(
@@ -303,7 +280,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.0173),
             Text(
-              introduction,
+              user!["intro"],
               style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.0173, height: MediaQuery.of(context).size.height * 0.0015),
             ),
           ],
@@ -356,8 +333,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text('Change profile picture'),
                 onTap: () {
                   Navigator.pop(context);
-                  // pickImage(ImageSource.gallery);
-                  _showPicMenu(likeUser, "profile");
+                  _showPicMenu(postUser, "profile");
                 },
               ),
               ListTile(
@@ -365,8 +341,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text('Change background picture'),
                 onTap: () {
                   Navigator.pop(context);
-                  // pickImage(ImageSource.gallery);
-                  _showPicMenu(likeUser, "background");
+                  _showPicMenu(postUser, "background");
                 },
               ),
               ListTile(
@@ -374,7 +349,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text('Edit profile information'),
                 onTap: () {
                   Navigator.pop(context);
-                  nextScreen(context, EditInfo(likeUser: likeUser,));
+                  nextScreen(context, EditInfo(postUser: postUser,));
                 },
               ),
               ListTile(
@@ -392,7 +367,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _showPicMenu(LikeUser likeUser, String usage) {
+  void _showPicMenu(DocumentSnapshot<Map<String, dynamic>>? post_user, String usage) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
@@ -407,17 +382,32 @@ class _ProfilePageState extends State<ProfilePage> {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.picture_in_picture_alt),
+                leading: Icon(Icons.folder),
                 title: Text('From gallery'),
                 onTap: () {
-                  pickImage(ImageSource.gallery, likeUser.email.toString(), likeUser.uid.toString(), usage);
+                  pickImage(ImageSource.gallery, post_user!["email"].toString(), post_user!["uid"].toString(), usage);
                 },
               ),
               ListTile(
                 leading: Icon(Icons.camera_alt_outlined),
                 title: Text('From camera'),
                 onTap: () {
-                  pickImage(ImageSource.camera, likeUser.email.toString(), likeUser.uid.toString(), usage);
+                  pickImage(ImageSource.camera, post_user!["email"].toString(), post_user!["uid"].toString(), usage);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.cancel),
+                title: Text('Cancel'),
+                onTap: () {
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.backspace),
+                title: Text('Back'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _showShareMenu();
                 },
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02,)

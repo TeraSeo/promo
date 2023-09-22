@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
@@ -8,25 +10,51 @@ import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
-class Post extends StatefulWidget {
-  final List<File> files;
-  const Post({super.key, required this.files});
+class EditPost extends StatefulWidget {
+  final String postId;
+  final String email;
+  const EditPost({super.key, required this.postId, required this.email});
 
   @override
-  State<Post> createState() => _PostState();
+  State<EditPost> createState() => _EditPostState();
 }
 
-class _PostState extends State<Post> {
+class _EditPostState extends State<EditPost> {
 
   DatabaseService? databaseService;
-  String? uId;
+  PostService postService = new PostService();
+  DocumentSnapshot<Map<String, dynamic>>? post;
+  bool isPostLoading = true;
+
+  List<File> selectedImages = [];
+  List<dynamic> images = [];
+  final picker = ImagePicker();
 
   @override
   void initState() {
     super.initState();
-
+    getPost();
   }
 
+  getPost() async {
+    await postService.getSpecificPost(widget.postId).then((value) => {
+      post = value,
+      if (this.mounted) {
+        setState(() {
+          _controllerDescription.text = post!["description"];
+          description = post!["description"];
+          category = post!["category"];
+          for (int i = 0; i < post!["tags"].length; i++) {
+            tags.add(post!["tags"][i]);
+          }
+          withComment = post!["withComment"];
+          isPostLoading = false;
+          images = post!["images"];
+        })
+      }
+      
+    });
+  }
 
   final formKey = GlobalKey<FormState>();
 
@@ -45,7 +73,7 @@ class _PostState extends State<Post> {
   ];
 
   String description = "";
-  String category = "Etc.";
+  String category = "";
   List<String> tags = [];
   bool withComment = true;
 
@@ -53,19 +81,51 @@ class _PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SingleChildScrollView(
+    return isPostLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
+      appBar: AppBar(
+        title: Text("Edit Post"),
+        backgroundColor: Colors.black,
+      ),
+      body: Container(
+        alignment: Alignment.center,
+        child: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
-              height: MediaQuery.of(context).size.height * 0.05,
+              height: MediaQuery.of(context).size.height * 0.02,
             ),
             Form(
               key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
                   getLabel(title: 'Images'),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  Container(
+                    width: 300,
+                    child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.black, // Background color
+                        ),
+                        onPressed: () {
+                          _showPicMenu();
+                        },
+                        child: Row(
+                            children: [
+                                Icon(Icons.change_circle, color: Colors.white,),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.03,
+                                ),
+                                Text("Change images")
+                            ]
+                        )
+                    )
+                  ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
@@ -276,14 +336,21 @@ class _PostState extends State<Post> {
                         postAble = false;
                       });
                       tags = _controllerTag.getTags!;
-                      PostService postService = new PostService();
-                      await postService.post(widget.files, description, category, tags, withComment);
-                      Future.delayed(Duration(seconds: 2)).then((value) => {
-                        nextScreen(context, HomePage())
-                      });
+                      
+                      if (images.isEmpty) {
+                        print(selectedImages);
+                        PostService postService = new PostService();
+                        await postService.updatePost(selectedImages, description, category, tags, withComment, widget.postId, widget.email);
+                        nextScreen(context, HomePage());
+                      }
+                      else {
+                        PostService postService = new PostService();
+                        await postService.updatePostWithOutImages(description, category, tags, withComment, widget.postId);
+                        nextScreen(context, HomePage());
+                      }
                     }
                   }, 
-                  child: Text("Post"),
+                  child: Text("Edit Post"),
                   style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -296,6 +363,7 @@ class _PostState extends State<Post> {
           ],
         ),
       ),
+      )
     );
   }
 
@@ -337,4 +405,68 @@ class _PostState extends State<Post> {
     )
   );
 
+  void _showPicMenu() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(25.0)
+        )
+      ),
+      builder: (BuildContext context) {
+        return Container(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.picture_in_picture_alt),
+                title: Text('No photo'),
+                onTap: () {
+                  setState(() {
+                    images = [];
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.picture_as_pdf_outlined),
+                title: Text('Select photo'),
+                onTap: () async{
+                  await getImages();
+                  Navigator.pop(context);
+                },
+              ),
+              SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
+            ],
+          ),
+        );
+      }
+    );
+  }
+
+  Future getImages() async {
+    selectedImages = [];
+    try {
+      final pickedFile = await picker.pickMultiImage(
+        imageQuality: 50, maxHeight: 1000, maxWidth: 1000);
+        List<XFile> xfilePick = pickedFile;
+        setState(
+          () {
+            if (xfilePick.isNotEmpty) {
+              for (var i = 0; i < xfilePick.length; i++) {
+                selectedImages.add(File(xfilePick[i].path));
+              }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Nothing is selected')));
+            }
+            images = [];
+          },
+        );
+
+    } catch (e) {
+      print(e);
+    }
+  }
 }

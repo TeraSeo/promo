@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/datas/users.dart';
@@ -7,9 +8,9 @@ import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 
 class EditInfo extends StatefulWidget {
-  final LikeUser likeUser;
+  final DocumentSnapshot<Map<String, dynamic>>? postUser;
 
-  const EditInfo({super.key, required this.likeUser});
+  const EditInfo({super.key, required this.postUser});
 
   @override
   State<EditInfo> createState() => _EditInfoState();
@@ -32,12 +33,12 @@ class _EditInfoState extends State<EditInfo> {
   void initState() {
     super.initState();
 
-    _controllerName.text = widget.likeUser.name.toString();
-    _controllerEmail.text = widget.likeUser.email.toString();
-    _controllerIntroduction.text = widget.likeUser.intro.toString();
+    _controllerName.text = widget.postUser!["name"].toString();
+    _controllerEmail.text = widget.postUser!["email"].toString();
+    _controllerIntroduction.text = widget.postUser!["intro"].toString();
 
-    changedName = widget.likeUser.name.toString();
-    changedIntro = widget.likeUser.intro.toString();
+    changedName = widget.postUser!["name"].toString();
+    changedIntro = widget.postUser!["intro"].toString();
   }
 
   @override
@@ -123,8 +124,8 @@ class _EditInfoState extends State<EditInfo> {
                   onPressed: () async{
                     if (formKey.currentState!.validate()) {
                       existing(changedName).then((value) async {
-                      if (value == true || widget.likeUser.name.toString() == changedName) {
-                        await restApi.setUserInfo(widget.likeUser.uid.toString(), changedName, changedIntro);
+                      if (value == true || widget.postUser!["name"].toString() == changedName) {
+                        await restApi.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
                         Future.delayed(Duration(seconds: 1),() {
                           nextScreen(context, HomePage());
                         });
