@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
 import 'package:like_app/helper/logger.dart';
+import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/post_service.dart';
@@ -22,8 +23,10 @@ class PostWidget extends StatefulWidget {
   final int? likes;
   final String? uId;
   final String? postOwnerUId;
+  final bool? withComment;
+  final bool? isBookMark;
   
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId});
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -42,7 +45,7 @@ class _PostWidgetState extends State<PostWidget> {
   List<String>? images;
 
   bool isLoading = true;
-  bool isBookMark = false;
+  bool? isBookMark;
 
   final pageController = PageController(
     initialPage: 0,
@@ -57,6 +60,7 @@ class _PostWidgetState extends State<PostWidget> {
       setState(() {
         isLike = widget.isLike;
         likes = widget.likes;
+        isBookMark = widget.isBookMark;
       });
     }
     
@@ -274,12 +278,13 @@ class _PostWidgetState extends State<PostWidget> {
                           ),
                         )
                       ),
+                      widget.withComment! ? 
                       SizedBox(
                         width: iconWidth,
                         child: IconButton(onPressed: () {
                           nextScreen(context, CommentWidget(postId: widget.postID));
                         }, icon: Icon(Icons.comment_outlined, size: logoSize),),
-                      ),
+                      ) : SizedBox()
                     ],
                   ),
                   Positioned(
@@ -289,7 +294,7 @@ class _PostWidgetState extends State<PostWidget> {
                         width: iconWidth,
                           child: IconButton(onPressed: () async {
                             setState(() {
-                              if (isBookMark) {
+                              if (isBookMark!) {
                                 isBookMark = false;
                               }
                               else {
@@ -297,18 +302,18 @@ class _PostWidgetState extends State<PostWidget> {
                               }
                             });
 
-                            if (isBookMark) {
+                            if (isBookMark!) {
 
                               await databaseService.addUserBookMark(widget.postID!);
-                              await postService.addUserBookMark(widget.postID!, isBookMark);
+                              await postService.addBookMark(widget.postID!, widget.uId!);
 
                             } else {
                               await databaseService.removeUserBookMark(widget.postID!);
-                              await postService.removeUserMark(widget.postID!, isBookMark);
+                              await postService.removeBookMark(widget.postID!, widget.uId!);
                             }
 
                           },
-                          icon: isBookMark? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
+                          icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
                         )
                       ),
                       )
@@ -443,12 +448,13 @@ class _PostWidgetState extends State<PostWidget> {
                           ),
                         )
                       ),
+                      widget.withComment! ? 
                       SizedBox(
                         width: iconWidth,
                         child: IconButton(onPressed: () {
                           nextScreen(context, CommentWidget(postId: widget.postID));
                         }, icon: Icon(Icons.comment_outlined, size: logoSize),),
-                      ),
+                      ) : SizedBox()
                     ],
                   ),
                   Positioned(
@@ -458,7 +464,7 @@ class _PostWidgetState extends State<PostWidget> {
                         width: iconWidth,
                           child: IconButton(onPressed: () async {
                             setState(() {
-                              if (isBookMark) {
+                              if (isBookMark!) {
                                 isBookMark = false;
                               }
                               else {
@@ -466,18 +472,18 @@ class _PostWidgetState extends State<PostWidget> {
                               }
                             });
 
-                            if (isBookMark) {
+                            if (isBookMark!) {
 
                               await databaseService.addUserBookMark(widget.postID!);
-                              await postService.addUserBookMark(widget.postID!, isBookMark);
+                              await postService.addBookMark(widget.postID!, widget.uId!);
 
                             } else {
                               await databaseService.removeUserBookMark(widget.postID!);
-                              await postService.removeUserMark(widget.postID!, isBookMark);
+                              await postService.removeBookMark(widget.postID!, widget.uId!);
                             }
 
                           },
-                          icon: isBookMark? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
+                          icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
                         )
                       ),
                       )
@@ -536,8 +542,9 @@ class _PostWidgetState extends State<PostWidget> {
                 ListTile(
                   leading: Icon(Icons.remove_circle),
                   title: Text('Remove this post'),
-                  onTap: () {
-                    Navigator.pop(context);
+                  onTap: () async {
+                    await postService.removePost(widget.postID!, widget.email!);
+                    nextScreen(context, HomePage());
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
@@ -595,7 +602,7 @@ class _PostWidgetState extends State<PostWidget> {
                     DatabaseService databaseService = DatabaseService(uid: widget.uId);
                     setState(()  {
 
-                        if (isBookMark) {
+                        if (isBookMark!) {
                           isBookMark = false;
                         }
                         else {
@@ -603,15 +610,16 @@ class _PostWidgetState extends State<PostWidget> {
                         }
                       });
 
-                      if (isBookMark) {
+                      if (isBookMark!) {
 
                         await databaseService.addUserBookMark(widget.postID!);
-                        await postService.addUserBookMark(widget.postID!, isBookMark);
+                        await postService.addBookMark(widget.postID!, widget.uId!);
 
                       } else {
                         await databaseService.removeUserBookMark(widget.postID!);
-                        await postService.removeUserMark(widget.postID!, isBookMark);
+                        await postService.removeBookMark(widget.postID!, widget.uId!);
                       }
+                      
                     Navigator.pop(context);
                   },
                 ),

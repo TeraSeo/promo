@@ -1,9 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:like_app/datas/users.dart';
 import 'package:like_app/pages/home_page.dart';
-import 'package:like_app/services/RestApi.dart';
+import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 
@@ -27,7 +26,10 @@ class _EditInfoState extends State<EditInfo> {
   String changedName = "" ;
   String changedIntro = "";
 
-  RestApi restApi = new RestApi();
+  bool isInfoChanging = false;
+
+  PostService postService = new PostService();
+  DatabaseService databaseService = new DatabaseService();
 
   @override
   void initState() {
@@ -122,21 +124,28 @@ class _EditInfoState extends State<EditInfo> {
                 height: MediaQuery.of(context).size.height * 0.057,
                 child: ElevatedButton(
                   onPressed: () async{
-                    if (formKey.currentState!.validate()) {
-                      existing(changedName).then((value) async {
-                      if (value == true || widget.postUser!["name"].toString() == changedName) {
-                        await restApi.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
-                        Future.delayed(Duration(seconds: 1),() {
-                          nextScreen(context, HomePage());
-                        });
+                    if (!isInfoChanging) {
+                      if (formKey.currentState!.validate()) {
+                        existing(changedName).then((value) async {
+                        if (value == true || widget.postUser!["name"].toString() == changedName) {
+
+                          setState(() {
+                            isInfoChanging = true;
+                          });
+
+                          await databaseService.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
+                          await postService.changeWriterName(changedName, widget.postUser!["posts"]);
+                          Future.delayed(Duration(seconds: 1),() {
+                            nextScreen(context, HomePage());
+                          });
+                          }
+                        else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text("Unavailable Name"))
+                          );
                         }
-                      else {
-                        print("not");
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Unavailable Name"))
-                        );
+                        });
                       }
-                      });
                     }
                   }, 
                   child: Text("Edit Profile"),

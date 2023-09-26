@@ -4,16 +4,17 @@ import 'package:like_app/datas/users.dart';
 
 class NumbersWidget extends StatelessWidget {
   DocumentSnapshot<Map<String, dynamic>> user;
+  int likes;
 
-  NumbersWidget(this.user);
+  NumbersWidget(this.user, this.likes);
 
   @override
   Widget build(BuildContext context) => Row(     //////
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          buildButton(context, user["ranking"].toString(), 'Ranking'),
+          buildButton(context, 0.toString(), 'Ranking'),
           buildDivider(context),
-          buildButton(context, user["likes"].length.toString(), 'Likes'),
+          buildButton(context, likes.toString(), 'Likes'),
           buildDivider(context),
           buildButton(context, user["posts"].length.toString(), 'Posts'),
         ],

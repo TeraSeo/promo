@@ -10,6 +10,7 @@ class LikeUser {
   int? ranking;
   List<dynamic>? posts;
   List<dynamic>? bookmarks;
+  int? removedLikes;
   
   LikeUser(
       {
@@ -23,7 +24,8 @@ class LikeUser {
       this.intro,
       this.ranking,
       this.posts,
-      this.bookmarks
+      this.bookmarks,
+      this.removedLikes
       });
 
   factory LikeUser.fromJson(Map<String, dynamic> data) {
@@ -39,10 +41,11 @@ class LikeUser {
     int ranking = data['ranking'] as int;
     List<dynamic> posts = data['posts'] as List<dynamic>;
     List<dynamic> bookmarks = data['bookmarks'] as List<dynamic>;
+    int removedLikes = data['removedLikes'] as int;
 
     return LikeUser(name: name, email: email, profilePic: profilePic,backgroundPic: backgroundPic,
                     uid: uid, likes: likes, registered: registered,
-                    intro: intro, ranking: ranking, posts: posts, bookmarks: bookmarks);
+                    intro: intro, ranking: ranking, posts: posts, bookmarks: bookmarks, removedLikes: removedLikes);
 
   }
 

@@ -13,7 +13,7 @@ class PostDB {
   bool? withComment;
   int? postNumber;
   String? uId;
-  bool? isBookMark;
+  List<dynamic>? bookMarks;
 
   PostDB({
     this.postId,
@@ -29,7 +29,7 @@ class PostDB {
     this.withComment,
     this.postNumber,
     this.uId,
-    this.isBookMark
+    this.bookMarks
   });
 
 
@@ -49,12 +49,12 @@ class PostDB {
     bool withComment = data['withComment'] as bool;
     int postNumber = data['postNumber'] as int;
     String uId = data['uId'] as String;
-    bool isBookMark = data['isBookMark'] as bool;
+    List<dynamic> bookMarks = data['bookMarks'] as List<dynamic>;
  
     return PostDB(postId: postId, description: description, category: category, comments: comments,
                   posted: posted, tags: tags,
                   likes: likes, postNumber: postNumber, images: images, writer: writer,
-                  withComment: withComment, email: email, uId: uId, isBookMark: isBookMark);
+                  withComment: withComment, email: email, uId: uId, bookMarks: bookMarks);
 
   }
 }

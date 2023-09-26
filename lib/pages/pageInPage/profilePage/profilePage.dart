@@ -37,6 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isBackground = true;
   bool isPostLoading = true;
   bool isUIdLoading = true;
+  bool isLikesLoading = true;
 
   Logging logging = new Logging();
 
@@ -44,6 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String img_url = "";
   String background_url = "";
+  int likes = 0;
 
   String? uID; 
 
@@ -93,8 +95,23 @@ class _ProfilePageState extends State<ProfilePage> {
     final user = userCollection.doc(uID);
     postUser = await user.get() as DocumentSnapshot<Map<String, dynamic>>;
     await getPosts();
-    await getUserProfile();
-    await getUserBackground();
+    getPostLikes(postUser!["posts"]);
+    getUserProfile();
+    getUserBackground();
+  }
+
+  getPostLikes(List<dynamic> postIds) async {
+    PostService postService = new PostService();
+    await postService.getPostLikes(postIds).then((value) => {
+      likes = likes + value,
+      if (this.mounted) {
+        setState(() {
+          isLikesLoading = false;
+        })
+      }
+    });
+    int num = postUser!["removedLikes"];
+    likes = likes + num;
   }
 
   getPosts() async {
@@ -154,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
     double top = MediaQuery.of(context).size.height * 0.026;
 
-    return (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+    return (_isImg || _isBackground || isPostLoading || isUIdLoading || isLikesLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
     Container(
       child: Column(
         children: [
@@ -176,7 +193,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     buildName(postUser!),
                     SizedBox(height: sizedBoxinCard),
                     SizedBox(height: sizedBoxinCard),
-                    NumbersWidget(postUser!),
+                    NumbersWidget(postUser!, likes),
                     SizedBox(height: sizedBoxinCard * 2),
                   ],
                 ),
@@ -244,7 +261,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Column(
             children: 
                 List.generate(posts!.length, (index) {
-                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId']);
+                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]),);
                 }
             )
           ),

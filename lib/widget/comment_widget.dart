@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
@@ -22,6 +21,7 @@ class _CommentWidgetState extends State<CommentWidget> {
   List<dynamic>? comments = [];
 
   bool isLoading = true;
+  bool isCommentSubmitting = false;
 
   @override
   void initState() {
@@ -85,10 +85,10 @@ class _CommentWidgetState extends State<CommentWidget> {
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
         title: Text("Comments", style: TextStyle(fontSize: barFontSize),),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
-          onPressed: () => nextScreen(context, HomePage()),
-        ), 
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
+        //   onPressed: () => nextScreen(context, HomePage()),
+        // ), 
       ),
       body: 
       comments!.length > 0 ? 
@@ -142,11 +142,18 @@ class _CommentWidgetState extends State<CommentWidget> {
                           disabledColor: Colors.black,
                           focusColor: Colors.blue,
                           onPressed: () async {
-                            CommentService commnetService = new CommentService(description: content, postId: widget.postId);
-                            await commnetService.postComment();
-                            Future.delayed(Duration(seconds: 1)).then((value) => {
-                              nextScreen(context, CommentWidget(postId: widget.postId,))
-                            });
+                            if (!isCommentSubmitting) {
+                              if (content!.length > 0) {
+                                setState(() {
+                                isCommentSubmitting = true;
+                                });
+                                CommentService commnetService = new CommentService(description: content, postId: widget.postId);
+                                await commnetService.postComment();
+                                Future.delayed(Duration(seconds: 1)).then((value) => {
+                                  nextScreen(context, CommentWidget(postId: widget.postId,))
+                                });
+                              }
+                            }
                           },
                           icon: Icon(Icons.post_add_rounded, size: logoSize,)
                         )

@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/pages/home_page.dart';
-import 'package:like_app/services/RestApi.dart';
 import 'package:like_app/services/storage.dart';
+import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 
 class EditProfile extends StatefulWidget {
@@ -24,8 +24,10 @@ class EditProfile extends StatefulWidget {
 class _EditProfileState extends State<EditProfile> {
 
   File image = new File("");
-  RestApi restApi = new RestApi();
   Storage storage = new Storage();
+  DatabaseService databaseService = new DatabaseService();
+
+  bool isProfileChanging = false;
 
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
     try {
@@ -132,15 +134,23 @@ class _EditProfileState extends State<EditProfile> {
                         style: TextStyle(color: Colors.white, fontSize: MediaQuery.of(context).size.height * 0.016),
                       ),
                       onPressed: () async{
-                        if (widget.usage == "profile") {
-                          await restApi.setUserProfile(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
+                        if (!isProfileChanging) {
+
+                          setState(() {
+                            isProfileChanging = true;
+                          });
+
+                          if (widget.usage == "profile") {
+                            await databaseService.setUserProfile(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
+                          }
+                          else if (widget.usage == "background") {
+                            await databaseService.setUserBackground(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
+                          }
+                          Future.delayed(Duration(seconds: 1),() {
+                            nextScreen(context, HomePage());
+                          });
+
                         }
-                        else if (widget.usage == "background") {
-                          await restApi.setUserBackground(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
-                        }
-                        Future.delayed(Duration(seconds: 1),() {
-                          nextScreen(context, HomePage());
-                        });
                       },
                     )
                   ),

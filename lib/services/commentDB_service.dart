@@ -26,7 +26,8 @@ class CommentDBService {
       "username" : username,
       "description" : description,
       "likes" : 0,
-      "posted" : datetime
+      "posted" : datetime,
+      "likedUsers" : []
     });
   }
 

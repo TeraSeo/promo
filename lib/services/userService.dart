@@ -1,22 +1,22 @@
-import 'dart:collection';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:like_app/services/storage.dart';
 
 class DatabaseService {
   final String? uid;
   DatabaseService({this.uid});
 
-  // reference for our collections
   final CollectionReference userCollection = 
         FirebaseFirestore.instance.collection("user");
+
+  Storage storage = new Storage();
 
   // updating the user data
   Future savingeUserData(String name, String email) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
     String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString();
-    int size = await userCollection.get()
-        .then((value) => value.size);  // collection 크기 받기
+    // int size = await userCollection.get()
+    //     .then((value) => value.size);  // collection 크기 받기
 
     return await userCollection.doc(uid).set({
       "name" : name,
@@ -27,9 +27,9 @@ class DatabaseService {
       "likes" : [],
       "registered" : datetime,
       "intro" : "",
-      "ranking" : size + 1,
       "posts" : [],
-      "bookmarks" : []
+      "bookmarks" : [],
+      "removedLikes" : 0,
     });
   }
 
@@ -140,7 +140,7 @@ class DatabaseService {
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
 
-      user.get().then((value) {
+      await user.get().then((value) {
         
         List<dynamic> bookmarks = value['bookmarks'];
 
@@ -157,6 +157,144 @@ class DatabaseService {
     } catch(e) {
       print(e);
     }
+  }
+
+  Future addRemovedLikes(int like, String theUId, String postId) async {
+
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(theUId);
+
+      await user.get().then((value) {
+        int removedLike = value["removedLikes"];
+        removedLike = removedLike + like;
+        List<dynamic> posts = value["posts"];
+
+        for (int i = 0; i < posts.length; i++) {
+          if (posts[i].toString() == postId) {
+            posts.remove(posts[i].toString());
+          }
+        }
+
+        user.update({
+          "removedLikes" : removedLike,
+          "posts" : posts
+        });
+      });
+
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  Future setUserInfo(String uId, String name, String intro) async {
+
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.update({
+        "name" : name,
+        "intro" : intro
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+  
+  Future setUserProfile(String uId, String path, String fileName, String email) async {
+
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.update({
+        "profilePic" : fileName
+      });
+              
+      await storage.uploadProfileImage(path, fileName, email);
+
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future setUserBackground(String uId, String path, String fileName, String email) async {
+
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.update({
+        "backgroundPic" : fileName
+      });
+              
+      await storage.uploadProfileBackground(path, fileName, email);
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future removeLikeInUser(String uId, String postId) async {
+
+    try {
+
+      List<dynamic> likes;
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.get().then((value) => {
+
+        likes = value["likes"], 
+
+        if (likes.contains(postId)) {
+          likes.remove(postId)
+        },
+
+        user.update({
+          "likes" : likes
+        })
+        
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future removeBookMarkInUser(String postId, String uId) async {
+
+    try {
+
+      List<dynamic> bookmarks;
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.get().then((value) => {
+
+        bookmarks = value["bookmarks"], 
+
+        if (bookmarks.contains(postId)) {
+          bookmarks.remove(postId)
+        },
+
+        user.update({
+          "bookmarks" : bookmarks
+        })
+        
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
   }
 
 }

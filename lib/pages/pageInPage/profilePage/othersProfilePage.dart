@@ -35,6 +35,9 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   bool _isImg = true;
   bool _isBackground = true;
   bool isPostLoading = true;
+  bool isLikesLoading = true;
+
+  int likes = 0;
 
   Logging logging = new Logging();
 
@@ -61,9 +64,22 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
     final docOwner = userCollection.doc(widget.postOwnerUId);
     postUser = await docOwner.get() as DocumentSnapshot<Map<String, dynamic>>;
-    await getPosts();
-    await getUserProfile();
-    await getUserBackground();
+    getPosts();
+    getPostLikes(postUser!["posts"]);
+    getUserProfile();
+    getUserBackground();
+  }
+
+  getPostLikes(List<dynamic> postIds) async {
+    PostService postService = new PostService();
+    await postService.getPostLikes(postIds).then((value) => {
+      likes = value,
+      if (this.mounted) {
+        setState(() {
+          isLikesLoading = false;
+        })
+      }
+    });
   }
 
   getPosts() async {
@@ -154,7 +170,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                     buildName(postUser!),
                     SizedBox(height: sizedBoxinCard),
                     SizedBox(height: sizedBoxinCard),
-                    NumbersWidget(postUser!),
+                    NumbersWidget(postUser!, likes),
                     SizedBox(height: sizedBoxinCard * 2),
                   ],
                 ),
@@ -212,7 +228,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           Column(
             children: 
                 List.generate(posts!.length, (index) {
-                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId']);
+                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]),);
                 }
             )
           ),

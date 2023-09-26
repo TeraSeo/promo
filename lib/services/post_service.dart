@@ -3,8 +3,10 @@ import 'dart:collection';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/postDB_service.dart';
 import 'package:like_app/services/storage.dart';
+import 'package:like_app/services/userService.dart';
 
 class PostService {
   String? email = ""; 
@@ -81,6 +83,44 @@ class PostService {
         "withComment" : withComment,
         "posted" : datetime
       });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future removePost(String postId, String email) async {
+
+    DatabaseService databaseService = new DatabaseService();
+
+    try {
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+      CommentService commentService = new CommentService();
+      
+
+      await post.get().then((value) =>  {
+        databaseService.addRemovedLikes(value["likes"].length, value["uId"], postId),
+
+        for (int i = 0; i < value["comments"].length; i++) {
+          commentService.removeComment(value["comments"][i])
+        },
+
+        for (int i = 0; i < value["likes"].length; i++) {
+          databaseService.removeLikeInUser(value["likes"][i], postId)
+        },
+
+        for (int i = 0; i < value["bookMarks"].length; i++) {
+          databaseService.removeBookMarkInUser(postId, value["bookMarks"][i])
+        }
+
+      });
+
+      Storage storage = new Storage();
+      await storage.deletePostImages(email, postId);
+
+      await post.delete();
 
     } catch(e) {
       print(e);
@@ -235,41 +275,41 @@ class PostService {
     }
   }
 
-  Future addUserBookMark(String postId, bool isBookMark) async {
+  // Future addUserBookMark(String postId, bool isBookMark) async {
 
-    try {
+  //   try {
 
-      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+  //     final post = FirebaseFirestore.instance.collection("post").doc(postId);
 
-      post.update({
-        "isBookMark" : isBookMark
-      });
+  //     post.update({
+  //       "isBookMark" : isBookMark
+  //     });
 
-      return true;
+  //     return true;
 
-    } catch(e) {
-      return e;
-    }
+  //   } catch(e) {
+  //     return e;
+  //   }
 
-  }
+  // }
 
-  Future removeUserMark(String postId, bool isBookMark) async {
+  // Future removeUserMark(String postId, bool isBookMark) async {
     
-    try {
+  //   try {
 
-      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+  //     final post = FirebaseFirestore.instance.collection("post").doc(postId);
 
-      post.update({
-        "isBookMark" : isBookMark
-      });
+  //     post.update({
+  //       "isBookMark" : isBookMark
+  //     });
 
-      return true;
+  //     return true;
 
-    } catch(e) {
-      return e;
-    }
+  //   } catch(e) {
+  //     return e;
+  //   }
 
-  }
+  // }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getSpecificPost(String postId) async {
 
@@ -277,6 +317,93 @@ class PostService {
     DocumentSnapshot<Map<String, dynamic>> thePost = await post.get();
 
     return thePost;
+
+  }
+
+  Future<int> getPostLikes(List<dynamic> postIds) async {
+
+    try {
+      int likes = 0;
+
+      for (int i = 0; i < postIds.length; i++) {
+
+        DocumentSnapshot<Map<String, dynamic>> posts = await getSpecificPost(postIds[i]);
+        
+        int like = posts["likes"].length;
+        likes += like;
+
+      }
+
+      return likes;
+
+    } catch(e) {
+      print(e);
+      return 0;
+    }
+
+  }
+
+  Future changeWriterName(String writer, List<dynamic> postIds) async {
+    
+    try {
+
+      for (int i = 0; i < postIds.length; i++) {
+
+        final post = FirebaseFirestore.instance.collection("post").doc(postIds[i]);
+
+        post.update({
+          "writer" : writer
+        });
+
+      }
+
+    } catch(e) {
+      return e;
+    }
+
+  }
+
+  Future addBookMark(String postId, String uId) async {
+
+    final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+    List<dynamic> bookMarks;
+
+    post.get().then((value) => {
+
+      bookMarks = value["bookMarks"],
+
+      if (!bookMarks.contains(uId)) {
+        bookMarks.add(uId)
+      },
+
+      post.update({
+        "bookMarks" : bookMarks
+      })
+      
+    });
+
+  }
+
+  Future removeBookMark(String postId, String uId) async {
+
+    final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+    List<dynamic> bookMarks;
+
+    post.get().then((value) => {
+
+      bookMarks = value["bookMarks"],
+
+      if (bookMarks.contains(uId)) {
+        bookMarks.remove(uId)
+      },
+
+      post.update({
+        "bookMarks" : bookMarks
+      })
+      
+    });
 
   }
 
