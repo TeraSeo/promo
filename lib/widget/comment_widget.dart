@@ -8,8 +8,9 @@ import 'package:like_app/widgets/widgets.dart';
 class CommentWidget extends StatefulWidget {
 
   final String? postId;
+  final String? uId;
 
-  const CommentWidget({super.key, required this.postId});
+  const CommentWidget({super.key, required this.postId, required this.uId});
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -98,7 +99,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           itemCount: comments!.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              child: CommentCard(commentId: comments![index],),
+              child: CommentCard(commentId: comments![index], uId: widget.uId,),
             );
           }
         )
@@ -150,7 +151,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 CommentService commnetService = new CommentService(description: content, postId: widget.postId);
                                 await commnetService.postComment();
                                 Future.delayed(Duration(seconds: 1)).then((value) => {
-                                  nextScreen(context, CommentWidget(postId: widget.postId,))
+                                  nextScreen(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
                                 });
                               }
                             }

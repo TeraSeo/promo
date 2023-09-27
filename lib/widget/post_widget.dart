@@ -282,7 +282,7 @@ class _PostWidgetState extends State<PostWidget> {
                       SizedBox(
                         width: iconWidth,
                         child: IconButton(onPressed: () {
-                          nextScreen(context, CommentWidget(postId: widget.postID));
+                          nextScreen(context, CommentWidget(postId: widget.postID, uId: widget.uId,));
                         }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                       ) : SizedBox()
                     ],
@@ -452,7 +452,7 @@ class _PostWidgetState extends State<PostWidget> {
                       SizedBox(
                         width: iconWidth,
                         child: IconButton(onPressed: () {
-                          nextScreen(context, CommentWidget(postId: widget.postID));
+                          nextScreen(context, CommentWidget(postId: widget.postID, uId: widget.uId,));
                         }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                       ) : SizedBox()
                     ],

@@ -80,4 +80,51 @@ class CommentService {
 
   }
 
+  Future addCommentLikeUser(String uId) async {
+
+    final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
+
+    List<dynamic> likedUsers;
+
+    comment.get().then((value) => {
+
+      likedUsers = value["likedUsers"],
+
+      if (!likedUsers.contains(uId)) {
+
+        likedUsers.add(uId)
+
+      },
+
+      comment.update({
+        "likedUsers" : likedUsers
+      })
+      
+    });
+  }
+
+  Future removeCommentLikeUser(String uId) async {
+
+    final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
+
+    List<dynamic> likedUsers;
+
+    comment.get().then((value) => {
+
+      likedUsers = value["likedUsers"],
+
+      if (!likedUsers.contains(uId)) {
+
+        likedUsers.remove(uId)
+
+      },
+
+      comment.update({
+        "likedUsers" : likedUsers
+      })
+      
+    });
+
+  }
+
 }

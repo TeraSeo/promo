@@ -6,8 +6,9 @@ import 'package:like_app/services/comment_service.dart';
 class CommentCard extends StatefulWidget {
 
   final String? commentId;
+  final String? uId;
 
-  const CommentCard({super.key, required this.commentId});
+  const CommentCard({super.key, required this.commentId, required this.uId});
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -19,6 +20,7 @@ class _CommentCardState extends State<CommentCard> {
 
   bool isLoading = true;
   bool isCommentLike = false;
+  int likes = 0;
 
   @override
   void initState() {
@@ -33,6 +35,7 @@ class _CommentCardState extends State<CommentCard> {
       if (mounted) {
         setState(() {
           isLoading = false;
+          likes = commentInfo!["likes"];
         })
       }
     });
@@ -58,19 +61,16 @@ class _CommentCardState extends State<CommentCard> {
 
     }
 
-
     return isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
     GestureDetector(
       onDoubleTap: () {
         setState(() {
           if (isCommentLike) {
-
             isCommentLike = false;
-
+            likes = likes - 1;
           } else {
-
             isCommentLike = true;
-
+            likes = likes + 1;
           }
         });
       },
@@ -120,7 +120,7 @@ class _CommentCardState extends State<CommentCard> {
                   Padding(
                     padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, top: MediaQuery.of(context).size.height * 0.008),
                     child: Text(
-                      commentInfo!["likes"].toString() + " likes",
+                      likes.toString() + " likes",
                       style: TextStyle(
                         fontSize: fontSize * 0.9,
                         fontWeight: FontWeight.w400
@@ -135,13 +135,11 @@ class _CommentCardState extends State<CommentCard> {
             child: IconButton(onPressed: () {
               setState(() {
                 if (isCommentLike) {
-
                   isCommentLike = false;
-
+                  likes = likes - 1;
                 } else {
-
                   isCommentLike = true;
-
+                  likes = likes + 1;
                 }
               });
             }, icon: isCommentLike? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
