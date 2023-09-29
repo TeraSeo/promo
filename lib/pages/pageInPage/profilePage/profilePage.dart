@@ -7,6 +7,7 @@ import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editInfo.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editProfile.dart';
+import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widget/background_widget.dart';
@@ -53,6 +54,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<DocumentSnapshot<Map<String, dynamic>>>? posts;
 
+  CommentService commentService = new CommentService();
+
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
     try {
       final image = await ImagePicker().pickImage(source: source);
@@ -96,6 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
     postUser = await user.get() as DocumentSnapshot<Map<String, dynamic>>;
     await getPosts();
     getPostLikes(postUser!["posts"]);
+    getCommentLikes(postUser!["comments"]);
     getUserProfile();
     getUserBackground();
   }
@@ -112,6 +116,13 @@ class _ProfilePageState extends State<ProfilePage> {
     });
     int num = postUser!["removedLikes"];
     likes = likes + num;
+  }
+
+  getCommentLikes(List<dynamic> commentIds) async {
+    for (int i = 0; i < commentIds.length; i++) {
+      int num = await commentService.getCommentLikes(commentIds[i]);
+      likes = likes + num;
+    }
   }
 
   getPosts() async {

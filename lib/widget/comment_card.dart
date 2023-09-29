@@ -22,10 +22,13 @@ class _CommentCardState extends State<CommentCard> {
   bool isCommentLike = false;
   int likes = 0;
 
+  bool isOwnComment = false;
+
   @override
   void initState() {
     super.initState();
     getCommentInfo();
+    
   }
 
   getCommentInfo() async {
@@ -34,8 +37,14 @@ class _CommentCardState extends State<CommentCard> {
       commentInfo = value,
       if (mounted) {
         setState(() {
+          likes = commentInfo!["likedUsers"].length;
+
+          isCommentLike = commentInfo!["likedUsers"].contains(widget.uId);
+
           isLoading = false;
-          likes = commentInfo!["likes"];
+
+          isOwnComment = commentInfo!["uId"] == widget.uId;
+
         })
       }
     });
@@ -47,6 +56,8 @@ class _CommentCardState extends State<CommentCard> {
     double fontSize;
     double radiusWidth;
     double iconSize;
+
+    CommentService commentService = new CommentService(commentId: widget.commentId);
 
     if(Device.get().isTablet) {
       fontSize = MediaQuery.of(context).size.width * 0.026;
@@ -68,9 +79,11 @@ class _CommentCardState extends State<CommentCard> {
           if (isCommentLike) {
             isCommentLike = false;
             likes = likes - 1;
+            commentService.removeCommentLikeUser(widget.uId!);
           } else {
             isCommentLike = true;
             likes = likes + 1;
+            commentService.addCommentLikeUser(widget.uId!);
           }
         });
       },
@@ -131,22 +144,93 @@ class _CommentCardState extends State<CommentCard> {
               ),
           ],
         ),
-         Positioned(child: Container(
-            child: IconButton(onPressed: () {
-              setState(() {
-                if (isCommentLike) {
-                  isCommentLike = false;
-                  likes = likes - 1;
-                } else {
-                  isCommentLike = true;
-                  likes = likes + 1;
-                }
-              });
-            }, icon: isCommentLike? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
-          ), left: MediaQuery.of(context).size.width * 0.8,)
-        ],
-       )
+        isOwnComment ?
+         Positioned(child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.04,
+              child: IconButton(onPressed: () {
+                setState(() {
+                  if (isCommentLike) {
+                    isCommentLike = false;
+                    likes = likes - 1;
+                    commentService.removeCommentLikeUser(widget.uId!);
+                  } else {
+                    isCommentLike = true;
+                    likes = likes + 1;
+                    commentService.addCommentLikeUser(widget.uId!);
+                  }
+                });
+              }, icon: isCommentLike? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
+            ),
+            IconButton(onPressed: () {
+              _showOptionMenu();
+            }, 
+              icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.04)
+            ), 
+          ],
+         ), left: MediaQuery.of(context).size.width * 0.78,) :
+         Positioned(child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.08,
+              child: IconButton(onPressed: () {
+                setState(() {
+                  if (isCommentLike) {
+                    isCommentLike = false;
+                    likes = likes - 1;
+                    commentService.removeCommentLikeUser(widget.uId!);
+                  } else {
+                    isCommentLike = true;
+                    likes = likes + 1;
+                    commentService.addCommentLikeUser(widget.uId!);
+                  }
+                });
+              }, icon: isCommentLike? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
+            ),
+          ],
+         ), left: MediaQuery.of(context).size.width * 0.78,)
+        ]
+       ) 
       ),
     );
+  }
+
+  void _showOptionMenu() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0)
+          )
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.edit),
+                  title: Text('Edit Comment'),
+                  onTap: () async{
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.remove_circle),
+                  title: Text('Remove Comment'),
+                  onTap: () async{
+                    Navigator.pop(context);
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
+              ],
+            ),
+          );
+        }
+      );
   }
 }

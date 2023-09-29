@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:like_app/datas/users.dart';
 
 class NumbersWidget extends StatelessWidget {
   DocumentSnapshot<Map<String, dynamic>> user;

@@ -40,6 +40,8 @@ class _CommentWidgetState extends State<CommentWidget> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
 
@@ -81,7 +83,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
     }
 
-    return isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
+    return isLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
@@ -99,7 +101,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           itemCount: comments!.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              child: CommentCard(commentId: comments![index], uId: widget.uId,),
+              child: CommentCard(commentId: comments![index], uId: widget.uId),
             );
           }
         )
@@ -149,7 +151,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 isCommentSubmitting = true;
                                 });
                                 CommentService commnetService = new CommentService(description: content, postId: widget.postId);
-                                await commnetService.postComment();
+                                await commnetService.postComment(widget.uId!);
                                 Future.delayed(Duration(seconds: 1)).then((value) => {
                                   nextScreen(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
                                 });

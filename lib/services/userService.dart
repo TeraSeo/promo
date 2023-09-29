@@ -30,6 +30,7 @@ class DatabaseService {
       "posts" : [],
       "bookmarks" : [],
       "removedLikes" : 0,
+      "comments" : []
     });
   }
 
@@ -287,6 +288,62 @@ class DatabaseService {
 
         user.update({
           "bookmarks" : bookmarks
+        })
+        
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future addComment(String uId, String commentId) async {
+
+    try {
+
+      List<dynamic> comments;
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.get().then((value) => {
+
+        comments = value["comments"], 
+
+        if (!comments.contains(commentId)) {
+          comments.add(commentId)
+        },
+
+        user.update({
+          "comments" : comments
+        })
+        
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future removeComment(String uId, String commentId) async {
+
+    try {
+
+      List<dynamic> comments;
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.get().then((value) => {
+
+        comments = value["comments"], 
+
+        if (comments.contains(commentId)) {
+          comments.remove(commentId)
+        },
+
+        user.update({
+          "comments" : comments
         })
         
       });

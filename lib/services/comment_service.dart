@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/commentDB_service.dart';
+import 'package:like_app/services/userService.dart';
 import 'package:uuid/uuid.dart';
 
 class CommentService {
@@ -17,7 +18,7 @@ class CommentService {
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("comment");
 
-  Future postComment() async {
+  Future postComment(String uID) async {
   
     try {
 
@@ -28,7 +29,10 @@ class CommentService {
       String commentId = Uuid().v4();
       
       CommentDBService commentDBService = new CommentDBService(username: name, description: description, commentId: commentId);
-      await commentDBService.savingeCommentDBData();
+      await commentDBService.savingeCommentDBData(uID);
+
+      DatabaseService databaseService = new DatabaseService();
+      await databaseService.addComment(uID, commentId);
 
       final post = FirebaseFirestore.instance.collection("post").doc(postId);
 
@@ -61,6 +65,22 @@ class CommentService {
     
     return comments;
    
+  }
+
+  Future<int> getCommentLikes(String commentID) async {
+
+    List<dynamic> likedUsers = [];
+
+    int likes = 0;
+
+    final comment = FirebaseFirestore.instance.collection("comment").doc(commentID);
+    await comment.get().then((value) {
+      likedUsers = value["likedUsers"];
+
+      likes = likedUsers.length;
+    });
+    
+    return likes;
   }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getCommentInfo() async {
@@ -113,7 +133,7 @@ class CommentService {
 
       likedUsers = value["likedUsers"],
 
-      if (!likedUsers.contains(uId)) {
+      if (likedUsers.contains(uId)) {
 
         likedUsers.remove(uId)
 

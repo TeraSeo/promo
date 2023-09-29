@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
+import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widget/background_widget.dart';
@@ -37,6 +38,8 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   bool isPostLoading = true;
   bool isLikesLoading = true;
 
+  CommentService commentService = new CommentService();
+
   int likes = 0;
 
   Logging logging = new Logging();
@@ -66,6 +69,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
     postUser = await docOwner.get() as DocumentSnapshot<Map<String, dynamic>>;
     getPosts();
     getPostLikes(postUser!["posts"]);
+    getCommentLikes(postUser!["comments"]);
     getUserProfile();
     getUserBackground();
   }
@@ -73,13 +77,20 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   getPostLikes(List<dynamic> postIds) async {
     PostService postService = new PostService();
     await postService.getPostLikes(postIds).then((value) => {
-      likes = value,
+      likes = likes + value,
       if (this.mounted) {
         setState(() {
           isLikesLoading = false;
         })
       }
     });
+  }
+
+   getCommentLikes(List<dynamic> commentIds) async {
+    for (int i = 0; i < commentIds.length; i++) {
+      int num = await commentService.getCommentLikes(commentIds[i]);
+      likes = likes + num;
+    }
   }
 
   getPosts() async {
