@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/services/comment_service.dart';
+import 'package:like_app/services/userService.dart';
 
 class CommentCard extends StatefulWidget {
 
@@ -21,8 +22,11 @@ class _CommentCardState extends State<CommentCard> {
   bool isLoading = true;
   bool isCommentLike = false;
   int likes = 0;
+  String commentOwnerUid = "";
 
   bool isOwnComment = false;
+
+  DatabaseService databaseService = new DatabaseService();
 
   @override
   void initState() {
@@ -43,7 +47,9 @@ class _CommentCardState extends State<CommentCard> {
 
           isLoading = false;
 
-          isOwnComment = commentInfo!["uId"] == widget.uId;
+          commentOwnerUid = commentInfo!["uId"];
+
+          isOwnComment = commentOwnerUid == widget.uId;
 
         })
       }
@@ -74,7 +80,7 @@ class _CommentCardState extends State<CommentCard> {
 
     return isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
     GestureDetector(
-      onDoubleTap: () {
+      onDoubleTap: () async {
         setState(() {
           if (isCommentLike) {
             isCommentLike = false;
@@ -86,6 +92,13 @@ class _CommentCardState extends State<CommentCard> {
             commentService.addCommentLikeUser(widget.uId!);
           }
         });
+
+        if (isCommentLike) {
+          await databaseService.plusCommentLike(commentOwnerUid);
+
+        } else {
+          await databaseService.minusCommentLike(commentOwnerUid);
+        }
       },
       child: Container(
         padding: EdgeInsets.symmetric(
@@ -150,18 +163,26 @@ class _CommentCardState extends State<CommentCard> {
           children: [
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.04,
-              child: IconButton(onPressed: () {
+              child: IconButton(onPressed: () async {
                 setState(() {
                   if (isCommentLike) {
                     isCommentLike = false;
                     likes = likes - 1;
                     commentService.removeCommentLikeUser(widget.uId!);
+                    
                   } else {
                     isCommentLike = true;
                     likes = likes + 1;
                     commentService.addCommentLikeUser(widget.uId!);
                   }
                 });
+
+                if (isCommentLike) {
+                  await databaseService.plusCommentLike(widget.uId!);
+
+                } else {
+                  await databaseService.minusCommentLike(widget.uId!);
+                }
               }, icon: isCommentLike? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
             ),
             IconButton(onPressed: () {
@@ -176,7 +197,7 @@ class _CommentCardState extends State<CommentCard> {
           children: [
             SizedBox(
               width: MediaQuery.of(context).size.width * 0.08,
-              child: IconButton(onPressed: () {
+              child: IconButton(onPressed: () async {
                 setState(() {
                   if (isCommentLike) {
                     isCommentLike = false;
@@ -188,6 +209,13 @@ class _CommentCardState extends State<CommentCard> {
                     commentService.addCommentLikeUser(widget.uId!);
                   }
                 });
+
+                if (isCommentLike) {
+                  await databaseService.plusCommentLike(widget.uId!);
+
+                } else {
+                  await databaseService.minusCommentLike(widget.uId!);
+                }
               }, icon: isCommentLike? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
             ),
           ],

@@ -30,7 +30,8 @@ class DatabaseService {
       "posts" : [],
       "bookmarks" : [],
       "removedLikes" : 0,
-      "comments" : []
+      "comments" : [],
+      "commentLikes" : 0
     });
   }
 
@@ -352,6 +353,59 @@ class DatabaseService {
       print(e);
     }
 
+  }
+
+  Future plusCommentLike(String uId) async {
+
+    int commentLikes = 0;
+    
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.get().then((value) => {
+
+        commentLikes = value["commentLikes"], 
+
+        commentLikes = commentLikes + 1,
+
+        user.update({
+          "commentLikes" : commentLikes
+        })
+        
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future minusCommentLike(String uId) async {
+
+    int commentLikes = 0;
+    
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.get().then((value) => {
+
+        commentLikes = value["commentLikes"], 
+
+        commentLikes = commentLikes - 1,
+
+        user.update({
+          "commentLikes" : commentLikes
+        })
+        
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+    
   }
 
 }
