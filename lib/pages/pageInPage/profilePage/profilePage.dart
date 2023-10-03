@@ -99,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
     postUser = await user.get() as DocumentSnapshot<Map<String, dynamic>>;
     await getPosts();
     getPostLikes(postUser!["posts"]);
-    getCommentLikes(postUser!["comments"]);
+    // getCommentLikes(postUser!["comments"]);
     getUserProfile();
     getUserBackground();
   }
@@ -116,14 +116,16 @@ class _ProfilePageState extends State<ProfilePage> {
     });
     int num = postUser!["removedLikes"];
     likes = likes + num;
+    int commentLikes = postUser!["commentLikes"];
+    likes = likes + commentLikes;
   }
 
-  getCommentLikes(List<dynamic> commentIds) async {
-    for (int i = 0; i < commentIds.length; i++) {
-      int num = await commentService.getCommentLikes(commentIds[i]);
-      likes = likes + num;
-    }
-  }
+  // getCommentLikes(List<dynamic> commentIds) async {
+  //   for (int i = 0; i < commentIds.length; i++) {
+  //     int num = await commentService.getCommentLikes(commentIds[i]);
+  //     likes = likes + num;
+  //   }
+  // }
 
   getPosts() async {
     PostService postService = new PostService();

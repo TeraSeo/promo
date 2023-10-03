@@ -299,6 +299,35 @@ class DatabaseService {
 
   }
 
+  Future removeCommentInUser(String commentId, String uId) async {
+
+    try {
+
+      List<dynamic> comments;
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.get().then((value) => {
+
+        comments = value["comments"], 
+
+        if (comments.contains(commentId)) {
+          comments.remove(commentId)
+        },
+
+        user.update({
+          "comments" : comments
+        })
+        
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+
+  }
+
   Future addComment(String uId, String commentId) async {
 
     try {

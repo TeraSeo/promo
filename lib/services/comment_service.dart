@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/commentDB_service.dart';
+import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,7 +19,7 @@ class CommentService {
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("comment");
 
-  Future postComment(String uID) async {
+  Future postComment(String uID, String email) async {
   
     try {
 
@@ -29,7 +30,7 @@ class CommentService {
       String commentId = Uuid().v4();
       
       CommentDBService commentDBService = new CommentDBService(username: name, description: description, commentId: commentId);
-      await commentDBService.savingeCommentDBData(uID);
+      await commentDBService.savingeCommentDBData(uID, email);
 
       DatabaseService databaseService = new DatabaseService();
       await databaseService.addComment(uID, commentId);
@@ -44,6 +45,25 @@ class CommentService {
           "comments" : comments
         });
 
+      });
+
+      return true;
+
+    } catch(e) {
+      return e; 
+    }
+
+  }
+
+
+  Future updateComment(String commentId) async {
+  
+    try {
+
+      final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
+
+      comment.update({
+        "description" : description
       });
 
       return true;
@@ -92,12 +112,30 @@ class CommentService {
     
   }
 
-  Future removeComment(String commentId) async {
+  Future removeComment(String commentId, String postId) async {
 
     final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
 
-    comment.delete();
+    DatabaseService databaseService = new DatabaseService();
+    PostService postService = new PostService();
 
+    String uId = "";
+
+    comment.get().then((value) async => {
+
+      uId = value["uId"],
+      await databaseService.removeComment(value["uId"], commentId),
+      await postService.removeComment(postId, commentId),
+      await comment.delete()
+    });
+
+  }
+
+  Future removeCommentOnly(String commentId) async {
+    final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
+
+    comment.delete();
+    
   }
 
   Future addCommentLikeUser(String uId) async {

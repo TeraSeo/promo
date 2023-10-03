@@ -1,24 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
+import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
 
-class CommentWidget extends StatefulWidget {
+class EditCommentWidget extends StatefulWidget {
 
   final String? postId;
   final String? uId;
+  final String? description;
+  final String? commentId;
 
-  const CommentWidget({super.key, required this.postId, required this.uId});
+  const EditCommentWidget({super.key, required this.postId, required this.uId, required this.description, required this.commentId});
 
   @override
-  State<CommentWidget> createState() => _CommentWidgetState();
+  State<EditCommentWidget> createState() => _EditCommentWidgetState();
 }
 
-class _CommentWidgetState extends State<CommentWidget> {
+class _EditCommentWidgetState extends State<EditCommentWidget> {
 
   String? content = "";
   List<dynamic>? comments = [];
@@ -26,12 +28,12 @@ class _CommentWidgetState extends State<CommentWidget> {
   bool isLoading = true;
   bool isCommentSubmitting = false;
 
-  String email = "";
-
   @override
   void initState() {
     super.initState();
-    getEmail();
+    setState(() {
+      content = widget.description;
+    });
     getComments();
   }
 
@@ -39,23 +41,12 @@ class _CommentWidgetState extends State<CommentWidget> {
     CommentService commentService = new CommentService(postId: widget.postId);
     await commentService.getComments().then((value) => {
       comments = value,
-      if (this.mounted) {
-        setState(() {
-          isLoading = false;
-        })
-      }
+      setState(() {
+        isLoading = false;
+      })
     });
   }
 
-  getEmail() async {
-    HelperFunctions.getUserEmailFromSF().then((value) => {
-      if (this.mounted) {
-        setState(() {
-          email = value!;
-        })
-      }
-    });
-  }
 
 
   @override
@@ -117,7 +108,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           itemCount: comments!.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              child: CommentCard(commentId: comments![index], uId: widget.uId, postId: widget.postId,),
+              child: CommentCard(commentId: comments![index], uId: widget.uId, postId: widget.postId),
             );
           }
         )
@@ -140,6 +131,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                   padding: EdgeInsets.only(left: commentPadLeft, right: commentPadTop * 0.5),
                   child: SizedBox(
                     child: TextField(
+                      controller: TextEditingController(text: content),
                       style: TextStyle(fontSize: hintSize),
                       onChanged: (value) {
                         content = value;
@@ -166,8 +158,8 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 setState(() {
                                 isCommentSubmitting = true;
                                 });
-                                CommentService commnetService = new CommentService(description: content, postId: widget.postId);
-                                await commnetService.postComment(widget.uId!, email);
+                                CommentService commnetService = new CommentService(description: content);
+                                await commnetService.updateComment(widget.commentId!);
                                 Future.delayed(Duration(seconds: 1)).then((value) => {
                                   nextScreen(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
                                 });

@@ -87,10 +87,8 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   }
 
    getCommentLikes(List<dynamic> commentIds) async {
-    for (int i = 0; i < commentIds.length; i++) {
-      int num = await commentService.getCommentLikes(commentIds[i]);
-      likes = likes + num;
-    }
+    int commentLikes = postUser!["commentLikes"];
+    likes = likes + commentLikes;
   }
 
   getPosts() async {

@@ -104,7 +104,8 @@ class PostService {
         databaseService.addRemovedLikes(value["likes"].length, value["uId"], postId),
 
         for (int i = 0; i < value["comments"].length; i++) {
-          commentService.removeComment(value["comments"][i])
+          databaseService.removeCommentInUser(value["comments"][i], value["uId"]),
+          commentService.removeCommentOnly(value["comments"][i]),
         },
 
         for (int i = 0; i < value["likes"].length; i++) {
@@ -178,10 +179,6 @@ class PostService {
     }
     
     return posts;
-  }
-
-  Future updatePostComment(String postId) async {
-
   }
 
   Future postAddLike(String postId) async {
@@ -404,6 +401,27 @@ class PostService {
       })
       
     });
+  }
+
+  Future removeComment(String postId, String commentId) async {
+
+    final post = FirebaseFirestore.instance.collection("post").doc(postId);
+  
+    List<dynamic> comments = [];
+
+    post.get().then((value) =>  {
+
+    comments = value["comments"],
+
+    if (comments.contains(commentId)) {
+      comments.remove(commentId)
+    },
+
+    post.update({
+      "comments" : comments
+    })
+
+  });
 
   }
 
