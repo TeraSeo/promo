@@ -22,7 +22,7 @@ class PostDBService {
 
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+    // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
     int size = await postCollection.get()
         .then((value) => value.size);  // collection 크기 받기
     String postId = Uuid().v4();
@@ -46,7 +46,7 @@ class PostDBService {
       "tags" : tags,
       "comments" : comments,
       "likes" : [],
-      "posted" : datetime,
+      "posted" : tsdate,
       "withComment" : withComment,
       'postNumber' : size,
       'uId' : uId,

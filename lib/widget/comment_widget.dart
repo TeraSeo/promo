@@ -104,10 +104,10 @@ class _CommentWidgetState extends State<CommentWidget> {
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
         title: Text("Comments", style: TextStyle(fontSize: barFontSize),),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
-          onPressed: () => nextScreen(context, HomePage()),
-        ), 
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
+        //   onPressed: () => nextScreen(context, HomePage()),
+        // ), 
       ),
       body: 
       comments!.length > 0 ? 

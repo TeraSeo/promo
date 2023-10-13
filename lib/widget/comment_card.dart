@@ -40,6 +40,11 @@ class _CommentCardState extends State<CommentCard> {
   String email = "";
   String name = "";
 
+  DateTime? current;
+  DateTime? posted;
+
+  String? diff = "";
+
   DatabaseService databaseService = new DatabaseService();
 
   Logging logging = new Logging();
@@ -91,6 +96,28 @@ class _CommentCardState extends State<CommentCard> {
 
           email = commentInfo!["email"];
           name = commentInfo!["username"];
+
+          current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+          posted = DateTime.fromMicrosecondsSinceEpoch(commentInfo!["posted"].microsecondsSinceEpoch);
+
+          if (current!.difference(posted!).inSeconds < 60 && current!.difference(posted!).inSeconds >= 1) {
+            diff = current!.difference(posted!).inSeconds.toString() + "s ago";
+          } 
+          else if (current!.difference(posted!).inMinutes < 60 && current!.difference(posted!).inMinutes >= 1) {
+            diff = current!.difference(posted!).inMinutes.toString() + "m ago";
+          } 
+          else if (current!.difference(posted!).inHours < 24 && current!.difference(posted!).inHours >= 1) {
+            diff = current!.difference(posted!).inHours.toString() + "h ago";
+          }
+          else if (current!.difference(posted!).inDays < 365 && current!.difference(posted!).inDays >= 1) {
+            diff = current!.difference(posted!).inDays.toString() + "d ago";
+          }
+          else if (current!.difference(posted!).inDays >= 365) {
+            diff = (current!.difference(posted!).inDays ~/ 365).toString() + "y ago";
+          } 
+          else {
+            diff = "now";
+          }
 
           isLoading = false;
 
@@ -189,7 +216,7 @@ class _CommentCardState extends State<CommentCard> {
                             style: TextStyle(fontWeight: FontWeight.bold)
                           ),
                           TextSpan(
-                            text: " " + commentInfo!["posted"],
+                            text: " " + diff!,
                             style: TextStyle(fontWeight: FontWeight.normal, fontSize: fontSize * 0.9)
                           ),
                         ]

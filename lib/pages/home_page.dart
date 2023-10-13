@@ -10,7 +10,6 @@ import 'package:like_app/pages/pageInPage/likes.dart';
 import 'package:like_app/pages/pageInPage/postPage/post.dart';
 import 'package:like_app/pages/pageInPage/profilePage/profilePage.dart';
 import 'package:like_app/pages/pageInPage/search.dart';
-import 'package:like_app/pages/searchPage.dart';
 import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -69,7 +68,7 @@ class _HomePageState extends State<HomePage> {
     Home(),
     Likes(),
     Post(files: selectedImages),
-    Search(),
+    // Search(),
     ProfilePage()
   ];
 
@@ -98,11 +97,14 @@ class _HomePageState extends State<HomePage> {
         
         actions: [
           IconButton(onPressed: (){
-            nextScreen(context, const SearchPage());
+            nextScreen(context, const Search());
           },
-          icon: const Icon(
-            Icons.search
-          ),)
+          icon: IconButton(
+            icon: Icon(Icons.search,),
+            onPressed: () {
+              nextScreen(context, Search());
+            },
+          )) 
         ],
 
         elevation: 0,
@@ -182,12 +184,12 @@ class _HomePageState extends State<HomePage> {
             selectedColor:
                 Theme.of(context).primaryColor
           ),
-          SalomonBottomBarItem(
-            icon: Icon(Icons.search, size: iconSize,),
-            title: Text("search"),
-            selectedColor:
-                Theme.of(context).primaryColor
-          ),
+          // SalomonBottomBarItem(
+          //   icon: Icon(Icons.search, size: iconSize,),
+          //   title: Text("search"),
+          //   selectedColor:
+          //       Theme.of(context).primaryColor
+          // ),
           SalomonBottomBarItem(
             icon: Icon(Icons.person_2_outlined, size: iconSize,),
             title: Text("profile"),
@@ -228,12 +230,12 @@ class _HomePageState extends State<HomePage> {
             selectedColor:
                 Theme.of(context).primaryColor
           ),
-          SalomonBottomBarItem(
-            icon: Icon(Icons.search),
-            title: Text("search"),
-            selectedColor:
-                Theme.of(context).primaryColor
-          ),
+          // SalomonBottomBarItem(
+          //   icon: Icon(Icons.search),
+          //   title: Text("search"),
+          //   selectedColor:
+          //       Theme.of(context).primaryColor
+          // ),
           SalomonBottomBarItem(
             icon: Icon(Icons.person_2_outlined),
             title: Text("profile"),
@@ -266,8 +268,19 @@ class _HomePageState extends State<HomePage> {
         setState(
           () {
             if (xfilePick.isNotEmpty) {
-              for (var i = 0; i < xfilePick.length; i++) {
-                selectedImages.add(File(xfilePick[i].path));
+              if (xfilePick.length > 8) {
+                final snackBar = SnackBar(
+                  content: const Text('Until 8 images can be posted!'),
+                );
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                for (var i = 0; i < 8; i++) {
+                  selectedImages.add(File(xfilePick[i].path));
+                }
+              }
+              else {
+                for (var i = 0; i < xfilePick.length; i++) {
+                  selectedImages.add(File(xfilePick[i].path));
+                }
               }
             } else {
               ScaffoldMessenger.of(context).showSnackBar(

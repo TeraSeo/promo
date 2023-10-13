@@ -62,8 +62,12 @@ class CommentService {
 
       final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
 
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
       comment.update({
-        "description" : description
+        "description" : description,
+        "posted" : tsdate
       });
 
       return true;

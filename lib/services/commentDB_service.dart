@@ -15,7 +15,8 @@ class CommentDBService {
   Future savingeCommentDBData(String uID, String email) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+    // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+
     // int size = await postCollection.get()
     //     .then((value) => value.size);  // collection 크기 받기
 
@@ -25,7 +26,7 @@ class CommentDBService {
       "commentId" : commentId,
       "username" : username,
       "description" : description,
-      "posted" : datetime,
+      "posted" : tsdate,
       "likedUsers" : [],
       "uId" : uID,
       "email" : email

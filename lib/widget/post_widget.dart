@@ -25,8 +25,10 @@ class PostWidget extends StatefulWidget {
   final String? postOwnerUId;
   final bool? withComment;
   final bool? isBookMark;
+  final List<dynamic> tags;
+  final Timestamp posted;
   
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark});
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -52,9 +54,13 @@ class _PostWidgetState extends State<PostWidget> {
     viewportFraction: 1,
   );
 
+  String timeDiff = "";
+
   @override
   void initState() {
     super.initState();
+    calTimeDiff();
+
     getImages();
     if (this.mounted) {
       setState(() {
@@ -65,6 +71,33 @@ class _PostWidgetState extends State<PostWidget> {
     }
     
     getOwnerProfile();
+  }
+
+  calTimeDiff() {
+
+    DateTime current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+    DateTime posted = DateTime.fromMicrosecondsSinceEpoch(widget.posted.microsecondsSinceEpoch);
+
+
+    if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
+      timeDiff = current.difference(posted).inSeconds.toString() + "s ago";
+    } 
+    else if (current.difference(posted).inMinutes < 60 && current.difference(posted).inMinutes >= 1) {
+      timeDiff = current.difference(posted).inMinutes.toString() + "m ago";
+    } 
+    else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
+      timeDiff = current.difference(posted).inHours.toString() + "h ago";
+    }
+    else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
+      timeDiff = current.difference(posted).inDays.toString() + "d ago";
+    }
+    else if (current.difference(posted).inDays >= 365) {
+      timeDiff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
+    } 
+    else {
+      timeDiff = "now";
+    }
+
   }
 
   getOwnerProfile() async {
@@ -327,6 +360,38 @@ class _PostWidgetState extends State<PostWidget> {
                       Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.8, fontWeight: FontWeight.bold),)
                     ],
                   ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      Row(
+                        children:List.generate(widget.tags.length, (index) {
+                          return Row(
+                            children: [
+                              GestureDetector(
+                                child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
+                                onTap: () {
+                                }, 
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.02,
+                              ),
+                            ],
+                          );
+                        })                   
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      Text(timeDiff, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
+                    ],
+                  ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
               ],
             ) :
@@ -505,6 +570,38 @@ class _PostWidgetState extends State<PostWidget> {
                         width: MediaQuery.of(context).size.width * 0.06,
                       ),
                       Text(widget.description.toString(), style: TextStyle(fontSize: descriptionSize),)
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      Row(
+                        children:List.generate(widget.tags.length, (index) {
+                          return Row(
+                            children: [
+                              GestureDetector(
+                                child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
+                                onTap: () {
+                                }, 
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.02,
+                              ),
+                            ],
+                          );
+                        })                   
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.06,
+                      ),
+                      Text(timeDiff, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
                     ],
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.07,),

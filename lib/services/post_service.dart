@@ -57,7 +57,7 @@ class PostService {
 
       int timestamp = DateTime.now().millisecondsSinceEpoch;
       DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+      // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
 
       List<String> filePaths = [];
       List<String> fileNames = [];
@@ -81,7 +81,7 @@ class PostService {
         "category" : category,
         "tags" : tags,
         "withComment" : withComment,
-        "posted" : datetime
+        "posted" : tsdate
       });
 
     } catch(e) {
@@ -137,14 +137,14 @@ class PostService {
 
       int timestamp = DateTime.now().millisecondsSinceEpoch;
       DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+      // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
 
       post.update({
         "description" : description,
         "category" : category,
         "tags" : tags,
         "withComment" : withComment,
-        "posted" : datetime
+        "posted" : tsdate
       });
 
     } catch(e) {

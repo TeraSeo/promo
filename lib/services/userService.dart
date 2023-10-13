@@ -14,7 +14,8 @@ class DatabaseService {
   Future savingeUserData(String name, String email) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString();
+
+    // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString();
     // int size = await userCollection.get()
     //     .then((value) => value.size);  // collection 크기 받기
 
@@ -25,7 +26,7 @@ class DatabaseService {
       "backgroundPic" : "",
       "uid" : uid,
       "likes" : [],
-      "registered" : datetime,
+      "registered" : tsdate,
       "intro" : "",
       "posts" : [],
       "bookmarks" : [],

@@ -53,6 +53,7 @@ dependencies:
   share_plus: ^7.1.0
   shared_preferences: ^2.1.1
   smooth_page_indicator: ^1.1.0
+  tab_container: ^2.0.0
   textfield_tags: ^2.0.2
   uuid: ^3.0.7
 
