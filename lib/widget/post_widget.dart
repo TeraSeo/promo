@@ -6,6 +6,7 @@ import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
+import 'package:like_app/pages/searchByTag.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
@@ -372,6 +373,7 @@ class _PostWidgetState extends State<PostWidget> {
                               GestureDetector(
                                 child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
                                 onTap: () {
+                                  nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
                                 }, 
                               ),
                               SizedBox(
@@ -584,6 +586,7 @@ class _PostWidgetState extends State<PostWidget> {
                               GestureDetector(
                                 child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
                                 onTap: () {
+                                  nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
                                 }, 
                               ),
                               SizedBox(
