@@ -101,7 +101,7 @@ class PostService {
       
 
       await post.get().then((value) =>  {
-        databaseService.addRemovedLikes(value["likes"].length, value["uId"], postId),
+        databaseService.removePostInUser(value["likes"].length, value["uId"], postId),
 
         for (int i = 0; i < value["comments"].length; i++) {
           databaseService.removeCommentInUser(value["comments"][i], value["uId"]),

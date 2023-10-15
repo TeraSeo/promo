@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/helper/helper_function.dart';
-import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';

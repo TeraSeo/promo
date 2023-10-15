@@ -14,7 +14,6 @@ import 'package:like_app/widget/background_widget.dart';
 import 'package:like_app/widget/numbers_widget.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
-import 'package:like_app/services/RestApi.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 
@@ -31,14 +30,13 @@ class _ProfilePageState extends State<ProfilePage> {
   DocumentSnapshot<Map<String, dynamic>>? postUser;
 
   DatabaseService databaseService = new DatabaseService();
-  RestApi restApi = new RestApi();
   Storage storage = new Storage();
 
   bool _isImg = true;
   bool _isBackground = true;
   bool isPostLoading = true;
   bool isUIdLoading = true;
-  bool isLikesLoading = true;
+  // bool isLikesLoading = true;
 
   Logging logging = new Logging();
 
@@ -97,28 +95,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
     final user = userCollection.doc(uID);
     postUser = await user.get() as DocumentSnapshot<Map<String, dynamic>>;
+    likes = postUser!["wholeLikes"];
     await getPosts();
-    getPostLikes(postUser!["posts"]);
+    // getPostLikes(postUser!["posts"]);
     // getCommentLikes(postUser!["comments"]);
     getUserProfile();
     getUserBackground();
   }
 
-  getPostLikes(List<dynamic> postIds) async {
-    PostService postService = new PostService();
-    await postService.getPostLikes(postIds).then((value) => {
-      likes = likes + value,
-      if (this.mounted) {
-        setState(() {
-          isLikesLoading = false;
-        })
-      }
-    });
-    int num = postUser!["removedLikes"];
-    likes = likes + num;
-    int commentLikes = postUser!["commentLikes"];
-    likes = likes + commentLikes;
-  }
+  // getPostLikes(List<dynamic> postIds) async {
+  //   likes = postUser!["wholeLikes"];
+  // }
 
   // getCommentLikes(List<dynamic> commentIds) async {
   //   for (int i = 0; i < commentIds.length; i++) {
@@ -184,7 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
     double top = MediaQuery.of(context).size.height * 0.026;
 
-    return (_isImg || _isBackground || isPostLoading || isUIdLoading || isLikesLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+    return (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
     Container(
       child: Column(
         children: [

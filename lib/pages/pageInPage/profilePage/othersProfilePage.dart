@@ -68,28 +68,29 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
     final docOwner = userCollection.doc(widget.postOwnerUId);
     postUser = await docOwner.get() as DocumentSnapshot<Map<String, dynamic>>;
     getPosts();
-    getPostLikes(postUser!["posts"]);
-    getCommentLikes(postUser!["comments"]);
+    likes = postUser!["wholeLikes"];
+    // getPostLikes(postUser!["posts"]);
+    // getCommentLikes(postUser!["comments"]);
     getUserProfile();
     getUserBackground();
   }
 
-  getPostLikes(List<dynamic> postIds) async {
-    PostService postService = new PostService();
-    await postService.getPostLikes(postIds).then((value) => {
-      likes = likes + value,
-      if (this.mounted) {
-        setState(() {
-          isLikesLoading = false;
-        })
-      }
-    });
-  }
+  // getPostLikes(List<dynamic> postIds) async {
+  //   PostService postService = new PostService();
+  //   await postService.getPostLikes(postIds).then((value) => {
+  //     likes = likes + value,
+  //     if (this.mounted) {
+  //       setState(() {
+  //         isLikesLoading = false;
+  //       })
+  //     }
+  //   });
+  // }
 
-   getCommentLikes(List<dynamic> commentIds) async {
-    int commentLikes = postUser!["commentLikes"];
-    likes = likes + commentLikes;
-  }
+  //  getCommentLikes(List<dynamic> commentIds) async {
+  //   int commentLikes = postUser!["commentLikes"];
+  //   likes = likes + commentLikes;
+  // }
 
   getPosts() async {
     PostService postService = new PostService();

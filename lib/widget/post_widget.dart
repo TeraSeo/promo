@@ -6,7 +6,7 @@ import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
-import 'package:like_app/pages/searchByTag.dart';
+import 'package:like_app/widget/searchByTag.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';

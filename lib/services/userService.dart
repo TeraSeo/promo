@@ -30,9 +30,9 @@ class DatabaseService {
       "intro" : "",
       "posts" : [],
       "bookmarks" : [],
-      "removedLikes" : 0,
       "comments" : [],
-      "commentLikes" : 0
+      "commentLikes" : 0,
+      "wholeLikes" : 0
     });
   }
 
@@ -74,16 +74,22 @@ class DatabaseService {
   }
 
   Future addUserLike(String postId) async {
+
+    int wholeLikes;
+
     try {
+
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
 
       user.get().then((value) {
         List<dynamic> likes = value['likes'];
+        wholeLikes = value["wholeLikes"];
 
         likes.add(postId);
 
         user.update({
-          "likes" : likes
+          "likes" : likes,
+          "wholeLikes" : wholeLikes + 1
         });
 
       });
@@ -94,19 +100,24 @@ class DatabaseService {
   }
 
   Future removeUserLike(String postId) async {
+
+    int wholeLikes;
+
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
 
       user.get().then((value) {
         
         List<dynamic> likes = value['likes'];
+        wholeLikes = value["wholeLikes"];
 
         if (likes.contains(postId)) {
           likes.remove(postId);
         }
 
         user.update({
-          "likes" : likes
+          "likes" : likes,
+          "wholeLikes" : wholeLikes - 1
         });
 
       });
@@ -162,15 +173,13 @@ class DatabaseService {
     }
   }
 
-  Future addRemovedLikes(int like, String theUId, String postId) async {
+  Future removePostInUser(int like, String theUId, String postId) async {
 
     try {
 
       final user = FirebaseFirestore.instance.collection("user").doc(theUId);
 
       await user.get().then((value) {
-        int removedLike = value["removedLikes"];
-        removedLike = removedLike + like;
         List<dynamic> posts = value["posts"];
 
         for (int i = 0; i < posts.length; i++) {
@@ -180,7 +189,6 @@ class DatabaseService {
         }
 
         user.update({
-          "removedLikes" : removedLike,
           "posts" : posts
         });
       });
@@ -387,7 +395,8 @@ class DatabaseService {
 
   Future plusCommentLike(String uId) async {
 
-    int commentLikes = 0;
+    int commentLikes;
+    int wholeLikes;
     
     try {
 
@@ -395,12 +404,12 @@ class DatabaseService {
 
       await user.get().then((value) => {
 
-        commentLikes = value["commentLikes"], 
-
-        commentLikes = commentLikes + 1,
+        commentLikes = value["commentLikes"],
+        wholeLikes = value["wholeLikes"], 
 
         user.update({
-          "commentLikes" : commentLikes
+          "commentLikes" : commentLikes + 1,
+          "wholeLikes" : wholeLikes + 1
         })
         
       });
@@ -413,7 +422,8 @@ class DatabaseService {
 
   Future minusCommentLike(String uId) async {
 
-    int commentLikes = 0;
+    int commentLikes;
+    int wholeLikes;
     
     try {
 
@@ -421,12 +431,15 @@ class DatabaseService {
 
       await user.get().then((value) => {
 
-        commentLikes = value["commentLikes"], 
+        commentLikes = value["commentLikes"],
+        wholeLikes = value["wholeLikes"], 
 
         commentLikes = commentLikes - 1,
+        wholeLikes = wholeLikes - 1,
 
         user.update({
-          "commentLikes" : commentLikes
+          "commentLikes" : commentLikes,
+          "wholeLikes" : wholeLikes
         })
         
       });

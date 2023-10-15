@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
 
   List<Widget> _widgetOptions = <Widget>[
     Home(),
-    Likes(),
+    LikesRanking(),
     Post(files: selectedImages),
     // Search(),
     ProfilePage()
