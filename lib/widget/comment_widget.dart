@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/pages/pageInPage/home.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
@@ -103,10 +104,10 @@ class _CommentWidgetState extends State<CommentWidget> {
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
         title: Text("Comments", style: TextStyle(fontSize: barFontSize),),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
-        //   onPressed: () => nextScreen(context, HomePage()),
-        // ), 
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
+          onPressed: () => nextScreenReplace(context, Home()),
+        ), 
       ),
       body: 
       comments!.length > 0 ? 

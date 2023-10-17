@@ -64,11 +64,10 @@ class _HomePageState extends State<HomePage> {
 
   int selectedIndex = 0;
 
-  List<Widget> _widgetOptions = <Widget>[
+  final _widgetOptions = <Widget>[
     Home(),
     LikesRanking(),
     Post(files: selectedImages),
-    // Search(),
     ProfilePage()
   ];
 
@@ -97,7 +96,7 @@ class _HomePageState extends State<HomePage> {
         
         actions: [
           IconButton(onPressed: (){
-            nextScreen(context, const Search());
+            nextScreen(context, Search());
           },
           icon: IconButton(
             icon: Icon(Icons.search,),
@@ -140,28 +139,33 @@ class _HomePageState extends State<HomePage> {
       ),
 
       body: 
-        SingleChildScrollView(
-          child:Container(
-            color: Theme.of(context).primaryColor,
-            child: Column(
-              children: [
-                SizedBox(height: sizedBox,),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    // borderRadius: BorderRadius.only(
-                    //   topRight: Radius.circular(borderCircular),
-                    //   topLeft: Radius.circular(borderCircular),
-                    // ),
+      IndexedStack(
+                    index: selectedIndex,
+                    children: _widgetOptions,
                   ),
-                  child: Center(
-                    child: _widgetOptions.elementAt(selectedIndex),
-                  )
-                ),
-              ]
-            ),
-          ),
-        ),
+        // SingleChildScrollView(
+        //   child:Container(
+        //     color: Theme.of(context).primaryColor,
+        //     child: Column(
+        //       children: [
+        //         SizedBox(height: sizedBox,),
+        //         Container(
+        //           decoration: BoxDecoration(
+        //             color: Colors.white,
+        //           ),
+        //           child: IndexedStack(
+        //             index: selectedIndex,
+        //             children: _widgetOptions,
+        //           )
+        //           // Center(
+        //           //   child: _widgetOptions[selectedIndex],
+        //           //   // _widgetOptions.elementAt(selectedIndex)
+        //           // )
+        //         ),
+        //       ]
+        //     ),
+        //   ),
+        // ),
       
       bottomNavigationBar: isTablet?
         SalomonBottomBar(
@@ -184,12 +188,6 @@ class _HomePageState extends State<HomePage> {
             selectedColor:
                 Theme.of(context).primaryColor
           ),
-          // SalomonBottomBarItem(
-          //   icon: Icon(Icons.search, size: iconSize,),
-          //   title: Text("search"),
-          //   selectedColor:
-          //       Theme.of(context).primaryColor
-          // ),
           SalomonBottomBarItem(
             icon: Icon(Icons.person_2_outlined, size: iconSize,),
             title: Text("profile"),
@@ -201,11 +199,13 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.amber[800],
           onTap: (index) {
           setState(() {
-            if (index == 2) {
-              _showPicMenu();
-            }
-            else {
-              selectedIndex = index;
+            if (this.mounted) {
+              if (index == 2) {
+                _showPicMenu();
+              }
+              else {
+                selectedIndex = index;
+              }
             }
           });
         },
@@ -230,12 +230,6 @@ class _HomePageState extends State<HomePage> {
             selectedColor:
                 Theme.of(context).primaryColor
           ),
-          // SalomonBottomBarItem(
-          //   icon: Icon(Icons.search),
-          //   title: Text("search"),
-          //   selectedColor:
-          //       Theme.of(context).primaryColor
-          // ),
           SalomonBottomBarItem(
             icon: Icon(Icons.person_2_outlined),
             title: Text("profile"),
@@ -247,11 +241,13 @@ class _HomePageState extends State<HomePage> {
         selectedItemColor: Colors.amber[800],
           onTap: (index) {
           setState(() {
-            if (index == 2) {
-              _showPicMenu();
+            if (this.mounted) {
+              if (index == 2) {
+                _showPicMenu();
+              }
+              else {
+                selectedIndex = index;
             }
-            else {
-              selectedIndex = index;
             }
           });
         },

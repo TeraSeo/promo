@@ -9,7 +9,6 @@ class Home extends StatefulWidget {
 
   @override
   State<Home> createState() => _HomeState();
-  
 }
 
 class _HomeState extends State<Home> {
@@ -58,8 +57,6 @@ class _HomeState extends State<Home> {
     final user = userCollection.doc(uId);
     postUser = await user.get() as DocumentSnapshot<Map<String, dynamic>>;
   }
-
- 
 
   @override
   Widget build(BuildContext context) {

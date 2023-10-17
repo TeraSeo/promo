@@ -17,14 +17,11 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   late TabController _tabController;
 
-  final TextEditingController searchController = new TextEditingController(text: "");
+  TextEditingController searchController = new TextEditingController(text: "");
 
   String? uId = "";
 
   bool isUIdLoading = true;
-
-  // bool isProfileLoading = true;
-  // String profile = "";
 
   List<bool> isprofLoadings = [];
   List<String> profileURLs = [];
@@ -33,14 +30,21 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   void initState() {
     _tabController = TabController(
       length: 3,
-      vsync: this,  //vsync에 this 형태로 전달해야 애니메이션이 정상 처리됨
+      vsync: this, 
     );
-    // searchController.dispose();
     getUId();
     super.initState();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    searchController.dispose();
+    _tabController.dispose();
+  }
+
   void getUId() async{
+
     await HelperFunctions.getUserUIdFromSF().then((value) => {
       uId = value,
       if (this.mounted) {
@@ -76,6 +80,19 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+
+    final future1 = FirebaseFirestore.instance.collection("post").
+                          where('description', isGreaterThanOrEqualTo: searchController.text).
+                          get();
+
+    final future2 = FirebaseFirestore.instance.collection("user").
+                          where('name', isGreaterThanOrEqualTo: searchController.text).
+                          get();
+
+    final future3 = FirebaseFirestore.instance.collection("post").
+                          where('tags', arrayContains: searchController.text).
+                          get();
+
     return isUIdLoading? 
       Center(
         child: CircularProgressIndicator(),
@@ -85,6 +102,10 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         appBar: AppBar(
           toolbarHeight: MediaQuery.of(context).size.height * 0.07,
           backgroundColor: Theme.of(context).primaryColor,
+          // leading: IconButton(
+          //   icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),
+          //   onPressed: () => nextScreen(context, HomePage()),
+          // ),
           title: TextFormField(
               style: TextStyle(color: Colors.white),
               controller: searchController,
@@ -124,9 +145,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
             searchController.text == "" ? 
             Container() : 
               FutureBuilder(
-              future: FirebaseFirestore.instance.collection("post").
-                          where('description', isGreaterThanOrEqualTo: searchController.text).
-                          get(), 
+              future: future1, 
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(
@@ -136,7 +155,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                 return ListView.builder(
                   itemCount: (snapshot.data! as dynamic).docs.length,
                   itemBuilder: (context, index) {
-
                     return Column(
                       children: [
                         SizedBox(height: 10,),
@@ -151,9 +169,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
             searchController.text == "" ? 
             Container() :
             FutureBuilder(
-              future: FirebaseFirestore.instance.collection("user").
-                          where('name', isGreaterThanOrEqualTo: searchController.text).
-                          get(), 
+              future: future2, 
               builder: (context, snapshot) {
                 
                 if (!snapshot.hasData) {
@@ -165,10 +181,12 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   itemCount: (snapshot.data! as dynamic).docs.length,
                   itemBuilder: (context, index) {
 
-                    profileURLs.add("");
-                    isprofLoadings.add(true);
+                    if (profileURLs.length != (snapshot.data! as dynamic).docs.length) {
+                      profileURLs.add("");
+                      isprofLoadings.add(true);
 
-                    getProfileURL(snapshot.data!.docs[index]["email"], snapshot.data!.docs[index]["profilePic"], index);
+                      getProfileURL(snapshot.data!.docs[index]["email"], snapshot.data!.docs[index]["profilePic"], index);
+                    }
 
                     return 
                       isprofLoadings[index] ? Center(
@@ -181,21 +199,21 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                       child :
                         ListTile(
                           leading: Container(
-                          width: MediaQuery.of(context).size.height * 0.05,
-                          height: MediaQuery.of(context).size.height * 0.05,
-                          decoration: BoxDecoration(
-                            color: const Color(0xff7c94b6),
-                            image: DecorationImage(
-                              image: NetworkImage(profileURLs[index]),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
-                            border: Border.all(
-                              color: Colors.white,
-                              width: MediaQuery.of(context).size.height * 0.005,
+                            width: MediaQuery.of(context).size.height * 0.05,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            decoration: BoxDecoration(
+                              color: const Color(0xff7c94b6),
+                              image: DecorationImage(
+                                image: NetworkImage(profileURLs[index]),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: MediaQuery.of(context).size.height * 0.005,
+                              ),
                             ),
                           ),
-                        ),
                           title: Text(
                             snapshot.data!.docs[index]["name"],
                             style: TextStyle(fontWeight: FontWeight.w600),
@@ -212,9 +230,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
             searchController.text == "" ? 
             Container() :
             FutureBuilder(
-              future: FirebaseFirestore.instance.collection("post").
-                          where('tags', arrayContains: searchController.text).
-                          get(), 
+              future: future3, 
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return Center(

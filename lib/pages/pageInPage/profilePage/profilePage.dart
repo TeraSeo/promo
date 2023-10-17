@@ -36,7 +36,6 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isBackground = true;
   bool isPostLoading = true;
   bool isUIdLoading = true;
-  // bool isLikesLoading = true;
 
   Logging logging = new Logging();
 
@@ -103,17 +102,6 @@ class _ProfilePageState extends State<ProfilePage> {
     getUserBackground();
   }
 
-  // getPostLikes(List<dynamic> postIds) async {
-  //   likes = postUser!["wholeLikes"];
-  // }
-
-  // getCommentLikes(List<dynamic> commentIds) async {
-  //   for (int i = 0; i < commentIds.length; i++) {
-  //     int num = await commentService.getCommentLikes(commentIds[i]);
-  //     likes = likes + num;
-  //   }
-  // }
-
   getPosts() async {
     PostService postService = new PostService();
      await postService.getProfilePosts(postUser!["posts"]).then((value) => {
@@ -172,7 +160,7 @@ class _ProfilePageState extends State<ProfilePage> {
     double top = MediaQuery.of(context).size.height * 0.026;
 
     return (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
-    Container(
+    SingleChildScrollView(
       child: Column(
         children: [
           Stack(
