@@ -160,7 +160,8 @@ class _ProfilePageState extends State<ProfilePage> {
     double top = MediaQuery.of(context).size.height * 0.026;
 
     return (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
-    SingleChildScrollView(
+    RefreshIndicator(
+      child: SingleChildScrollView(
       child: Column(
         children: [
           Stack(
@@ -255,7 +256,21 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       )
-    ); 
+    ), 
+      onRefresh: () async {
+        await Future.delayed(Duration(seconds: 1)).then((value) => {
+          setState(() {
+            if (this.mounted) {
+              _isImg = true;
+              _isBackground = true;
+              isPostLoading = true;
+              isUIdLoading = true;
+            }
+          })
+        });
+        await getUser();
+      },
+    );
   }
 
    Widget buildName(DocumentSnapshot<Map<String, dynamic>> user) => Column(

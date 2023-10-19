@@ -60,15 +60,30 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return (isLoading || isUIdLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : SingleChildScrollView(
+    return (isLoading || isUIdLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+    RefreshIndicator(
+        onRefresh: () async {
+          await Future.delayed(Duration(seconds: 1)).then((value) => {
+            setState(() {
+            if (this.mounted) {
+              isLoading = true;
+              isUIdLoading = true;
+            }
+          })
+          });
+          getPosts();
+          getUId();
+        },
+        child: SingleChildScrollView(
        child: 
-       Column(
-        children: 
-        List.generate(posts!.length, (index) {
-          return Container(
-            child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],),
-          );
-        })
+        Column(
+          children: 
+          List.generate(posts!.length, (index) {
+            return Container(
+              child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],),
+            );
+          })
+        ),
       )
     );
   }

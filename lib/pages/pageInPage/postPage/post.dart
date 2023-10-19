@@ -53,6 +53,7 @@ class _PostState extends State<Post> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      alignment: Alignment.center,
       child: SingleChildScrollView(
         child: Column(
           children: [
