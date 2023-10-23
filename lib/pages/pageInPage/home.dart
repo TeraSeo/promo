@@ -16,6 +16,7 @@ class _HomeState extends State<Home> {
   Map<dynamic, dynamic>? posts;
   bool isLoading = true;
   bool isUIdLoading = true;
+  bool isMoreLoading = false;
   DocumentSnapshot<Map<String, dynamic>>? postUser;
 
   QuerySnapshot<Map<String, dynamic>>? snapshots;
@@ -36,6 +37,7 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     getUId();
+    getPosts();
   }
 
   void getPosts() async {
@@ -44,7 +46,7 @@ class _HomeState extends State<Home> {
       posts = value,
       if (this.mounted) {
           setState(() {
-            // snapshots!.docs[(snapshots! as dynamic).docs.length] = snapshots!.docs[0];
+            isLoading = false;
           })
       }
     });
@@ -70,12 +72,23 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return 
-      isUIdLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+      (isUIdLoading || isLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
         NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
-                  if (scrollNotification.metrics.pixels > 0 && scrollNotification.metrics.atEdge) {
-                    setState(() {
-                      postNum = postNum + 1;
+                  if (scrollNotification.metrics.pixels > 0 && scrollNotification.metrics.atEdge && !isMoreLoading) {
+                    isMoreLoading = true;
+                    postService.loadMore(posts![posts!.length - 1]['postNumber']).then((value) => {
+                      for (int i = 0; i < value.length; i++) {
+                        setState(() {
+                          posts![posts!.length] = value[i];
+                        })
+                      },
+
+                      print(posts!.length),
+                      setState(() {
+                        isMoreLoading = false;
+                      })
+                      
                     });
                   }
                   return true;
@@ -86,70 +99,86 @@ class _HomeState extends State<Home> {
             setState(() {
             if (this.mounted) {
               isUIdLoading = true;
+              isLoading = true;
             }
           })
           });
           getUId();
+          getPosts();
         },
           child: SingleChildScrollView(
           child: 
-          FutureBuilder(
-            future: FirebaseFirestore.instance.collection("post").
-                          orderBy("posted", descending: true).limit(postNum).
-                          get(), 
-            builder: (context, snapshot) {
+          // FutureBuilder(
+          //   future: FirebaseFirestore.instance.collection("post").
+          //                 orderBy("posted", descending: true).limit(postNum).
+          //                 get(), 
+          //   builder: (context, snapshot) {
 
-              if (!snapshot.hasData) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-              else {
+          //     if (!snapshot.hasData) {
+          //         return Center(
+          //           child: CircularProgressIndicator(),
+          //         );
+          //       }
+          //     else {
 
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                else {
-                  // snapshots = snapshot.data;
+          //       if (snapshot.connectionState == ConnectionState.waiting) {
+          //         return Center(
+          //           child: CircularProgressIndicator(),
+          //         );
+          //       }
+          //       else {
+          //         // snapshots = snapshot.data;
 
-                  // return Wrap(
-                  //   children: List.generate((snapshots! as dynamic).docs.length, (index) {
-                  //   return PostWidget(email: snapshots!.docs[index]["email"], postID: snapshots!.docs[index]["postId"], name: snapshots!.docs[index]["writer"], image: snapshots!.docs[index]["images"], description: snapshots!.docs[index]["description"],isLike: snapshots!.docs[index]["likes"].contains(uId!), likes: snapshots!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshots!.docs[index]["uId"], withComment: snapshots!.docs[index]["withComment"], isBookMark: snapshots!.docs[index]["bookMarks"].contains(uId), tags: snapshots!.docs[index]["tags"], posted: snapshots!.docs[index]["posted"],);
-                  // }));
+          //         // return Wrap(
+          //         //   children: List.generate((snapshots! as dynamic).docs.length, (index) {
+          //         //   return PostWidget(email: snapshots!.docs[index]["email"], postID: snapshots!.docs[index]["postId"], name: snapshots!.docs[index]["writer"], image: snapshots!.docs[index]["images"], description: snapshots!.docs[index]["description"],isLike: snapshots!.docs[index]["likes"].contains(uId!), likes: snapshots!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshots!.docs[index]["uId"], withComment: snapshots!.docs[index]["withComment"], isBookMark: snapshots!.docs[index]["bookMarks"].contains(uId), tags: snapshots!.docs[index]["tags"], posted: snapshots!.docs[index]["posted"],);
+          //         // }));
 
-                  return Wrap(
-                    children: List.generate((snapshot.data! as dynamic).docs.length, (index) {
-                      print(index);
-                    return PostWidget(email: snapshot.data!.docs[index]["email"], postID: snapshot.data!.docs[index]["postId"], name: snapshot.data!.docs[index]["writer"], image: snapshot.data!.docs[index]["images"], description: snapshot.data!.docs[index]["description"],isLike: snapshot.data!.docs[index]["likes"].contains(uId!), likes: snapshot.data!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uId"], withComment: snapshot.data!.docs[index]["withComment"], isBookMark: snapshot.data!.docs[index]["bookMarks"].contains(uId), tags: snapshot.data!.docs[index]["tags"], posted: snapshot.data!.docs[index]["posted"],);
-                  }));
-                }
+          //         return Wrap(
+          //           children: List.generate((snapshot.data! as dynamic).docs.length, (index) {
+          //             print(index);
+          //           return PostWidget(email: snapshot.data!.docs[index]["email"], postID: snapshot.data!.docs[index]["postId"], name: snapshot.data!.docs[index]["writer"], image: snapshot.data!.docs[index]["images"], description: snapshot.data!.docs[index]["description"],isLike: snapshot.data!.docs[index]["likes"].contains(uId!), likes: snapshot.data!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uId"], withComment: snapshot.data!.docs[index]["withComment"], isBookMark: snapshot.data!.docs[index]["bookMarks"].contains(uId), tags: snapshot.data!.docs[index]["tags"], posted: snapshot.data!.docs[index]["posted"],);
+          //         }));
+          //       }
                   
-              //     return PageStorage(bucket: pageBucket, 
-              //     child: ListView.builder(
-              //       key: PageStorageKey<String>( 
-              // 'pageOne'),
-              //       controller: ScrollController(),
-              //       itemCount: (snapshot.data! as dynamic).docs.length,
-              //       itemBuilder: (context, index) {
-              //           return PostWidget(email: snapshot.data!.docs[index]["email"], postID: snapshot.data!.docs[index]["postId"], name: snapshot.data!.docs[index]["writer"], image: snapshot.data!.docs[index]["images"], description: snapshot.data!.docs[index]["description"],isLike: snapshot.data!.docs[index]["likes"].contains(uId!), likes: snapshot.data!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uId"], withComment: snapshot.data!.docs[index]["withComment"], isBookMark: snapshot.data!.docs[index]["bookMarks"].contains(uId), tags: snapshot.data!.docs[index]["tags"], posted: snapshot.data!.docs[index]["posted"],);
+          //     //     return PageStorage(bucket: pageBucket, 
+          //     //     child: ListView.builder(
+          //     //       key: PageStorageKey<String>( 
+          //     // 'pageOne'),
+          //     //       controller: ScrollController(),
+          //     //       itemCount: (snapshot.data! as dynamic).docs.length,
+          //     //       itemBuilder: (context, index) {
+          //     //           return PostWidget(email: snapshot.data!.docs[index]["email"], postID: snapshot.data!.docs[index]["postId"], name: snapshot.data!.docs[index]["writer"], image: snapshot.data!.docs[index]["images"], description: snapshot.data!.docs[index]["description"],isLike: snapshot.data!.docs[index]["likes"].contains(uId!), likes: snapshot.data!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uId"], withComment: snapshot.data!.docs[index]["withComment"], isBookMark: snapshot.data!.docs[index]["bookMarks"].contains(uId), tags: snapshot.data!.docs[index]["tags"], posted: snapshot.data!.docs[index]["posted"],);
                         
-              //       // },
-              //   // );
-              //   }));}
-              }
-              // },
-          // )
-          // Column(
-          //   children: 
-          //   List.generate(posts!.length, (index) {
-          //     return Container(
-          //       child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],),
-          //     );
-          //   })
-            }
-          ),
+          //     //       // },
+          //     //   // );
+          //     //   }));}
+          //     }
+          //     // },
+          // // )
+          // // Column(
+          // //   children: 
+          // //   List.generate(posts!.length, (index) {
+          // //     return Container(
+          // //       child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],),
+          // //     );
+          // //   })
+          //   }
+          // ),
+
+
+          Column(
+            children: [
+              Column(
+                children: 
+                List.generate(posts!.length, (index) {
+                  return Container(
+                    child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],),
+                  );
+                })),
+                isMoreLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Container()
+                ],
+              )
         )
       )
     );

@@ -156,7 +156,22 @@ class PostService {
   Future<Map<dynamic, dynamic>> getPosts() async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
-    await postCollection.where("postNumber", isGreaterThan: -1).orderBy("postNumber", descending: true).limit(18).get().then((value) => {
+    await postCollection.orderBy("postNumber", descending: true).limit(2).get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+        posts[i] = post;
+        i += 1;
+      })
+    });
+
+    return posts;
+
+  }
+
+  Future loadMore(int postNumber) async {
+    Map posts = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+    await postCollection.where("postNumber", isLessThan: postNumber).orderBy("postNumber", descending: true).limit(2).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
         posts[i] = post;
