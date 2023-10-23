@@ -62,6 +62,8 @@ class _PostWidgetState extends State<PostWidget> {
     super.initState();
     calTimeDiff();
 
+    print("object");
+
     getImages();
     if (this.mounted) {
       setState(() {
@@ -148,7 +150,6 @@ class _PostWidgetState extends State<PostWidget> {
     double descriptionSize;
     double iconWidth;
 
-
     DatabaseService databaseService = DatabaseService(uid: widget.uId);
 
     if(Device.get().isTablet) {
@@ -183,7 +184,7 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                     InkWell(
                       onTap: () {
-                        nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                        nextScreenReplace(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.height * 0.05,
@@ -225,7 +226,7 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                     InkWell(
                       onTap: () {
-                        nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                        nextScreenReplace(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.height * 0.05,
@@ -323,7 +324,6 @@ class _PostWidgetState extends State<PostWidget> {
                   ),
                   Positioned(
                         left: bookMarkLeft,
-
                         child: SizedBox(
                         width: iconWidth,
                           child: IconButton(onPressed: () async {
@@ -373,7 +373,7 @@ class _PostWidgetState extends State<PostWidget> {
                               GestureDetector(
                                 child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
                                 onTap: () {
-                                  nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
+                                  nextScreenReplace(context, SearchByTag(searchText: widget.tags[index].toString()));
                                 }, 
                               ),
                               SizedBox(
@@ -586,7 +586,7 @@ class _PostWidgetState extends State<PostWidget> {
                               GestureDetector(
                                 child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
                                 onTap: () {
-                                  nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
+                                  nextScreenReplace(context, SearchByTag(searchText: widget.tags[index].toString()));
                                 }, 
                               ),
                               SizedBox(

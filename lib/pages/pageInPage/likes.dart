@@ -85,7 +85,7 @@ class _LikesRankingState extends State<LikesRanking> {
               Text("Ranking", textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23))
             ],
           ),
-
+          SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
           FutureBuilder(
             future: future,
             builder: (context, snapshot) {
@@ -164,7 +164,5 @@ class _LikesRankingState extends State<LikesRanking> {
       });
     },
   );
-    
-    
   }
 }

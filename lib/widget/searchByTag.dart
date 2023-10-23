@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widget/post_widget.dart';
@@ -90,6 +91,10 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
         appBar: AppBar(
           toolbarHeight: MediaQuery.of(context).size.height * 0.07,
           backgroundColor: Theme.of(context).primaryColor,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),
+            onPressed: () => nextScreen(context, HomePage())
+          ),
           title: TextFormField(
               style: TextStyle(color: Colors.white),
               controller: searchController,
@@ -138,19 +143,30 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
                     child: CircularProgressIndicator(),
                   );
                 }
-                return ListView.builder(
-                  itemCount: (snapshot.data! as dynamic).docs.length,
-                  itemBuilder: (context, index) {
-
-                    return Column(
-                      children: [
-                        SizedBox(height: 10,),
-
-                        PostWidget(email: snapshot.data!.docs[index]["email"], postID: snapshot.data!.docs[index]["postId"], name: snapshot.data!.docs[index]["writer"], image: snapshot.data!.docs[index]["images"], description: snapshot.data!.docs[index]["description"],isLike: snapshot.data!.docs[index]["likes"].contains(uId!), likes: snapshot.data!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uId"], withComment: snapshot.data!.docs[index]["withComment"], isBookMark: snapshot.data!.docs[index]["bookMarks"].contains(uId), tags: snapshot.data!.docs[index]["tags"], posted: snapshot.data!.docs[index]["posted"],)
-                      ],
+                else {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                );
+                  }
+                  else {
+                    return ListView.builder(
+                      itemCount: (snapshot.data! as dynamic).docs.length,
+                      itemBuilder: (context, index) {
+
+                        return Column(
+                          children: [
+                            SizedBox(height: 10,),
+
+                            PostWidget(email: snapshot.data!.docs[index]["email"], postID: snapshot.data!.docs[index]["postId"], name: snapshot.data!.docs[index]["writer"], image: snapshot.data!.docs[index]["images"], description: snapshot.data!.docs[index]["description"],isLike: snapshot.data!.docs[index]["likes"].contains(uId!), likes: snapshot.data!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uId"], withComment: snapshot.data!.docs[index]["withComment"], isBookMark: snapshot.data!.docs[index]["bookMarks"].contains(uId), tags: snapshot.data!.docs[index]["tags"], posted: snapshot.data!.docs[index]["posted"],)
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  
+                }
+                
               },
             ),
             searchController.text == "" ? 
@@ -166,52 +182,63 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
                     child: CircularProgressIndicator(),
                   );
                 }
-                return ListView.builder(
-                  itemCount: (snapshot.data! as dynamic).docs.length,
-                  itemBuilder: (context, index) {
+                else {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  else {
+                    return ListView.builder(
+                      itemCount: (snapshot.data! as dynamic).docs.length,
+                      itemBuilder: (context, index) {
 
-                    profileURLs.add("");
-                    isprofLoadings.add(true);
+                        profileURLs.add("");
+                        isprofLoadings.add(true);
 
-                    getProfileURL(snapshot.data!.docs[index]["email"], snapshot.data!.docs[index]["profilePic"], index);
+                        getProfileURL(snapshot.data!.docs[index]["email"], snapshot.data!.docs[index]["profilePic"], index);
 
-                    return 
-                      isprofLoadings[index] ? Center(
-                        child: CircularProgressIndicator(),
-                      ) : 
-                      InkWell(
-                      onTap: () {
-                        nextScreen(context, OthersProfilePages(uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uid"]));
+                        return 
+                          isprofLoadings[index] ? Center(
+                            child: CircularProgressIndicator(),
+                          ) : 
+                          InkWell(
+                          onTap: () {
+                            nextScreen(context, OthersProfilePages(uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uid"]));
+                          },
+                          child :
+                            ListTile(
+                              leading: Container(
+                              width: MediaQuery.of(context).size.height * 0.05,
+                              height: MediaQuery.of(context).size.height * 0.05,
+                              decoration: BoxDecoration(
+                                color: const Color(0xff7c94b6),
+                                image: DecorationImage(
+                                  image: NetworkImage(profileURLs[index]),
+                                  fit: BoxFit.cover,
+                                ),
+                                borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: MediaQuery.of(context).size.height * 0.005,
+                                ),
+                              ),
+                            ),
+                              title: Text(
+                                snapshot.data!.docs[index]["name"],
+                                style: TextStyle(fontWeight: FontWeight.w600),
+                              ),
+                              subtitle: Text(
+                                snapshot.data!.docs[index]["email"]
+                              ),
+                            )
+                          );
                       },
-                      child :
-                        ListTile(
-                          leading: Container(
-                          width: MediaQuery.of(context).size.height * 0.05,
-                          height: MediaQuery.of(context).size.height * 0.05,
-                          decoration: BoxDecoration(
-                            color: const Color(0xff7c94b6),
-                            image: DecorationImage(
-                              image: NetworkImage(profileURLs[index]),
-                              fit: BoxFit.cover,
-                            ),
-                            borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
-                            border: Border.all(
-                              color: Colors.white,
-                              width: MediaQuery.of(context).size.height * 0.005,
-                            ),
-                          ),
-                        ),
-                          title: Text(
-                            snapshot.data!.docs[index]["name"],
-                            style: TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                          subtitle: Text(
-                            snapshot.data!.docs[index]["email"]
-                          ),
-                        )
-                      );
-                  },
-                );
+                    );
+                  }
+
+                }
+                
               },
             ),
             searchController.text == "" ? 
@@ -226,19 +253,30 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
                     child: CircularProgressIndicator(),
                   );
                 }
-                return ListView.builder(
-                  itemCount: (snapshot.data! as dynamic).docs.length,
-                  itemBuilder: (context, index) {
-
-                    return Column(
-                      children: [
-                        SizedBox(height: 10,),
-
-                        PostWidget(email: snapshot.data!.docs[index]["email"], postID: snapshot.data!.docs[index]["postId"], name: snapshot.data!.docs[index]["writer"], image: snapshot.data!.docs[index]["images"], description: snapshot.data!.docs[index]["description"],isLike: snapshot.data!.docs[index]["likes"].contains(uId!), likes: snapshot.data!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uId"], withComment: snapshot.data!.docs[index]["withComment"], isBookMark: snapshot.data!.docs[index]["bookMarks"].contains(uId), tags: snapshot.data!.docs[index]["tags"], posted: snapshot.data!.docs[index]["posted"],)
-                      ],
+                else {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
                     );
-                  },
-                );
+                  }
+                  else {
+                    return ListView.builder(
+                      itemCount: (snapshot.data! as dynamic).docs.length,
+                      itemBuilder: (context, index) {
+
+                        return Column(
+                          children: [
+                            SizedBox(height: 10,),
+
+                            PostWidget(email: snapshot.data!.docs[index]["email"], postID: snapshot.data!.docs[index]["postId"], name: snapshot.data!.docs[index]["writer"], image: snapshot.data!.docs[index]["images"], description: snapshot.data!.docs[index]["description"],isLike: snapshot.data!.docs[index]["likes"].contains(uId!), likes: snapshot.data!.docs[index]["likes"].length, uId: uId!, postOwnerUId: snapshot.data!.docs[index]["uId"], withComment: snapshot.data!.docs[index]["withComment"], isBookMark: snapshot.data!.docs[index]["bookMarks"].contains(uId), tags: snapshot.data!.docs[index]["tags"], posted: snapshot.data!.docs[index]["posted"],)
+                          ],
+                        );
+                      },
+                    );
+                  }
+                  
+                }
+                
               },
             ),
           ]

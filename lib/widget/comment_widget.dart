@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/helper/helper_function.dart';
-import 'package:like_app/pages/pageInPage/home.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
@@ -104,10 +103,10 @@ class _CommentWidgetState extends State<CommentWidget> {
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
         title: Text("Comments", style: TextStyle(fontSize: barFontSize),),
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
-          onPressed: () => nextScreenReplace(context, Home()),
-        ), 
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
+        //   onPressed: () => nextScreenReplace(context, Home()),
+        // ), 
       ),
       body: 
       comments!.length > 0 ? 
@@ -169,7 +168,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 CommentService commnetService = new CommentService(description: content, postId: widget.postId);
                                 await commnetService.postComment(widget.uId!, email);
                                 Future.delayed(Duration(seconds: 1)).then((value) => {
-                                  nextScreen(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
+                                  nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
                                 });
                               }
                             }

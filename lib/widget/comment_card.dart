@@ -182,7 +182,7 @@ class _CommentCardState extends State<CommentCard> {
           children: [
             InkWell(
               onTap: () {
-                nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: commentOwnerUid,));
+                nextScreenReplace(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: commentOwnerUid,));
               },
               child: Container(
                 width: MediaQuery.of(context).size.height * 0.05,
