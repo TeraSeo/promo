@@ -17,27 +17,23 @@ class _HomeState extends State<Home> {
   bool isLoading = true;
   bool isUIdLoading = true;
   bool isMoreLoading = false;
-  DocumentSnapshot<Map<String, dynamic>>? postUser;
+  bool isWholePostLengthLoading = true;
 
-  QuerySnapshot<Map<String, dynamic>>? snapshots;
+  int? wholePostLength;
 
   String? uId; 
 
   PostService postService = new PostService();
 
-  final future = FirebaseFirestore.instance.collection("post").
-                          orderBy("posted", descending: true).limit(3).
-                          get();
-
-  int postNum = 2;
-
-  final pageBucket = PageStorageBucket();
+  final CollectionReference postCollection = 
+        FirebaseFirestore.instance.collection("post");
 
   @override
   void initState() {
     super.initState();
     getUId();
     getPosts();
+    getPostLength();
   }
 
   void getPosts() async {
@@ -61,21 +57,29 @@ class _HomeState extends State<Home> {
         })
       }
     });
+  }
 
-    final CollectionReference userCollection = 
+  final CollectionReference userCollection = 
         FirebaseFirestore.instance.collection("user");
 
-    final user = userCollection.doc(uId);
-    postUser = await user.get() as DocumentSnapshot<Map<String, dynamic>>;
+  void getPostLength() async {
+    await postCollection.get().then((value) => {
+      wholePostLength = value.docs.length,
+      setState(() {
+        isWholePostLengthLoading = false;
+      }),
+      print(wholePostLength)
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return 
-      (isUIdLoading || isLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+      (isUIdLoading || isLoading || isWholePostLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
         NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
-                  if (scrollNotification.metrics.pixels > 0 && scrollNotification.metrics.atEdge && !isMoreLoading) {
+                  if (scrollNotification.metrics.pixels > 0 && scrollNotification.metrics.atEdge && !isMoreLoading && wholePostLength! > posts!.length) {
+                    print(posts!.length);
                     isMoreLoading = true;
                     postService.loadMore(posts![posts!.length - 1]['postNumber']).then((value) => {
                       for (int i = 0; i < value.length; i++) {
@@ -84,7 +88,6 @@ class _HomeState extends State<Home> {
                         })
                       },
 
-                      print(posts!.length),
                       setState(() {
                         isMoreLoading = false;
                       })
@@ -100,6 +103,7 @@ class _HomeState extends State<Home> {
             if (this.mounted) {
               isUIdLoading = true;
               isLoading = true;
+              isMoreLoading = false;
             }
           })
           });

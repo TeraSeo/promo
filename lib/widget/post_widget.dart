@@ -62,8 +62,6 @@ class _PostWidgetState extends State<PostWidget> {
     super.initState();
     calTimeDiff();
 
-    print("object");
-
     getImages();
     if (this.mounted) {
       setState(() {

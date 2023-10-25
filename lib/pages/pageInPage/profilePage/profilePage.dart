@@ -36,6 +36,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _isBackground = true;
   bool isPostLoading = true;
   bool isUIdLoading = true;
+  bool isMoreLoading = false;
 
   Logging logging = new Logging();
 

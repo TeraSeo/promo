@@ -156,7 +156,7 @@ class PostService {
   Future<Map<dynamic, dynamic>> getPosts() async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
-    await postCollection.orderBy("postNumber", descending: true).limit(2).get().then((value) => {
+    await postCollection.orderBy("postNumber", descending: true).limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
         posts[i] = post;
@@ -171,7 +171,7 @@ class PostService {
   Future loadMore(int postNumber) async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
-    await postCollection.where("postNumber", isLessThan: postNumber).orderBy("postNumber", descending: true).limit(2).get().then((value) => {
+    await postCollection.where("postNumber", isLessThan: postNumber).orderBy("postNumber", descending: true).limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
         posts[i] = post;
@@ -185,9 +185,8 @@ class PostService {
 
   Future<List<DocumentSnapshot<Map<String, dynamic>>>> getProfilePosts(List<dynamic> postIds) async {
     List<DocumentSnapshot<Map<String, dynamic>>> posts = [];
-    int i = 0;
 
-    for (int i = 0; i < postIds.length; i++) {
+    for (int i = postIds.length - 1; i >= 0; i--) {
       final post = postCollection.doc(postIds[i].toString());
       DocumentSnapshot<Map<String, dynamic>> p = await post.get() as DocumentSnapshot<Map<String, dynamic>>;
       posts.add(p);

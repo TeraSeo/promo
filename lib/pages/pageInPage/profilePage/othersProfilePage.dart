@@ -154,10 +154,10 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
     return (_isImg || _isBackground || isPostLoading)? Center(child: CircularProgressIndicator(color: Colors.white),) : Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),
-        //   onPressed: () => nextScreen(context, HomePage()),
-        // )
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),
+          onPressed: () => nextScreen(context, HomePage()),
+        )
       ),
       body: SingleChildScrollView(
       child: Column(

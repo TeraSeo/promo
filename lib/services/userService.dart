@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/storage.dart';
 
 class DatabaseService {
@@ -208,6 +209,8 @@ class DatabaseService {
         "name" : name,
         "intro" : intro
       });
+
+      HelperFunctions.saveUserNameSF(name);
 
     } catch(e) {
       print(e);
