@@ -183,6 +183,74 @@ class PostService {
 
   }
 
+  Future<Map<dynamic, dynamic>> getPostsBySearchName(String searchedName) async {
+    Map posts = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+    await FirebaseFirestore.instance.collection("post").
+      where('description', isGreaterThanOrEqualTo: searchedName).limit(7).get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+        posts[i] = post;
+        i += 1;
+      })
+    });
+
+    return posts;
+
+  }
+
+  Future<Map<dynamic, dynamic>> loadMorePostsPostsBySearchName(String searchedName, String postId) async {
+    Map posts = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+    await FirebaseFirestore.instance.collection("post").
+      where('description', isGreaterThanOrEqualTo: searchedName).limit(7).get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+        if (post["postId"] != postId) {
+          posts[i] = post;
+          i += 1;
+        }
+      })
+    });
+
+    return posts;
+
+  }
+
+  Future<Map<dynamic, dynamic>> getTagsBySearchName(String searchedName) async {
+    Map tags = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+    await FirebaseFirestore.instance.collection("post").orderBy("posted", descending: true).
+      where('tags', arrayContains: searchedName).limit(7).get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> tag = element.data() as Map<String, dynamic>;
+        tags[i] = tag;
+        i += 1;
+      })
+    });
+
+    return tags;
+
+  }
+
+  Future<Map<dynamic, dynamic>> loadMoreTagsBySearchName(String searchedName, String date) async {
+    Map posts = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+    await FirebaseFirestore.instance.collection("post").
+      where('tags', arrayContains: searchedName).where('posted', isLessThanOrEqualTo: date).limit(7).get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+        if (post["posted"] != date) {
+          posts[i] = post;
+          i += 1;
+        }
+      })
+    });
+
+    return posts;
+
+  }
+
   Future<List<DocumentSnapshot<Map<String, dynamic>>>> getProfilePosts(List<dynamic> postIds) async {
     List<DocumentSnapshot<Map<String, dynamic>>> posts = [];
 

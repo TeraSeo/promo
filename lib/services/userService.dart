@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/storage.dart';
@@ -452,6 +454,47 @@ class DatabaseService {
     }
 
     
+  }
+
+  Future getUserBySearchedName(String searchedName) async {
+
+    Map users = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+    await FirebaseFirestore.instance.collection("user").
+                          where('name', isGreaterThanOrEqualTo: searchedName).limit(20).
+                          get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> user = element.data() as Map<String, dynamic>;
+        users[i] = user;
+        print(i);
+        i += 1;
+      })
+    });
+
+    return users;
+
+  }
+
+  Future loadMoreUsersBySearchedName(String searchedName, String uId) async {
+
+    Map users = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+    await FirebaseFirestore.instance.collection("user").
+                          where('name', isGreaterThanOrEqualTo: searchedName).limit(20).
+                          get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> user = element.data() as Map<String, dynamic>;
+        if (user['uid'] != uId) {
+          print(user);
+          users[i] = user;
+          i += 1;
+        }
+        
+      })
+    });
+
+    return users;
+
   }
 
 }

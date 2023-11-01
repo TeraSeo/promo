@@ -78,8 +78,7 @@ class _HomeState extends State<Home> {
       (isUIdLoading || isLoading || isWholePostLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
         NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
-                  if (scrollNotification.metrics.pixels > 0 && scrollNotification.metrics.atEdge && !isMoreLoading && wholePostLength! > posts!.length) {
-                    print(posts!.length);
+                  if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && scrollNotification.metrics.atEdge && !isMoreLoading && wholePostLength! > posts!.length) {
                     isMoreLoading = true;
                     postService.loadMore(posts![posts!.length - 1]['postNumber']).then((value) => {
                       for (int i = 0; i < value.length; i++) {
