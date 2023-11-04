@@ -9,7 +9,10 @@ import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
 
 class Search extends StatefulWidget {
-  const Search({super.key});
+
+  final String searchName;
+
+  const Search({super.key, required this.searchName});
 
   @override
   State<Search> createState() => _SearchState();
@@ -19,7 +22,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   late TabController _tabController;
 
-  TextEditingController searchController = new TextEditingController(text: "");
+  TextEditingController? searchController;
 
   String? uId = "";
 
@@ -30,6 +33,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
+    searchController = new TextEditingController(text: widget.searchName);
     _tabController = TabController(
       length: 3,
       vsync: this, 
@@ -41,7 +45,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   @override
   void dispose() {
     super.dispose();
-    searchController.dispose();
+    searchController!.dispose();
     _tabController.dispose();
   }
 
@@ -62,7 +66,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   bool isLoadingMorePostsPossible = true;
   bool isMoreLoading1 = false;
   
-  late final Future future1 = getPostsBySearchName(searchController.text);
+  late final Future future1 = getPostsBySearchName(searchController!.text);
+  late final Future future2 = getUsersBySearchName(searchController!.text);
+  late final Future future3 = getTagsBySearchName(searchController!.text);
 
   Future getPostsBySearchName(String searchedName) async {
     PostService postService = new PostService();
@@ -104,7 +110,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   bool isLoadingMoreUsersPossible = true;
   bool isMoreLoading2 = false;
 
-  late final Future future2 = getUsersBySearchName(searchController.text);
 
   Future getUsersBySearchName(String searchedName) async {
     DatabaseService databaseService = new DatabaseService();
@@ -171,7 +176,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   bool isLoadingMoreTagsPossible = true;
   bool isMoreLoading3 = false;
   
-  late final Future future3 = getTagsBySearchName(searchController.text);
 
   Future getTagsBySearchName(String searchedName) async {
     PostService postService = new PostService();
@@ -230,7 +234,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   void getAccountsLength(String searchedName) async {
 
     await FirebaseFirestore.instance.collection("user").
-      where('name', isGreaterThanOrEqualTo: searchController.text).
+      where('name', isGreaterThanOrEqualTo: searchController!.text).
       get().then((value) => {
         wholeAccountsLength = value.docs.length,
         setState(() {
@@ -242,7 +246,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   void getTagsLength(String searchedName) async {
 
     await FirebaseFirestore.instance.collection("post").
-      where('tags', arrayContains: searchController.text).limit(7).
+      where('tags', arrayContains: searchController!.text).limit(7).
       get().then((value) => {
         wholeTagsLength = value.docs.length,
         setState(() {
@@ -253,11 +257,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-
-    // final future3 = FirebaseFirestore.instance.collection("post").
-    //                       where('tags', arrayContains: searchController.text).limit(7).
-    //                       get();
-
     return isUIdLoading ? 
       Center(
         child: CircularProgressIndicator(),
@@ -287,7 +286,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               ),
               onFieldSubmitted: (String _) {
                 setState(() {
-                  searchController.text = _;
+                  searchController!.text = _;
                 });
                 getPostsLength(_);
                 getAccountsLength(_);
@@ -310,7 +309,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         TabBarView(
           controller: _tabController,
           children: [
-            searchController.text == "" ? 
+            searchController!.text == "" ? 
             Container() : 
             isWholePostLengthLoading? Container() :
             NotificationListener<ScrollNotification>(
@@ -329,6 +328,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                 FutureBuilder(
                 future: future1, 
                 builder: (context, snapshot) {
+
+                  print("object");
                   
                   if (isPostLoading) {
                     return Center(
@@ -347,7 +348,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
               )
             ),
-            searchController.text == "" ? 
+            searchController!.text == "" ? 
             Container() :
             isWholeAccountsLengthLoading ? Container() :
              NotificationListener<ScrollNotification>(
@@ -427,7 +428,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               )
             ),
             ),
-            searchController.text == "" ? 
+            searchController!.text == "" ? 
             Container() :
             isWholeTagsLengthLoading ? Container() :
              NotificationListener<ScrollNotification>(

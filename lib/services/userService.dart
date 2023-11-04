@@ -452,8 +452,6 @@ class DatabaseService {
     } catch(e) {
       print(e);
     }
-
-    
   }
 
   Future getUserBySearchedName(String searchedName) async {

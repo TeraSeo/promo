@@ -156,6 +156,7 @@ class PostService {
   Future<Map<dynamic, dynamic>> getPosts() async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
+    // .where("postNumber", isLessThan: postNumber)
     await postCollection.orderBy("postNumber", descending: true).limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
@@ -171,7 +172,7 @@ class PostService {
   Future loadMore(int postNumber) async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
-    await postCollection.where("postNumber", isLessThan: postNumber).orderBy("postNumber", descending: true).limit(7).get().then((value) => {
+    await postCollection.orderBy("postNumber", descending: true).limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
         posts[i] = post;
@@ -187,7 +188,10 @@ class PostService {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
     await FirebaseFirestore.instance.collection("post").
-      where('description', isGreaterThanOrEqualTo: searchedName).limit(7).get().then((value) => {
+      where('description', isGreaterThanOrEqualTo: searchedName).
+      orderBy("description", descending: false).
+      orderBy("postNumber", descending: true).
+      limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
         posts[i] = post;
@@ -220,8 +224,10 @@ class PostService {
   Future<Map<dynamic, dynamic>> getTagsBySearchName(String searchedName) async {
     Map tags = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
-    await FirebaseFirestore.instance.collection("post").orderBy("posted", descending: true).
-      where('tags', arrayContains: searchedName).limit(7).get().then((value) => {
+    await FirebaseFirestore.instance.collection("post").
+      where('tags', arrayContains: searchedName).
+      // orderBy("posted", descending: true).
+      limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> tag = element.data() as Map<String, dynamic>;
         tags[i] = tag;

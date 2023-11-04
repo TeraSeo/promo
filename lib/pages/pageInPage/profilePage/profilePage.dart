@@ -7,6 +7,7 @@ import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editInfo.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editProfile.dart';
+import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
@@ -74,9 +75,19 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero,() async {
+    try {
+      Future.delayed(Duration.zero,() async {
       await getUser();
+      await getPosts();
+      // getPostLikes(postUser!["posts"]);
+      // getCommentLikes(postUser!["comments"]);
+      getUserProfile();
+      getUserBackground();
     });
+    } catch(e) {
+      print(e);
+    }
+   
   }
 
   Future getUser() async {
@@ -94,13 +105,11 @@ class _ProfilePageState extends State<ProfilePage> {
         FirebaseFirestore.instance.collection("user");
 
     final user = userCollection.doc(uID);
-    postUser = await user.get() as DocumentSnapshot<Map<String, dynamic>>;
-    likes = postUser!["wholeLikes"];
-    await getPosts();
-    // getPostLikes(postUser!["posts"]);
-    // getCommentLikes(postUser!["comments"]);
-    getUserProfile();
-    getUserBackground();
+    await user.get().then((value) => {
+      postUser = value as DocumentSnapshot<Map<String, dynamic>>,
+      likes = postUser!["wholeLikes"]
+    });
+    
   }
 
   getPosts() async {

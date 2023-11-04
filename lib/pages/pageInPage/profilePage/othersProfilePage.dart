@@ -30,7 +30,6 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   DocumentSnapshot<Map<String, dynamic>>? postUser;
 
   DatabaseService databaseService = new DatabaseService();
-  RestApi restApi = new RestApi();
   Storage storage = new Storage();
 
   bool _isImg = true;

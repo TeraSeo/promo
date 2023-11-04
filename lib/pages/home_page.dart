@@ -96,12 +96,12 @@ class _HomePageState extends State<HomePage> {
         
         actions: [
           IconButton(onPressed: (){
-            nextScreen(context, Search());
+            nextScreen(context, Search(searchName: "",));
           },
           icon: IconButton(
             icon: Icon(Icons.search,),
             onPressed: () {
-              nextScreen(context, Search());
+              nextScreen(context, Search(searchName: "",));
             },
           )) 
         ],
