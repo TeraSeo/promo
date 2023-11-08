@@ -309,7 +309,7 @@ class _LoginPageState extends State<OtpScreen> {
       await HelperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
       await HelperFunctions.saveUserUIdSF(FirebaseAuth.instance.currentUser!.uid);
 
-      nextScreenReplace(context, const HomePage());
+      nextScreenReplace(context, const HomePage(pageIndex: 0,));
     
   }
 

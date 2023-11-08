@@ -133,10 +133,11 @@ class _EditInfoState extends State<EditInfo> {
                             isInfoChanging = true;
                           });
 
-                          await databaseService.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
-                          await postService.changeWriterName(changedName, widget.postUser!["posts"]);
-                          Future.delayed(Duration(seconds: 1),() {
-                            nextScreen(context, HomePage());
+                        
+                          Future.delayed(Duration(seconds: 0),() async { 
+                            await databaseService.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
+                            await postService.changeWriterName(changedName, widget.postUser!["posts"]);
+                            nextScreen(context, HomePage(pageIndex: 3,));
                           });
                           }
                         else {

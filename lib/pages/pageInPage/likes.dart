@@ -20,6 +20,8 @@ class _LikesRankingState extends State<LikesRanking> {
   List<bool> isprofLoadings = [];
   List<String> profileURLs = [];
 
+  bool isErrorOccurred = false;
+
   final future = FirebaseFirestore.instance.collection("user").
                       orderBy("commentLikes", descending: true)
                       .limit(50).get();
@@ -33,14 +35,23 @@ class _LikesRankingState extends State<LikesRanking> {
   }
 
   void getUId() async{
-    await HelperFunctions.getUserUIdFromSF().then((value) => {
-      uId = value,
-      if (this.mounted) {
-        setState(() {
-          isUIdLoading = false;
-        })
-      }
-    });
+    try {
+      await HelperFunctions.getUserUIdFromSF().then((value) => {
+        uId = value,
+        if (this.mounted) {
+          setState(() {
+            isUIdLoading = false;
+          })
+        }
+      });
+
+    } catch(e) {
+
+      setState(() {
+        isErrorOccurred = true;
+      });
+
+    }
   }
 
   getProfileURL(String email, String profile, int index) async {
@@ -68,8 +79,24 @@ class _LikesRankingState extends State<LikesRanking> {
 
   @override
   Widget build(BuildContext context) {
-    
-    return isUIdLoading? Center(
+
+    try {   
+    return 
+      isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                setState(() {
+                  isErrorOccurred = false;
+                  isUIdLoading = false;
+                });
+                getUId();
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) :
+     isUIdLoading? Center(
         child: CircularProgressIndicator(),
       ) : 
       RefreshIndicator(
@@ -233,6 +260,22 @@ class _LikesRankingState extends State<LikesRanking> {
         })
       });
     },
-  );
+  );} 
+  catch(e) {
+    return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                setState(() {
+                  isErrorOccurred = false;
+                  isUIdLoading = false;
+                });
+                getUId();
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+  }
   }
 }

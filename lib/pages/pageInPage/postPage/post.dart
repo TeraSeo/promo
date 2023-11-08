@@ -279,7 +279,7 @@ class _PostState extends State<Post> {
                       PostService postService = new PostService();
                       await postService.post(widget.files, description, category, tags, withComment);
                       Future.delayed(Duration(seconds: 2)).then((value) => {
-                        nextScreen(context, HomePage())
+                        nextScreen(context, HomePage(pageIndex: 0,))
                       });
                     }
                   }, 

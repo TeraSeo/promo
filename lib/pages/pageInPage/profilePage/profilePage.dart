@@ -277,7 +277,19 @@ class _ProfilePageState extends State<ProfilePage> {
             }
           })
         });
-        await getUser();
+        try {
+          Future.delayed(Duration.zero,() async {
+            await getUser();
+            await getPosts();
+            // getPostLikes(postUser!["posts"]);
+            // getCommentLikes(postUser!["comments"]);
+            getUserProfile();
+            getUserBackground();
+          });
+        } 
+        catch(e) {
+          print(e);
+        }
       },
     );
   }

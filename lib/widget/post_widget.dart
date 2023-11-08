@@ -168,336 +168,247 @@ class _PostWidgetState extends State<PostWidget> {
       iconWidth = MediaQuery.of(context).size.width * 0.093;
     }
 
+    try {
 
-    return (isLoading || isProfileLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
-    children: [
-      SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
-      Container(
-        child: Column(
-          children: [
-            isTablet ? 
-            (Stack(
+      return (isLoading || isProfileLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
+        children: [
+          SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
+          Container(
+            child: Column(
               children: [
-                (Row(
+                isTablet ? 
+                (Stack(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.height * 0.016,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        if (widget.isProfileClickable) {
-                          nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
-                        }
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.height * 0.05,
-                        height: MediaQuery.of(context).size.height * 0.05,
-                        decoration: BoxDecoration(
-                          color: const Color(0xff7c94b6),
-                          image: DecorationImage(
-                            image: NetworkImage(profileUrl!),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
-                          border: Border.all(
-                            color: Colors.white,
-                            width: MediaQuery.of(context).size.height * 0.005,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
-                    Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.6),
-                  ],
-                )), 
-                Positioned(child: IconButton(onPressed: () {
-                      _showOptionMenu();
-                    }, 
-                      icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.04)
-                    ), 
-                  left: MediaQuery.of(context).size.width * 0.9,
-                )
-              ],
-            )) : 
-            Stack(
-              children: [
-                (Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.height * 0.016,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        if (widget.isProfileClickable) {
-                          nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
-                        }
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.height * 0.05,
-                        height: MediaQuery.of(context).size.height * 0.05,
-                        decoration: BoxDecoration(
-                          color: const Color(0xff7c94b6),
-                          image: DecorationImage(
-                            image: NetworkImage(profileUrl!),
-                            fit: BoxFit.cover,
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
-                          border: Border.all(
-                            color: Colors.white,
-                            width: MediaQuery.of(context).size.height * 0.005,
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
-                    Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
-                    SizedBox(width: MediaQuery.of(context).size.width * 0.6),
-                  ],
-                )), 
-                Positioned(child: IconButton(onPressed: () {
-                      _showOptionMenu();
-                    }, 
-                      icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.057)
-                    ), 
-                  left: MediaQuery.of(context).size.width * 0.85,
-                )
-              ],
-            ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.013
-            ),
-            images!.length == 0 ? Column(
-              children: [
-                SizedBox(height: MediaQuery.of(context).size.height * 0.012,),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.06,
-                      ),
-                      Text(widget.description.toString(), style: TextStyle(fontSize: descriptionSize),)
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
-                  Stack(
-                    children: [
-                      Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.02,
-                      ),
-                      SizedBox(
-                        width: iconWidth,
-                        child: LikeAnimation(
-                          isAnimating: true,
-                          smallLike: false,
-                          child: IconButton(
-                          onPressed: () async {
-                            setState(()  {
-                              if (!isLike!) {
-                                isLikeAnimation = true;
-                                isLike = true;
-                                likes = likes! + 1;
-                              }
-                              else {
-                                isLike = false;
-                                likes = likes! - 1;
-                              }
-                            });
-                            if (isLike!) {
-                              await postService.postAddLike(widget.postID!);
-                              await databaseService.addUserLike(widget.postID!);
-                            }
-                            else {
-                              await postService.postRemoveLike(widget.postID!);
-                              await databaseService.removeUserLike(widget.postID!);
-                            }
-                          }, 
-                            icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
-                          ),
-                        )
-                      ),
-                      widget.withComment! ? 
-                      SizedBox(
-                        width: iconWidth,
-                        child: IconButton(onPressed: () {
-                          nextScreen(context, CommentWidget(postId: widget.postID, uId: widget.uId,));
-                        }, icon: Icon(Icons.comment_outlined, size: logoSize),),
-                      ) : SizedBox()
-                    ],
-                  ),
-                  Positioned(
-                        left: bookMarkLeft,
-                        child: SizedBox(
-                        width: iconWidth,
-                          child: IconButton(onPressed: () async {
-                            setState(() {
-                              if (isBookMark!) {
-                                isBookMark = false;
-                              }
-                              else {
-                                isBookMark = true;
-                              }
-                            });
-
-                            if (isBookMark!) {
-
-                              await databaseService.addUserBookMark(widget.postID!);
-                              await postService.addBookMark(widget.postID!, widget.uId!);
-
-                            } else {
-                              await databaseService.removeUserBookMark(widget.postID!);
-                              await postService.removeBookMark(widget.postID!, widget.uId!);
-                            }
-
-                          },
-                          icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
-                        )
-                      ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.06,
-                      ),
-                      Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.8, fontWeight: FontWeight.bold),)
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.06,
-                      ),
-                      Row(
-                        children:List.generate(widget.tags.length, (index) {
-                          return Row(
-                            children: [
-                              GestureDetector(
-                                child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
-                                onTap: () {
-                                  nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
-                                }, 
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02,
-                              ),
-                            ],
-                          );
-                        })                   
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.06,
-                      ),
-                      Text(timeDiff, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
-              ],
-            ) :
-            Column(
-              children: [
-                  GestureDetector(
-                    onDoubleTap: () async {
-                      setState(()  {
-                        if (!isLike!) {
-                            isLikeAnimation = true;
-                            isLike = true;
-                            likes = likes! + 1;
-                          }
-                          else {
-                            isLike = false;
-                            likes = likes! - 1;
-                          }
-                        });
-                        if (isLike!) {
-                          await postService.postAddLike(widget.postID!);
-                          await databaseService.addUserLike(widget.postID!);
-                        }
-                        else {
-                          await postService.postRemoveLike(widget.postID!);
-                          await databaseService.removeUserLike(widget.postID!);
-                        }
-                    }, 
-                    child: Stack(
-                      alignment: Alignment.center ,
+                    (Row(
                       children: [
-                        Container(
-                          height: MediaQuery.of(context).size.height * 0.38,
-                          child: PageView.builder(
-                            controller: pageController,
-                            itemBuilder: (_, index) {
-                              return AnimatedBuilder(
-                                animation: pageController,
-                                builder: (ctx, child) {
-                                  return SizedBox(
-                                    child: Image(
-                                      image: NetworkImage(images![index]),fit: BoxFit.fill
-                                    ));
-                                }
-                              );
-                            },
-                            itemCount: images!.length
-                          )
+                        SizedBox(
+                          width: MediaQuery.of(context).size.height * 0.016,
                         ),
-                        AnimatedOpacity(
-                          opacity: isLikeAnimation? 1: 0, 
-                          duration: const Duration(milliseconds: 200),
-                          child: LikeAnimation(
-                            child: const Icon(Icons.favorite, color: Colors.white, size: 100), 
-                            isAnimating: isLikeAnimation,
-                            duration: const Duration(
-                              milliseconds: 400
+                        InkWell(
+                          onTap: () {
+                            if (widget.isProfileClickable) {
+                              nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                            }
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.height * 0.05,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            decoration: BoxDecoration(
+                              color: const Color(0xff7c94b6),
+                              image: DecorationImage(
+                                image: NetworkImage(profileUrl!),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: MediaQuery.of(context).size.height * 0.005,
+                              ),
                             ),
-                            onEnd: () {
-                              setState(() {
-                                isLikeAnimation = false;
-                              });
-                            },
-                          )  
-                        )
+                          ),
+                        ),
+                        SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
+                        Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
+                        SizedBox(width: MediaQuery.of(context).size.width * 0.6),
                       ],
-                    ),
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.012,),
-                  images!.length == 1 ? Container(height: 0,) :  
-                  Column(children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
-                    SmoothPageIndicator(
-                      controller: pageController, 
-                      count: images!.length,
-                      effect: SwapEffect(
-                        activeDotColor: Colors.black,
-                        dotHeight: MediaQuery.of(context).size.height * 0.01,
-                        dotWidth: MediaQuery.of(context).size.height * 0.01,
-                        spacing:  MediaQuery.of(context).size.height * 0.005,
-                      ),
-                    ),
-                  ],),
-                  Stack(
-                    children: [
+                    )), 
+                    Positioned(child: IconButton(onPressed: () {
+                          _showOptionMenu();
+                        }, 
+                          icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.04)
+                        ), 
+                      left: MediaQuery.of(context).size.width * 0.9,
+                    )
+                  ],
+                )) : 
+                Stack(
+                  children: [
+                    (Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.height * 0.016,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            if (widget.isProfileClickable) {
+                              nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                            }
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.height * 0.05,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            decoration: BoxDecoration(
+                              color: const Color(0xff7c94b6),
+                              image: DecorationImage(
+                                image: NetworkImage(profileUrl!),
+                                fit: BoxFit.cover,
+                              ),
+                              borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
+                              border: Border.all(
+                                color: Colors.white,
+                                width: MediaQuery.of(context).size.height * 0.005,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: MediaQuery.of(context).size.height * 0.011,),
+                        Text(widget.name.toString(), style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.035, fontStyle: FontStyle.normal, fontWeight: FontWeight.w500)),
+                        SizedBox(width: MediaQuery.of(context).size.width * 0.6),
+                      ],
+                    )), 
+                    Positioned(child: IconButton(onPressed: () {
+                          _showOptionMenu();
+                        }, 
+                          icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.057)
+                        ), 
+                      left: MediaQuery.of(context).size.width * 0.85,
+                    )
+                  ],
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.013
+                ),
+                images!.length == 0 ? Column(
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.012,),
                       Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.02,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.06,
+                          ),
+                          Text(widget.description.toString(), style: TextStyle(fontSize: descriptionSize),)
+                        ],
                       ),
-                      SizedBox(
-                        width: iconWidth,
-                        child: LikeAnimation(
-                          isAnimating: true,
-                          smallLike: false,
-                          child: IconButton(
-                          onPressed: () async {
-                            setState(()  {
-                              if (!isLike!) {
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
+                      Stack(
+                        children: [
+                          Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.02,
+                          ),
+                          SizedBox(
+                            width: iconWidth,
+                            child: LikeAnimation(
+                              isAnimating: true,
+                              smallLike: false,
+                              child: IconButton(
+                              onPressed: () async {
+                                setState(()  {
+                                  if (!isLike!) {
+                                    isLikeAnimation = true;
+                                    isLike = true;
+                                    likes = likes! + 1;
+                                  }
+                                  else {
+                                    isLike = false;
+                                    likes = likes! - 1;
+                                  }
+                                });
+                                if (isLike!) {
+                                  await postService.postAddLike(widget.postID!);
+                                  await databaseService.addUserLike(widget.postID!);
+                                }
+                                else {
+                                  await postService.postRemoveLike(widget.postID!);
+                                  await databaseService.removeUserLike(widget.postID!);
+                                }
+                              }, 
+                                icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
+                              ),
+                            )
+                          ),
+                          widget.withComment! ? 
+                          SizedBox(
+                            width: iconWidth,
+                            child: IconButton(onPressed: () {
+                              nextScreen(context, CommentWidget(postId: widget.postID, uId: widget.uId,));
+                            }, icon: Icon(Icons.comment_outlined, size: logoSize),),
+                          ) : SizedBox()
+                        ],
+                      ),
+                      Positioned(
+                            left: bookMarkLeft,
+                            child: SizedBox(
+                            width: iconWidth,
+                              child: IconButton(onPressed: () async {
+                                setState(() {
+                                  if (isBookMark!) {
+                                    isBookMark = false;
+                                  }
+                                  else {
+                                    isBookMark = true;
+                                  }
+                                });
+
+                                if (isBookMark!) {
+
+                                  await databaseService.addUserBookMark(widget.postID!);
+                                  await postService.addBookMark(widget.postID!, widget.uId!);
+
+                                } else {
+                                  await databaseService.removeUserBookMark(widget.postID!);
+                                  await postService.removeBookMark(widget.postID!, widget.uId!);
+                                }
+
+                              },
+                              icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
+                            )
+                          ),
+                          )
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.06,
+                          ),
+                          Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.8, fontWeight: FontWeight.bold),)
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.06,
+                          ),
+                          Row(
+                            children:List.generate(widget.tags.length, (index) {
+                              return Row(
+                                children: [
+                                  GestureDetector(
+                                    child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
+                                    onTap: () {
+                                      nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
+                                    }, 
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width * 0.02,
+                                  ),
+                                ],
+                              );
+                            })                   
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.06,
+                          ),
+                          Text(timeDiff, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
+                        ],
+                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
+                  ],
+                ) :
+                Column(
+                  children: [
+                      GestureDetector(
+                        onDoubleTap: () async {
+                          setState(()  {
+                            if (!isLike!) {
                                 isLikeAnimation = true;
                                 isLike = true;
                                 likes = likes! + 1;
@@ -515,111 +426,206 @@ class _PostWidgetState extends State<PostWidget> {
                               await postService.postRemoveLike(widget.postID!);
                               await databaseService.removeUserLike(widget.postID!);
                             }
-                          }, 
-                            icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
+                        }, 
+                        child: Stack(
+                          alignment: Alignment.center ,
+                          children: [
+                            Container(
+                              height: MediaQuery.of(context).size.height * 0.38,
+                              child: PageView.builder(
+                                controller: pageController,
+                                itemBuilder: (_, index) {
+                                  return AnimatedBuilder(
+                                    animation: pageController,
+                                    builder: (ctx, child) {
+                                      return SizedBox(
+                                        child: Image(
+                                          image: NetworkImage(images![index]),fit: BoxFit.fill
+                                        ));
+                                    }
+                                  );
+                                },
+                                itemCount: images!.length
+                              )
+                            ),
+                            AnimatedOpacity(
+                              opacity: isLikeAnimation? 1: 0, 
+                              duration: const Duration(milliseconds: 200),
+                              child: LikeAnimation(
+                                child: const Icon(Icons.favorite, color: Colors.white, size: 100), 
+                                isAnimating: isLikeAnimation,
+                                duration: const Duration(
+                                  milliseconds: 400
+                                ),
+                                onEnd: () {
+                                  setState(() {
+                                    isLikeAnimation = false;
+                                  });
+                                },
+                              )  
+                            )
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.012,),
+                      images!.length == 1 ? Container(height: 0,) :  
+                      Column(children: [
+                        SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+                        SmoothPageIndicator(
+                          controller: pageController, 
+                          count: images!.length,
+                          effect: SwapEffect(
+                            activeDotColor: Colors.black,
+                            dotHeight: MediaQuery.of(context).size.height * 0.01,
+                            dotWidth: MediaQuery.of(context).size.height * 0.01,
+                            spacing:  MediaQuery.of(context).size.height * 0.005,
                           ),
-                        )
+                        ),
+                      ],),
+                      Stack(
+                        children: [
+                          Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.02,
+                          ),
+                          SizedBox(
+                            width: iconWidth,
+                            child: LikeAnimation(
+                              isAnimating: true,
+                              smallLike: false,
+                              child: IconButton(
+                              onPressed: () async {
+                                setState(()  {
+                                  if (!isLike!) {
+                                    isLikeAnimation = true;
+                                    isLike = true;
+                                    likes = likes! + 1;
+                                  }
+                                  else {
+                                    isLike = false;
+                                    likes = likes! - 1;
+                                  }
+                                });
+                                if (isLike!) {
+                                  await postService.postAddLike(widget.postID!);
+                                  await databaseService.addUserLike(widget.postID!);
+                                }
+                                else {
+                                  await postService.postRemoveLike(widget.postID!);
+                                  await databaseService.removeUserLike(widget.postID!);
+                                }
+                              }, 
+                                icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
+                              ),
+                            )
+                          ),
+                          widget.withComment! ? 
+                          SizedBox(
+                            width: iconWidth,
+                            child: IconButton(onPressed: () {
+                              nextScreen(context, CommentWidget(postId: widget.postID, uId: widget.uId,));
+                            }, icon: Icon(Icons.comment_outlined, size: logoSize),),
+                          ) : SizedBox()
+                        ],
                       ),
-                      widget.withComment! ? 
-                      SizedBox(
-                        width: iconWidth,
-                        child: IconButton(onPressed: () {
-                          nextScreen(context, CommentWidget(postId: widget.postID, uId: widget.uId,));
-                        }, icon: Icon(Icons.comment_outlined, size: logoSize),),
-                      ) : SizedBox()
-                    ],
-                  ),
-                  Positioned(
-                        left: bookMarkLeft,
+                      Positioned(
+                            left: bookMarkLeft,
 
-                        child: SizedBox(
-                        width: iconWidth,
-                          child: IconButton(onPressed: () async {
-                            setState(() {
-                              if (isBookMark!) {
-                                isBookMark = false;
-                              }
-                              else {
-                                isBookMark = true;
-                              }
-                            });
+                            child: SizedBox(
+                            width: iconWidth,
+                              child: IconButton(onPressed: () async {
+                                setState(() {
+                                  if (isBookMark!) {
+                                    isBookMark = false;
+                                  }
+                                  else {
+                                    isBookMark = true;
+                                  }
+                                });
 
-                            if (isBookMark!) {
+                                if (isBookMark!) {
 
-                              await databaseService.addUserBookMark(widget.postID!);
-                              await postService.addBookMark(widget.postID!, widget.uId!);
+                                  await databaseService.addUserBookMark(widget.postID!);
+                                  await postService.addBookMark(widget.postID!, widget.uId!);
 
-                            } else {
-                              await databaseService.removeUserBookMark(widget.postID!);
-                              await postService.removeBookMark(widget.postID!, widget.uId!);
-                            }
+                                } else {
+                                  await databaseService.removeUserBookMark(widget.postID!);
+                                  await postService.removeBookMark(widget.postID!, widget.uId!);
+                                }
 
-                          },
-                          icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
-                        )
+                              },
+                              icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
+                            )
+                          ),
+                          )
+                        ],
                       ),
-                      )
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.06,
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.005,),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.06,
+                          ),
+                          Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.9, fontWeight: FontWeight.bold),)
+                        ],
                       ),
-                      Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.9, fontWeight: FontWeight.bold),)
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.003,),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.06,
-                      ),
-                      Text(widget.description.toString(), style: TextStyle(fontSize: descriptionSize),)
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.06,
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.003,),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.06,
+                          ),
+                          Text(widget.description.toString(), style: TextStyle(fontSize: descriptionSize),)
+                        ],
                       ),
                       Row(
-                        children:List.generate(widget.tags.length, (index) {
-                          return Row(
-                            children: [
-                              GestureDetector(
-                                child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
-                                onTap: () {
-                                  nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
-                                }, 
-                              ),
-                              SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.02,
-                              ),
-                            ],
-                          );
-                        })                   
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.06,
+                          ),
+                          Row(
+                            children:List.generate(widget.tags.length, (index) {
+                              return Row(
+                                children: [
+                                  GestureDetector(
+                                    child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
+                                    onTap: () {
+                                      nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
+                                    }, 
+                                  ),
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width * 0.02,
+                                  ),
+                                ],
+                              );
+                            })                   
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.06,
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.06,
+                          ),
+                          Text(timeDiff, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
+                        ],
                       ),
-                      Text(timeDiff, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
-                    ],
-                  ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 0.07,),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.07,),
+                  ],
+                )
               ],
-            )
-          ],
-        ),
-      )
-    ]
-  );
+            ),
+          )
+        ]
+      );
+
+    } catch(e) {
+      return Container();
+    }
+    
   }
 
   void _showOptionMenu() {
@@ -649,7 +655,7 @@ class _PostWidgetState extends State<PostWidget> {
                   title: Text('Remove this post'),
                   onTap: () async {
                     await postService.removePost(widget.postID!, widget.email!);
-                    nextScreen(context, HomePage());
+                    nextScreen(context, HomePage(pageIndex: 0,));
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02,)

@@ -341,12 +341,12 @@ class _EditPostState extends State<EditPost> {
                         print(selectedImages);
                         PostService postService = new PostService();
                         await postService.updatePost(selectedImages, description, category, tags, withComment, widget.postId, widget.email);
-                        nextScreen(context, HomePage());
+                        nextScreen(context, HomePage(pageIndex: 0,));
                       }
                       else {
                         PostService postService = new PostService();
                         await postService.updatePostWithOutImages(description, category, tags, withComment, widget.postId);
-                        nextScreen(context, HomePage());
+                        nextScreen(context, HomePage(pageIndex: 0,));
                       }
                     }
                   }, 

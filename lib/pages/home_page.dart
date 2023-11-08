@@ -15,7 +15,10 @@ import 'package:like_app/widgets/widgets.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+
+  final int pageIndex;
+
+  const HomePage({super.key, required this.pageIndex});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -28,30 +31,42 @@ class _HomePageState extends State<HomePage> {
   String email = "";
 
   bool isEmailVerified = false;
+  bool isErrorOccurred = false;
 
   static List<File> selectedImages = [];
   final picker = ImagePicker();
 
+  int selectedIndex = 0;
+
   @override
   void initState() {
+    selectedIndex = widget.pageIndex;
+
     super.initState();
     gettingUserData();
+    
   }
 
   gettingUserData() async {
 
-    await HelperFunctions.getUserEmailFromSF().then((value) => {
-      setState(() {
-        email = value!;
-      })
-    });
+    try {
+      await HelperFunctions.getUserEmailFromSF().then((value) => {
+        setState(() {
+          email = value!;
+        })
+      });
 
-    await HelperFunctions.getUserNameFromSF().then((value) => {
-      setState(() {
-        userName = value!;
-      })
-    });
+      await HelperFunctions.getUserNameFromSF().then((value) => {
+        setState(() {
+          userName = value!;
+        })
+      });
 
+      } catch(e) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
   }
 
   final PageController _pageController = PageController();
@@ -61,8 +76,6 @@ class _HomePageState extends State<HomePage> {
     _pageController.dispose();
     super.dispose();
   }
-
-  int selectedIndex = 0;
 
   final _widgetOptions = <Widget>[
     Home(),
@@ -89,170 +102,183 @@ class _HomePageState extends State<HomePage> {
       sizedBox = MediaQuery.of(context).size.height * 0.047;
     }
     
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-        toolbarHeight: toolbarHeight,
-        
-        actions: [
-          IconButton(onPressed: (){
-            nextScreen(context, Search(searchName: "",));
-          },
-          icon: IconButton(
-            icon: Icon(Icons.search,),
-            onPressed: () {
+    try {
+      
+      return
+       Scaffold(
+        resizeToAvoidBottomInset: false,
+          appBar: AppBar(
+          toolbarHeight: toolbarHeight,
+          
+          actions: [
+            IconButton(onPressed: (){
               nextScreen(context, Search(searchName: "",));
             },
-          )) 
-        ],
-
-        elevation: 0,
-        centerTitle: true,
-        backgroundColor: Theme.of(context).primaryColor,
-        title: Text(
-          "LikeApp",
-          style: TextStyle(
-            color: Colors.white, fontWeight: FontWeight.w500, fontSize:  MediaQuery.of(context).size.height * 0.0205
-          ),
-        ),
-      ),
-      drawer: Drawer(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 50),
-          children: <Widget>[
-            Icon(
-              Icons.account_circle,
-              size: 150,
-              color: Colors.grey,
-            ),
-            const SizedBox(height: 15,),
-            Text(userName),
-            Text(email),
-            ElevatedButton(
-            child: Text("LOGOUT"),
-            onPressed: () {
-              authServie.signOut();
-              nextScreen(context, const LoginPage());
-            },)
+            icon: IconButton(
+              icon: Icon(Icons.search,),
+              onPressed: () {
+                nextScreen(context, Search(searchName: "",));
+              },
+            )) 
           ],
-        ),
-      ),
 
-      body: 
-      IndexedStack(
-                    index: selectedIndex,
-                    children: _widgetOptions,
-                  ),
-        // SingleChildScrollView(
-        //   child:Container(
-        //     color: Theme.of(context).primaryColor,
-        //     child: Column(
-        //       children: [
-        //         SizedBox(height: sizedBox,),
-        //         Container(
-        //           decoration: BoxDecoration(
-        //             color: Colors.white,
-        //           ),
-        //           child: IndexedStack(
-        //             index: selectedIndex,
-        //             children: _widgetOptions,
-        //           )
-        //           // Center(
-        //           //   child: _widgetOptions[selectedIndex],
-        //           //   // _widgetOptions.elementAt(selectedIndex)
-        //           // )
-        //         ),
-        //       ]
-        //     ),
-        //   ),
-        // ),
-      
-      bottomNavigationBar: isTablet?
-        SalomonBottomBar(
-        items: [
-          SalomonBottomBarItem(
-            icon: Icon(Icons.home_outlined, size: iconSize,),
-            title: Text("home"),
-            selectedColor:
-                Theme.of(context).primaryColor
+          elevation: 0,
+          centerTitle: true,
+          backgroundColor: Theme.of(context).primaryColor,
+          title: Text(
+            "LikeApp",
+            style: TextStyle(
+              color: Colors.white, fontWeight: FontWeight.w500, fontSize:  MediaQuery.of(context).size.height * 0.0205
+            ),
           ),
-          SalomonBottomBarItem(
-            icon: Icon(Icons.favorite_border, size: iconSize,),
-            title: Text("likes"),
-            selectedColor:
-                Theme.of(context).primaryColor
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: 50),
+            children: <Widget>[
+              Icon(
+                Icons.account_circle,
+                size: 150,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 15,),
+              Text(userName),
+              Text(email),
+              ElevatedButton(
+              child: Text("LOGOUT"),
+              onPressed: () {
+                authServie.signOut();
+                nextScreen(context, const LoginPage());
+              },)
+            ],
           ),
-          SalomonBottomBarItem(
-            icon: Icon(Icons.post_add_outlined, size: iconSize,),
-            title: Text("post"),
-            selectedColor:
-                Theme.of(context).primaryColor
-          ),
-          SalomonBottomBarItem(
-            icon: Icon(Icons.person_2_outlined, size: iconSize,),
-            title: Text("profile"),
-            selectedColor:
-                Theme.of(context).primaryColor
-          ),
-        ],
-        currentIndex: selectedIndex,
-        selectedItemColor: Colors.amber[800],
-          onTap: (index) {
-          setState(() {
-            if (this.mounted) {
-              if (index == 2) {
-                _showPicMenu();
-              }
-              else {
-                selectedIndex = index;
-              }
-            }
-          });
-        },
+        ),
+
+        body: 
+        isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                });
+                gettingUserData();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
       ) :
-      SalomonBottomBar(
-        items: [
-          SalomonBottomBarItem(
-            icon: Icon(Icons.home_outlined),
-            title: Text("home"),
-            selectedColor:
-                Theme.of(context).primaryColor
-          ),
-          SalomonBottomBarItem(
-            icon: Icon(Icons.favorite_border),
-            title: Text("likes"),
-            selectedColor:
-                Theme.of(context).primaryColor
-          ),
-          SalomonBottomBarItem(
-            icon: Icon(Icons.post_add_outlined),
-            title: Text("post"),
-            selectedColor:
-                Theme.of(context).primaryColor
-          ),
-          SalomonBottomBarItem(
-            icon: Icon(Icons.person_2_outlined),
-            title: Text("profile"),
-            selectedColor:
-                Theme.of(context).primaryColor
-          ),
-        ],
-        currentIndex: selectedIndex,
-        selectedItemColor: Colors.amber[800],
-          onTap: (index) {
-          setState(() {
-            if (this.mounted) {
-              if (index == 2) {
-                _showPicMenu();
+        IndexedStack(
+                      index: selectedIndex,
+                      children: _widgetOptions,
+                    ),
+        bottomNavigationBar: isTablet?
+          SalomonBottomBar(
+          items: [
+            SalomonBottomBarItem(
+              icon: Icon(Icons.home_outlined, size: iconSize,),
+              title: Text("home"),
+              selectedColor:
+                  Theme.of(context).primaryColor
+            ),
+            SalomonBottomBarItem(
+              icon: Icon(Icons.favorite_border, size: iconSize,),
+              title: Text("likes"),
+              selectedColor:
+                  Theme.of(context).primaryColor
+            ),
+            SalomonBottomBarItem(
+              icon: Icon(Icons.post_add_outlined, size: iconSize,),
+              title: Text("post"),
+              selectedColor:
+                  Theme.of(context).primaryColor
+            ),
+            SalomonBottomBarItem(
+              icon: Icon(Icons.person_2_outlined, size: iconSize,),
+              title: Text("profile"),
+              selectedColor:
+                  Theme.of(context).primaryColor
+            ),
+          ],
+          currentIndex: selectedIndex,
+          selectedItemColor: Colors.amber[800],
+            onTap: (index) {
+            setState(() {
+              if (this.mounted) {
+                if (index == 2) {
+                  _showPicMenu();
+                }
+                else {
+                  selectedIndex = index;
+                }
               }
-              else {
-                selectedIndex = index;
-            }
-            }
-          });
-        },
-      ),
-    );
+            });
+          },
+        ) :
+        SalomonBottomBar(
+          items: [
+            SalomonBottomBarItem(
+              icon: Icon(Icons.home_outlined),
+              title: Text("home"),
+              selectedColor:
+                  Theme.of(context).primaryColor
+            ),
+            SalomonBottomBarItem(
+              icon: Icon(Icons.favorite_border),
+              title: Text("likes"),
+              selectedColor:
+                  Theme.of(context).primaryColor
+            ),
+            SalomonBottomBarItem(
+              icon: Icon(Icons.post_add_outlined),
+              title: Text("post"),
+              selectedColor:
+                  Theme.of(context).primaryColor
+            ),
+            SalomonBottomBarItem(
+              icon: Icon(Icons.person_2_outlined),
+              title: Text("profile"),
+              selectedColor:
+                  Theme.of(context).primaryColor
+            ),
+          ],
+          currentIndex: selectedIndex,
+          selectedItemColor: Colors.amber[800],
+            onTap: (index) {
+            setState(() {
+              if (this.mounted) {
+                if (index == 2) {
+                  _showPicMenu();
+                }
+                else {
+                  selectedIndex = index;
+              }
+              }
+            });
+          },
+        ),
+      );
+
+    } catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                });
+                gettingUserData();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+
+    }
   }
 
   Future getImages() async {

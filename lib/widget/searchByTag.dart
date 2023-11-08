@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
-import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/search.dart';
 import 'package:like_app/widget/searchName.dart';
 import 'package:like_app/widget/searchTag.dart';
@@ -24,9 +23,6 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
   String? uId = "";
 
   bool isUIdLoading = true;
-
-  // bool isProfileLoading = true;
-  // String profile = "";
 
   int _currentIndex = 2;
 
@@ -89,7 +85,7 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
           backgroundColor: Theme.of(context).primaryColor,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),
-            onPressed: () => nextScreen(context, HomePage())
+            onPressed: () => Navigator.of(context).pop()
           ),
           title: TextFormField(
               style: TextStyle(color: Colors.white),

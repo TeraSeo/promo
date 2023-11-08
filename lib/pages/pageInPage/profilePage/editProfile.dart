@@ -139,15 +139,15 @@ class _EditProfileState extends State<EditProfile> {
                           setState(() {
                             isProfileChanging = true;
                           });
-
-                          if (widget.usage == "profile") {
-                            await databaseService.setUserProfile(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
-                          }
-                          else if (widget.usage == "background") {
-                            await databaseService.setUserBackground(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
-                          }
-                          Future.delayed(Duration(seconds: 1),() {
-                            nextScreen(context, HomePage());
+                          
+                          Future.delayed(Duration(seconds: 0),() async {
+                            if (widget.usage == "profile") {
+                              await databaseService.setUserProfile(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
+                            }
+                            else if (widget.usage == "background") {
+                              await databaseService.setUserBackground(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
+                            }
+                            nextScreen(context, HomePage(pageIndex: 3,));
                           });
 
                         }

@@ -306,5 +306,3 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
       );
 
 }
-
-// Theme.of(context).primaryColor,

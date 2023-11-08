@@ -18,6 +18,7 @@ class _HomeState extends State<Home> {
   bool isUIdLoading = true;
   bool isMoreLoading = false;
   bool isWholePostLengthLoading = true;
+  bool isErrorOccurred = false;
 
   int? wholePostLength;
 
@@ -37,40 +38,94 @@ class _HomeState extends State<Home> {
   }
 
   void getPosts() async {
-    PostService postService = new PostService();
-     await postService.getPosts().then((value) => {
-      posts = value,
-      if (this.mounted) {
-          setState(() {
-            isLoading = false;
-          })
-      }
-    });
+    try {
+      PostService postService = new PostService();
+      await postService.getPosts().then((value) => {
+        posts = value,
+        if (this.mounted) {
+            setState(() {
+              isLoading = false;
+            })
+        }
+      });
+
+    } catch(e) {
+
+      setState(() {
+        isErrorOccurred = true;
+      });
+
+    }
+    
   }
 
    void getUId() async{
-    await HelperFunctions.getUserUIdFromSF().then((value) => {
-      uId = value,
-      if (this.mounted) {
-        setState(() {
-          isUIdLoading = false;
-        })
-      }
-    });
+    try {
+
+      await HelperFunctions.getUserUIdFromSF().then((value) => {
+        uId = value,
+        if (this.mounted) {
+          setState(() {
+            isUIdLoading = false;
+          })
+        }
+      });
+
+    } catch(e) {
+
+      setState(() {
+        isErrorOccurred = true;
+      });
+
+    }
+    
   }
 
   void getPostLength() async {
-    await postCollection.get().then((value) => {
-      wholePostLength = value.docs.length,
+    try {
+      
+      await postCollection.get().then((value) => {
+        wholePostLength = value.docs.length,
+        setState(() {
+          isWholePostLengthLoading = false;
+        }),
+      });
+
+    } catch(e) {
+
       setState(() {
-        isWholePostLengthLoading = false;
-      }),
-    });
+        isErrorOccurred = true;
+      });
+
+    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
+
+    try {
     return 
+      isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                  isUIdLoading = false;
+                  isLoading = false;
+                  isWholePostLengthLoading = false;
+                });
+                getUId();
+                getPosts();
+                getPostLength();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : 
       (isUIdLoading || isLoading || isWholePostLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
         NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
@@ -180,7 +235,31 @@ class _HomeState extends State<Home> {
               )
         )
       )
-    );
+    );}
+    catch(e) {
+
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                  isUIdLoading = false;
+                  isLoading = false;
+                  isWholePostLengthLoading = false;
+                });
+                getUId();
+                getPosts();
+                getPostLength();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+
+    }
   }
   
 }
