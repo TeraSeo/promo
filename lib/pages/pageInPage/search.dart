@@ -3,6 +3,7 @@ import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/widget/searchName.dart';
 import 'package:like_app/widget/searchTag.dart';
 import 'package:like_app/widget/searchUser.dart';
+import 'package:like_app/widgets/widgets.dart';
 
 class Search extends StatefulWidget {
 
@@ -69,7 +70,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
     final _tabContent = <Widget>[
       searchController!.text == "" ? 
             Container() : 
-            searchName(searchedName: searchController!.text, uId: uId!),
+            SearchName(searchedName: searchController!.text, uId: uId!),
       searchController!.text == "" ? 
             Container() :
             SearchUser(searchedName: searchController!.text, uId: uId!),
@@ -106,9 +107,13 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                 prefixIconColor: Colors.white
               ),
               onFieldSubmitted: (String _) {
-                setState(() {
-                  searchController!.text = _;
-                });
+                if (this.mounted) {
+                  if (_ != "") {
+                    setState(() {
+                      nextScreenReplace(context, Search(searchName: _));
+                    });
+                  }
+                }
               },
             ),
             bottom: TabBar(

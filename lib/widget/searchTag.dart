@@ -40,9 +40,11 @@ class _SearchTagState extends State<SearchTag> {
       where('tags', arrayContains: widget.searchedName).limit(7).
       get().then((value) => {
         wholeTagsLength = value.docs.length,
-        setState(() {
-          isWholeTagsLengthLoading = false;
-        }),
+        if (this.mounted) {
+          setState(() {
+            isWholeTagsLengthLoading = false;
+          }),
+        }
     });
   }
 
@@ -62,16 +64,20 @@ class _SearchTagState extends State<SearchTag> {
     PostService postService = new PostService();
      await postService.loadMoreTagsBySearchName(searchedName, postNumber).then((value) => {
       if (value.length == 0) {
-        setState(() {
-          isLoadingMoreTagsPossible = false;
-        })
+        if (this.mounted) {
+          setState(() {
+            isLoadingMoreTagsPossible = false;
+          })
+        }
       }
       else {
-        for (int i = 0; i < value.length; i++) {
-          setState(() {
-            tags![tags!.length] = value[i];
-          })
-        },
+        if (this.mounted) {
+          for (int i = 0; i < value.length; i++) {
+            setState(() {
+              tags![tags!.length] = value[i];
+            })
+          },
+        }
       },
       if (this.mounted) {
         setState(() {
@@ -95,18 +101,18 @@ class _SearchTagState extends State<SearchTag> {
               },
               child: RefreshIndicator(
                 onRefresh: () async {
-
-                  setState(() {
-                    isTagLoading = true;
-                    isWholeTagsLengthLoading = true;
-                  });
-
+                  if (this.mounted) {
+                    setState(() {
+                      isTagLoading = true;
+                      isWholeTagsLengthLoading = true;
+                    });
+                  }
                   await getTagsBySearchName(widget.searchedName);
                   getTagsLength(widget.searchedName);
                 },
                 child: SingleChildScrollView(
             child: Wrap(children: List.generate(tags!.length, (index) { 
-                return PostWidget(email: tags![index]["email"], postID: tags![index]["postId"], name: tags![index]["writer"], image: tags![index]["images"], description: tags![index]["description"],isLike: tags![index]["likes"].contains(widget.uId), likes: tags![index]["likes"].length, uId: widget.uId, postOwnerUId: tags![index]["uId"], withComment: tags![index]["withComment"], isBookMark: tags![index]["bookMarks"].contains(widget.uId), tags: tags![index]["tags"], posted: tags![index]["posted"]);
+                return PostWidget(email: tags![index]["email"], postID: tags![index]["postId"], name: tags![index]["writer"], image: tags![index]["images"], description: tags![index]["description"],isLike: tags![index]["likes"].contains(widget.uId), likes: tags![index]["likes"].length, uId: widget.uId, postOwnerUId: tags![index]["uId"], withComment: tags![index]["withComment"], isBookMark: tags![index]["bookMarks"].contains(widget.uId), tags: tags![index]["tags"], posted: tags![index]["posted"], isProfileClickable: true,);
 
             })))
        ));

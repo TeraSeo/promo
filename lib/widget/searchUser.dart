@@ -59,15 +59,19 @@ class _SesarchUserState extends State<SearchUser> {
     DatabaseService databaseService = new DatabaseService();
      await databaseService.loadMoreUsersBySearchedName(searchedName, uId).then((value) => {
       if (value.length == 0) {
-        setState(() {
-          isLoadingMoreUsersPossible = false;
-        })
+        if (this.mounted) {
+          setState(() {
+            isLoadingMoreUsersPossible = false;
+          })
+        }
       }
       else {
-        for (int i = 0; i < value.length; i++) {
-          setState(() {
-            users![users!.length] = value[i];
-          })
+        if (this.mounted) {
+          for (int i = 0; i < value.length; i++) {
+              setState(() {
+                users![users!.length] = value[i];
+              })
+          }
         },
         setProfileUrls()
       },
@@ -88,10 +92,11 @@ class _SesarchUserState extends State<SearchUser> {
       await getProfileURL(users![profileURLs.length - 1]["email"], users![profileURLs.length - 1]["profilePic"], profileURLs.length - 1);
     }
 
-    setState(() {
-      isProfileLoading = false;
-    });
-
+    if (this.mounted) {
+      setState(() {
+        isProfileLoading = false;
+      });
+    }
   }
 
   getProfileURL(String email, String profile, int index) async {
@@ -122,9 +127,11 @@ class _SesarchUserState extends State<SearchUser> {
       where('name', isGreaterThanOrEqualTo: searchedName).
       get().then((value) => {
         wholeAccountsLength = value.docs.length,
-        setState(() {
-          isWholeAccountsLengthLoading = false;
-        }),
+        if (this.mounted) {
+          setState(() {
+            isWholeAccountsLengthLoading = false;
+          }),
+        }
     });
   }
 
@@ -147,13 +154,13 @@ class _SesarchUserState extends State<SearchUser> {
               },
               child: RefreshIndicator(
                 onRefresh: () async {
-
-                  setState(() {
-                    isWholeAccountsLengthLoading = true;
-                    isUserLoading = true;
-                    isProfileLoading = true;
-                  });
-
+                  if (this.mounted) {
+                    setState(() {
+                      isWholeAccountsLengthLoading = true;
+                      isUserLoading = true;
+                      isProfileLoading = true;
+                    });
+                  }
                   await getUsersBySearchName(widget.searchedName);
                   getAccountsLength(widget.searchedName);
                   

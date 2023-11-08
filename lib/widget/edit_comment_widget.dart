@@ -131,7 +131,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
         title: Text("Comments", style: TextStyle(fontSize: barFontSize),),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
-          onPressed: () => nextScreen(context, HomePage()),
+          onPressed: () => Navigator.of(context).pop(),
         ), 
       ),
       body: 

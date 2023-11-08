@@ -28,8 +28,10 @@ class PostWidget extends StatefulWidget {
   final bool? isBookMark;
   final List<dynamic> tags;
   final Timestamp posted;
+
+  final bool isProfileClickable;
   
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted});
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -183,7 +185,9 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                     InkWell(
                       onTap: () {
-                        nextScreenReplace(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                        if (widget.isProfileClickable) {
+                          nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                        }
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.height * 0.05,
@@ -225,7 +229,9 @@ class _PostWidgetState extends State<PostWidget> {
                     ),
                     InkWell(
                       onTap: () {
-                        nextScreenReplace(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                        if (widget.isProfileClickable) {
+                          nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                        }
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.height * 0.05,
@@ -372,7 +378,7 @@ class _PostWidgetState extends State<PostWidget> {
                               GestureDetector(
                                 child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
                                 onTap: () {
-                                  nextScreenReplace(context, SearchByTag(searchText: widget.tags[index].toString()));
+                                  nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
                                 }, 
                               ),
                               SizedBox(
@@ -585,7 +591,7 @@ class _PostWidgetState extends State<PostWidget> {
                               GestureDetector(
                                 child: Text("#" + widget.tags[index].toString(), style: TextStyle(fontSize: descriptionSize, color: Colors.blueGrey),),
                                 onTap: () {
-                                  nextScreenReplace(context, SearchByTag(searchText: widget.tags[index].toString()));
+                                  nextScreen(context, SearchByTag(searchText: widget.tags[index].toString()));
                                 }, 
                               ),
                               SizedBox(
@@ -726,7 +732,9 @@ class _PostWidgetState extends State<PostWidget> {
                   leading: Icon(Icons.person),
                   title: Text('About this account'),
                   onTap: () {
-                    nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                    if (widget.isProfileClickable) {
+                      nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
+                    }
                   },
                 ),
                 ListTile(

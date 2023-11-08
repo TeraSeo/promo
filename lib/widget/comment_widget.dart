@@ -136,15 +136,21 @@ class _CommentWidgetState extends State<CommentWidget> {
 
     }
 
+    try {
+
+    } catch(e) {
+      
+    }
+
     return (isLoading || isWholeCommentLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
         title: Text("Comments", style: TextStyle(fontSize: barFontSize),),
-        // leading: IconButton(
-        //   icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
-        //   onPressed: () => nextScreenReplace(context, Home()),
-        // ), 
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
+          onPressed: () => Navigator.of(context).pop()
+        ), 
       ),
       body: 
       comments!.length > 0 ? 

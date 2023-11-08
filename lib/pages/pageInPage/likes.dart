@@ -197,7 +197,7 @@ class _LikesRankingState extends State<LikesRanking> {
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
                               subtitle: Text(
-                                snapshot.data!.docs[index]["email"]
+                                snapshot.data!.docs[index]["email"] + "  / " + snapshot.data!.docs[index]["wholeLikes"].toString() + " likes"
                               ),
                             ),
                           )

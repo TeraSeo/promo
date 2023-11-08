@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/logger.dart';
-import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
@@ -10,9 +9,7 @@ import 'package:like_app/widget/background_widget.dart';
 import 'package:like_app/widget/numbers_widget.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
-import 'package:like_app/services/RestApi.dart';
 import 'package:like_app/services/userService.dart';
-import 'package:like_app/widgets/widgets.dart';
 
 class OthersProfilePages extends StatefulWidget {
 
@@ -155,7 +152,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
         backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),
-          onPressed: () => nextScreen(context, HomePage()),
+          onPressed: () => Navigator.of(context).pop(),
         )
       ),
       body: SingleChildScrollView(
@@ -237,7 +234,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           Column(
             children: 
                 List.generate(posts!.length, (index) {
-                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"]);
+                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: false,);
                 }
             )
           ),
