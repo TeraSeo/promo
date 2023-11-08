@@ -172,7 +172,10 @@ class PostService {
   Future loadMore(int postNumber) async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
-    await postCollection.orderBy("postNumber", descending: true).limit(7).get().then((value) => {
+    await postCollection.
+          where("postNumber", isLessThan: postNumber).
+          orderBy("postNumber", descending: true).
+          limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
         posts[i] = post;
@@ -189,8 +192,8 @@ class PostService {
     int i = 0;
     await FirebaseFirestore.instance.collection("post").
       where('description', isGreaterThanOrEqualTo: searchedName).
-      orderBy("description", descending: false).
-      orderBy("postNumber", descending: true).
+      // orderBy("description", descending: false).
+      // orderBy("postNumber", descending: true).
       limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
@@ -226,7 +229,7 @@ class PostService {
     int i = 0;
     await FirebaseFirestore.instance.collection("post").
       where('tags', arrayContains: searchedName).
-      // orderBy("posted", descending: true).
+      orderBy("postNumber", descending: true).
       limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> tag = element.data() as Map<String, dynamic>;
@@ -239,17 +242,19 @@ class PostService {
 
   }
 
-  Future<Map<dynamic, dynamic>> loadMoreTagsBySearchName(String searchedName, String date) async {
+  Future<Map<dynamic, dynamic>> loadMoreTagsBySearchName(String searchedName, String postNumber) async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
-    await FirebaseFirestore.instance.collection("post").
-      where('tags', arrayContains: searchedName).where('posted', isLessThanOrEqualTo: date).limit(7).get().then((value) => {
+
+    await FirebaseFirestore.instance.collection("post")
+      .where('tags', arrayContains: searchedName)
+      .orderBy('postNumber', descending: true)
+      .where('postNumber', isLessThan: int.parse(postNumber))
+      .limit(7).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
-        if (post["posted"] != date) {
-          posts[i] = post;
-          i += 1;
-        }
+        posts[i] = post;
+        i += 1;
       })
     });
 

@@ -12,11 +12,18 @@ import 'package:like_app/widgets/widgets.dart';
 
 class CommentCard extends StatefulWidget {
 
+  final int? likes;
+  final bool? isCommentLike;
+  final String? commentOwnerUid;
+  final String? email;
+  final String? name;
+  final DateTime? posted;
+
   final String? commentId;
   final String? uId;
   final String? postId;
 
-  const CommentCard({super.key, required this.commentId, required this.uId, required this.postId});
+  const CommentCard({super.key, required this.likes, required this.isCommentLike, required this.commentOwnerUid, required this.email, required this.name, required this.posted, required this.commentId, required this.uId, required this.postId});
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -27,21 +34,16 @@ class _CommentCardState extends State<CommentCard> {
   DocumentSnapshot<Map<String, dynamic>>? commentInfo;
 
   bool isLoading = true;
-  bool isCommentLike = false;
-  int likes = 0;
-  String commentOwnerUid = "";
 
   String? profileUrl = "";
   
   bool isProfileLoading = true;
 
-  bool isOwnComment = false;
-  
-  String email = "";
-  String name = "";
-
   DateTime? current;
-  DateTime? posted;
+
+  bool? isOwnComment;
+  bool? isCommentLike;
+  int? likes;
 
   String? diff = "";
 
@@ -51,7 +53,9 @@ class _CommentCardState extends State<CommentCard> {
 
   @override
   void initState() {
+
     super.initState();
+
     Future.delayed(Duration(seconds: 0)).then((value) async => {
       await getCommentInfo(),
       await getOwnerProfile()
@@ -61,11 +65,11 @@ class _CommentCardState extends State<CommentCard> {
   getOwnerProfile() async {
 
     QuerySnapshot snapshot =
-        await DatabaseService().gettingUserData(email);
+        await DatabaseService().gettingUserData(widget.email!);
 
     Storage storage = new Storage();
     try {
-      await storage.loadProfileFile(email, snapshot.docs[0]["profilePic"].toString()).then((value) => {
+      await storage.loadProfileFile(widget.email!, snapshot.docs[0]["profilePic"].toString()).then((value) => {
         profileUrl = value,
         if (this.mounted) {
           setState(() {
@@ -79,7 +83,7 @@ class _CommentCardState extends State<CommentCard> {
           isProfileLoading = false;
         });
       }
-      logging.message_error(name + "'s error " + e.toString());
+      logging.message_error(widget.name! + "'s error " + e.toString());
     }
   }
 
@@ -89,41 +93,45 @@ class _CommentCardState extends State<CommentCard> {
       commentInfo = value,
       if (mounted) {
         setState(() {
-          likes = commentInfo!["likedUsers"].length;
-          isCommentLike = commentInfo!["likedUsers"].contains(widget.uId);
-          commentOwnerUid = commentInfo!["uId"];
-          isOwnComment = commentOwnerUid == widget.uId;
 
-          email = commentInfo!["email"];
-          name = commentInfo!["username"];
+          isCommentLike = widget.isCommentLike!;
+          likes = widget.likes;
 
+          isOwnComment = widget.uId == widget.commentOwnerUid;
           current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
-          posted = DateTime.fromMicrosecondsSinceEpoch(commentInfo!["posted"].microsecondsSinceEpoch);
 
-          if (current!.difference(posted!).inSeconds < 60 && current!.difference(posted!).inSeconds >= 1) {
-            diff = current!.difference(posted!).inSeconds.toString() + "s ago";
-          } 
-          else if (current!.difference(posted!).inMinutes < 60 && current!.difference(posted!).inMinutes >= 1) {
-            diff = current!.difference(posted!).inMinutes.toString() + "m ago";
-          } 
-          else if (current!.difference(posted!).inHours < 24 && current!.difference(posted!).inHours >= 1) {
-            diff = current!.difference(posted!).inHours.toString() + "h ago";
-          }
-          else if (current!.difference(posted!).inDays < 365 && current!.difference(posted!).inDays >= 1) {
-            diff = current!.difference(posted!).inDays.toString() + "d ago";
-          }
-          else if (current!.difference(posted!).inDays >= 365) {
-            diff = (current!.difference(posted!).inDays ~/ 365).toString() + "y ago";
-          } 
-          else {
-            diff = "now";
-          }
-
-          isLoading = false;
+          calcTime(current!, widget.posted!);
 
         })
       }
     });
+  }
+
+  calcTime(DateTime current, DateTime posted) {
+
+    if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
+      diff = current.difference(posted).inSeconds.toString() + "s ago";
+    } 
+    else if (current.difference(posted).inMinutes < 60 && current.difference(posted).inMinutes >= 1) {
+      diff = current.difference(posted).inMinutes.toString() + "m ago";
+    } 
+    else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
+      diff = current.difference(posted).inHours.toString() + "h ago";
+    }
+    else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
+      diff = current.difference(posted).inDays.toString() + "d ago";
+    }
+    else if (current.difference(posted).inDays >= 365) {
+      diff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
+    } 
+    else {
+      diff = "now";
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+
   }
 
   @override
@@ -152,22 +160,22 @@ class _CommentCardState extends State<CommentCard> {
     GestureDetector(
       onDoubleTap: () async {
         setState(() {
-          if (isCommentLike) {
+          if (isCommentLike!) {
             isCommentLike = false;
-            likes = likes - 1;
+            likes = likes! - 1;
             commentService.removeCommentLikeUser(widget.uId!);
           } else {
             isCommentLike = true;
-            likes = likes + 1;
+            likes = likes! + 1;
             commentService.addCommentLikeUser(widget.uId!);
           }
         });
 
-        if (isCommentLike) {
-          await databaseService.plusCommentLike(commentOwnerUid);
+        if (isCommentLike!) {
+          await databaseService.plusCommentLike(widget.commentOwnerUid!);
 
         } else {
-          await databaseService.minusCommentLike(commentOwnerUid);
+          await databaseService.minusCommentLike(widget.commentOwnerUid!);
         }
       },
       child: Container(
@@ -182,7 +190,7 @@ class _CommentCardState extends State<CommentCard> {
           children: [
             InkWell(
               onTap: () {
-                nextScreenReplace(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: commentOwnerUid,));
+                nextScreenReplace(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.commentOwnerUid!,));
               },
               child: Container(
                 width: MediaQuery.of(context).size.height * 0.05,
@@ -244,7 +252,7 @@ class _CommentCardState extends State<CommentCard> {
               ),
           ],
         ),
-        isOwnComment ?
+        isOwnComment! ?
          Positioned(child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -252,25 +260,25 @@ class _CommentCardState extends State<CommentCard> {
               width: MediaQuery.of(context).size.width * 0.04,
               child: IconButton(onPressed: () async {
                 setState(() {
-                  if (isCommentLike) {
+                  if (isCommentLike!) {
                     isCommentLike = false;
-                    likes = likes - 1;
+                    likes = likes! - 1;
                     commentService.removeCommentLikeUser(widget.uId!);
                     
                   } else {
                     isCommentLike = true;
-                    likes = likes + 1;
+                    likes = likes! + 1;
                     commentService.addCommentLikeUser(widget.uId!);
                   }
                 });
 
-                if (isCommentLike) {
+                if (isCommentLike!) {
                   await databaseService.plusCommentLike(widget.uId!);
 
                 } else {
                   await databaseService.minusCommentLike(widget.uId!);
                 }
-              }, icon: isCommentLike? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
+              }, icon: isCommentLike!? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
             ),
             IconButton(onPressed: () {
               _showOptionMenu();
@@ -286,24 +294,24 @@ class _CommentCardState extends State<CommentCard> {
               width: MediaQuery.of(context).size.width * 0.08,
               child: IconButton(onPressed: () async {
                 setState(() {
-                  if (isCommentLike) {
+                  if (isCommentLike!) {
                     isCommentLike = false;
-                    likes = likes - 1;
+                    likes = likes! - 1;
                     commentService.removeCommentLikeUser(widget.uId!);
                   } else {
                     isCommentLike = true;
-                    likes = likes + 1;
+                    likes = likes! + 1;
                     commentService.addCommentLikeUser(widget.uId!);
                   }
                 });
 
-                if (isCommentLike) {
+                if (isCommentLike!) {
                   await databaseService.plusCommentLike(widget.uId!);
 
                 } else {
                   await databaseService.minusCommentLike(widget.uId!);
                 }
-              }, icon: isCommentLike? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
+              }, icon: isCommentLike!? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
             ),
           ],
          ), left: MediaQuery.of(context).size.width * 0.78,)

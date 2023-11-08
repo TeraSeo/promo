@@ -59,16 +59,12 @@ class _HomeState extends State<Home> {
     });
   }
 
-  final CollectionReference userCollection = 
-        FirebaseFirestore.instance.collection("user");
-
   void getPostLength() async {
     await postCollection.get().then((value) => {
       wholePostLength = value.docs.length,
       setState(() {
         isWholePostLengthLoading = false;
       }),
-      print(wholePostLength)
     });
   }
 

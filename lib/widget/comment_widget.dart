@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/helper/helper_function.dart';
@@ -20,23 +21,29 @@ class CommentWidget extends StatefulWidget {
 class _CommentWidgetState extends State<CommentWidget> {
 
   String? content = "";
-  List<dynamic>? comments = [];
+  Map<dynamic, dynamic>? comments;
 
   bool isLoading = true;
   bool isCommentSubmitting = false;
+  bool isEmailLoading = true;
 
   String email = "";
+
+  bool isLoadingMorePostsPossible = true;
+  bool isMoreLoading = false;
+  int wholePostsLength = 0;
 
   @override
   void initState() {
     super.initState();
     getEmail();
     getComments();
+    getCommentLength();
   }
 
   getComments() async {
     CommentService commentService = new CommentService(postId: widget.postId);
-    await commentService.getComments().then((value) => {
+    await commentService.getComments(widget.postId!).then((value) => {
       comments = value,
       if (this.mounted) {
         setState(() {
@@ -48,14 +55,45 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   getEmail() async {
     HelperFunctions.getUserEmailFromSF().then((value) => {
+      email = value!,
       if (this.mounted) {
         setState(() {
-          email = value!;
+          isEmailLoading = false;
         })
       }
     });
   }
 
+  getMoreComments() async {
+    CommentService commentService = new CommentService(postId: widget.postId);
+    await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!).then((value) => {
+      for (int i = 0; i < value.length; i++) {
+        setState(() {
+          comments![comments!.length] = value[i];
+        })
+      },
+      if (this.mounted) {
+        setState(() {
+          isMoreLoading = false;
+        })
+      }
+    });
+  }
+
+  final CollectionReference commentCollection = 
+        FirebaseFirestore.instance.collection("comment");
+
+  int? wholeCommentLength;
+  bool isWholeCommentLengthLoading = true;
+
+  void getCommentLength() async {
+    await commentCollection.get().then((value) => {
+      wholeCommentLength = value.docs.length,
+      setState(() {
+        isWholeCommentLengthLoading = false;
+      }),
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +136,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
     }
 
-    return isLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
+    return (isLoading || isWholeCommentLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
@@ -111,16 +149,29 @@ class _CommentWidgetState extends State<CommentWidget> {
       body: 
       comments!.length > 0 ? 
       Container(
+        child: NotificationListener<ScrollNotification>(
+        onNotification: (scrollNotification) {
+          if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !isMoreLoading && wholeCommentLength! > comments!.length) {
+            isMoreLoading = true;
+
+            getMoreComments();
+
+          }
+          return true;
+        },
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
           itemCount: comments!.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              child: CommentCard(commentId: comments![index], uId: widget.uId, postId: widget.postId,),
+              child: CommentCard(likes: comments![index]["likedUsers"].length, isCommentLike: comments![index]["likedUsers"].contains(widget.uId),
+                                 commentOwnerUid: comments![index]["uId"], email: comments![index]["email"], name: comments![index]["username"], 
+                                 posted: DateTime.fromMicrosecondsSinceEpoch(comments![index]["posted"].microsecondsSinceEpoch), 
+                                 commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId,),
             );
           }
         )
-      ) : Container(),
+      )) : Container(),
       bottomNavigationBar: SafeArea(
         child: Container(
           height: kTooHeight,

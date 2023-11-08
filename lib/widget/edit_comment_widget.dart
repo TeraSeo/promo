@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/pages/home_page.dart';
@@ -23,10 +24,11 @@ class EditCommentWidget extends StatefulWidget {
 class _EditCommentWidgetState extends State<EditCommentWidget> {
 
   String? content = "";
-  List<dynamic>? comments = [];
+  Map<dynamic, dynamic>? comments;
 
   bool isLoading = true;
   bool isCommentSubmitting = false;
+  bool isMoreLoading = false;
 
   @override
   void initState() {
@@ -35,19 +37,51 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
       content = widget.description;
     });
     getComments();
+    getCommentLength();
   }
 
   getComments() async {
     CommentService commentService = new CommentService(postId: widget.postId);
-    await commentService.getComments().then((value) => {
+    await commentService.getComments(widget.postId!).then((value) => {
       comments = value,
-      setState(() {
-        isLoading = false;
-      })
+      if (this.mounted) {
+        setState(() {
+          isLoading = false;
+        })
+      }
     });
   }
 
+  getMoreComments() async {
+    CommentService commentService = new CommentService(postId: widget.postId);
+    await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!).then((value) => {
+      for (int i = 0; i < value.length; i++) {
+        setState(() {
+          comments![comments!.length] = value[i];
+        })
+      },
+      if (this.mounted) {
+        setState(() {
+          isMoreLoading = false;
+        })
+      }
+    });
+  }
 
+  final CollectionReference commentCollection = 
+        FirebaseFirestore.instance.collection("comment");
+
+  int? wholeCommentLength;
+  bool isWholeCommentLengthLoading = true;
+
+  void getCommentLength() async {
+    await commentCollection.get().then((value) => {
+      wholeCommentLength = value.docs.length,
+      setState(() {
+        isWholeCommentLengthLoading = false;
+      }),
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -103,15 +137,28 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
       body: 
       comments!.length > 0 ? 
       Container(
+        child: NotificationListener<ScrollNotification>(
+        onNotification: (scrollNotification) {
+          if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && !isMoreLoading && wholeCommentLength! > comments!.length) {
+            isMoreLoading = true;
+
+            getMoreComments();
+
+          }
+          return true;
+        },
         child: ListView.builder(
           padding: const EdgeInsets.all(8),
           itemCount: comments!.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
-              child: CommentCard(commentId: comments![index], uId: widget.uId, postId: widget.postId),
+              child: CommentCard(likes: comments![index]["likedUsers"].length, isCommentLike: comments![index]["likedUsers"].contains(widget.uId),
+                                 commentOwnerUid: comments![index]["uId"], email: comments![index]["email"], name: comments![index]["username"], 
+                                 posted: DateTime.fromMicrosecondsSinceEpoch(comments![index]["posted"].microsecondsSinceEpoch), 
+                                 commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId,),
             );
           }
-        )
+        ))
       ) : Container(),
       bottomNavigationBar: SafeArea(
         child: Container(

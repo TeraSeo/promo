@@ -60,6 +60,7 @@ class _PostWidgetState extends State<PostWidget> {
   @override
   void initState() {
     super.initState();
+
     calTimeDiff();
 
     getImages();

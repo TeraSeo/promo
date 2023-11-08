@@ -464,7 +464,6 @@ class DatabaseService {
       value.docs.forEach((element) {
         Map<String, dynamic> user = element.data() as Map<String, dynamic>;
         users[i] = user;
-        print(i);
         i += 1;
       })
     });
@@ -483,7 +482,6 @@ class DatabaseService {
       value.docs.forEach((element) {
         Map<String, dynamic> user = element.data() as Map<String, dynamic>;
         if (user['uid'] != uId) {
-          print(user);
           users[i] = user;
           i += 1;
         }

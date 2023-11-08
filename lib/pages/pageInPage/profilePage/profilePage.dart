@@ -7,7 +7,6 @@ import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editInfo.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editProfile.dart';
-import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';

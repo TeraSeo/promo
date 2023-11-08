@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/commentDB_service.dart';
@@ -30,22 +31,22 @@ class CommentService {
       String commentId = Uuid().v4();
       
       CommentDBService commentDBService = new CommentDBService(username: name, description: description, commentId: commentId);
-      await commentDBService.savingeCommentDBData(uID, email);
+      await commentDBService.savingeCommentDBData(uID, email, postId!);
 
       DatabaseService databaseService = new DatabaseService();
       await databaseService.addComment(uID, commentId);
 
-      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+      // final post = FirebaseFirestore.instance.collection("post").doc(postId);
 
-      post.get().then((value) {
-        List<dynamic> comments = value["comments"];
-        comments.add(commentId);
+      // post.get().then((value) {
+      //   List<dynamic> comments = value["comments"];
+      //   comments.add(commentId);
         
-        post.update({
-          "comments" : comments
-        });
+      //   post.update({
+      //     "comments" : comments
+      //   });
 
-      });
+      // });
 
       return true;
 
@@ -78,13 +79,56 @@ class CommentService {
 
   }
 
-  Future<List<dynamic>> getComments() async {
+  // Future<List<dynamic>> getComments() async {
 
-    List<dynamic> comments = [];
+  //   List<dynamic> comments = [];
 
-    final post = FirebaseFirestore.instance.collection("post").doc(postId);
-    await post.get().then((value) {
-      comments = value["comments"];
+  //   final post = FirebaseFirestore.instance.collection("post").doc(postId);
+  //   await post.get().then((value) {
+  //     comments = value["comments"];
+  //   });
+    
+  //   return comments;
+   
+  // }
+
+  Future<Map<dynamic, dynamic>> getComments(String postId) async {
+    
+    Map comments = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+
+    await FirebaseFirestore.instance.collection("comment").
+      orderBy("posted", descending: true).
+      where("postId", isEqualTo: postId).
+      limit(7).get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+        comments[i] = post;
+        i += 1;
+      })
+    });
+
+    return comments;
+
+  }
+
+  Future<Map<dynamic, dynamic>> getMoreComments(DateTime posted, String commentId) async {
+
+    Map comments = new HashMap<int, Map<String, dynamic>>();
+    int i = 0;
+
+    await FirebaseFirestore.instance.collection("comment").
+      where("postId", isEqualTo: postId).
+      orderBy("posted", descending: true).
+      where("posted", isLessThan: posted).
+      limit(7).get().then((value) => {
+      value.docs.forEach((element) {
+        Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+        if (post["commentId"] != commentId) {
+          comments[i] = post;
+          i += 1;
+        }
+      })
     });
     
     return comments;
