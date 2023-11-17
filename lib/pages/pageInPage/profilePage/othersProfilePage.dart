@@ -34,6 +34,8 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   bool isPostLoading = true;
   bool isLikesLoading = true;
 
+  bool isErrorOccurred = false;
+
   CommentService commentService = new CommentService();
 
   int likes = 0;
@@ -52,52 +54,56 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero,() async {
-      await getUser();
-    });
+    try {
+      getUser();
+    } catch(e) {
+      setState(() {
+        isErrorOccurred = true;
+      });
+    }
   }
 
   Future getUser() async {
-    final CollectionReference userCollection = 
+    try {
+      final CollectionReference userCollection = 
         FirebaseFirestore.instance.collection("user");
 
-    final docOwner = userCollection.doc(widget.postOwnerUId);
-    postUser = await docOwner.get() as DocumentSnapshot<Map<String, dynamic>>;
-    getPosts();
-    likes = postUser!["wholeLikes"];
-    // getPostLikes(postUser!["posts"]);
-    // getCommentLikes(postUser!["comments"]);
-    getUserProfile();
-    getUserBackground();
-  }
+      final docOwner = userCollection.doc(widget.postOwnerUId);
+      postUser = await docOwner.get() as DocumentSnapshot<Map<String, dynamic>>;
+      getPosts();
+      likes = postUser!["wholeLikes"];
+      getUserProfile();
+      getUserBackground();
 
-  // getPostLikes(List<dynamic> postIds) async {
-  //   PostService postService = new PostService();
-  //   await postService.getPostLikes(postIds).then((value) => {
-  //     likes = likes + value,
-  //     if (this.mounted) {
-  //       setState(() {
-  //         isLikesLoading = false;
-  //       })
-  //     }
-  //   });
-  // }
-
-  //  getCommentLikes(List<dynamic> commentIds) async {
-  //   int commentLikes = postUser!["commentLikes"];
-  //   likes = likes + commentLikes;
-  // }
-
-  getPosts() async {
-    PostService postService = new PostService();
-     await postService.getProfilePosts(postUser!["posts"]).then((value) => {
-      posts = value,
+    } catch(e) {
       if (this.mounted) {
         setState(() {
-          isPostLoading = false;
-        })
+          isErrorOccurred = true;
+        });
       }
-    });
+    }
+    
+  }
+
+  getPosts() async {
+    try {
+      PostService postService = new PostService();
+      await postService.getProfilePosts(postUser!["posts"]).then((value) => {
+        posts = value,
+        if (this.mounted) {
+          setState(() {
+            isPostLoading = false;
+          })
+        }
+      });
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+    }
+    
   }
 
   getUserProfile() async {
@@ -116,7 +122,6 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           _isImg = false;
         });
       }
-      logging.message_error(postUser!["name"].toString() + "'s error " + e.toString());
     }
   }
 
@@ -136,7 +141,6 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           _isBackground = false;
         });
       }
-      logging.message_error(postUser!["name"].toString() + "'s error " + e.toString());
     }
   }
 
@@ -146,8 +150,28 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
     double top = MediaQuery.of(context).size.height * 0.026;
+    try {
+    return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                  setState(() {
+                  if (this.mounted) {
+                    isErrorOccurred = false;
+                    _isImg = true;
+                    _isBackground = true;
+                    isPostLoading = true;
+                  }
+                });
+                Future.delayed(Duration.zero,() async {
+                  await getUser();
+                });
 
-    return (_isImg || _isBackground || isPostLoading)? Center(child: CircularProgressIndicator(color: Colors.white),) : Scaffold(
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : (_isImg || _isBackground || isPostLoading)? Center(child: CircularProgressIndicator(color: Colors.white),) : Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
@@ -241,7 +265,29 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
         ],
       )
     )
-    );
+    );} catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                  setState(() {
+                  if (this.mounted) {
+                    isErrorOccurred = false;
+                    _isImg = true;
+                    _isBackground = true;
+                    isPostLoading = true;
+                  }
+                });
+                Future.delayed(Duration.zero,() async {
+                  await getUser();
+                });
+
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
   }
 
   Widget buildName(DocumentSnapshot<Map<String, dynamic>> user) => Column(

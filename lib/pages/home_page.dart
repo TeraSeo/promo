@@ -159,9 +159,9 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             children: [
               IconButton(onPressed: () {
-                
                 setState(() {
                   isErrorOccurred = false;
+                  selectedIndex = 0;
                 });
                 gettingUserData();
                 
@@ -269,6 +269,7 @@ class _HomePageState extends State<HomePage> {
                 
                 setState(() {
                   isErrorOccurred = false;
+                  selectedIndex = 0;
                 });
                 gettingUserData();
                 
@@ -312,6 +313,10 @@ class _HomePageState extends State<HomePage> {
         );
 
     } catch (e) {
+      setState(() {
+        isErrorOccurred = true;
+        selectedIndex = 0;
+      });
       print(e);
     }
   }
@@ -345,12 +350,22 @@ class _HomePageState extends State<HomePage> {
                 leading: Icon(Icons.picture_as_pdf_outlined),
                 title: Text('Select photo'),
                 onTap: () async{
-                  await getImages();
-                  setState(() {
-                    _widgetOptions[2] = Post(files: selectedImages);
-                    selectedIndex = 2;
-                  });
-                  Navigator.pop(context);
+                  try {
+                    await getImages();
+                    if (this.mounted) {
+                      setState(() {
+                        _widgetOptions[2] = Post(files: selectedImages);
+                        selectedIndex = 2;
+                      });
+                    }
+                    Navigator.pop(context);
+                  } catch(e) {
+                    if (this.mounted) {
+                      setState(() {
+                        isErrorOccurred = true;
+                      });
+                    }
+                  }
                 },
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02,)

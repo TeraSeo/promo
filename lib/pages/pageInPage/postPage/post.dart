@@ -21,6 +21,8 @@ class _PostState extends State<Post> {
   DatabaseService? databaseService;
   String? uId;
 
+  bool isErrorOccurred = false;
+
   @override
   void initState() {
     super.initState();
@@ -52,7 +54,22 @@ class _PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+
+    try {
+    return isErrorOccurred ? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                    isErrorOccurred = false;
+                  });
+                }
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : Container(
       alignment: Alignment.center,
       child: SingleChildScrollView(
         child: Column(
@@ -248,9 +265,10 @@ class _PostState extends State<Post> {
                                     Switch(
                                       value: withComment,
                                       onChanged: (value) {
+                                        if (this.mounted) {
                                       setState(() {
                                       withComment = value;
-                                    });
+                                    });}
                                       },
                                       activeTrackColor: Theme.of(context).primaryColor,
                                       activeColor: Colors.white,
@@ -271,16 +289,24 @@ class _PostState extends State<Post> {
                 height: MediaQuery.of(context).size.height * 0.057,
                 child: ElevatedButton(
                   onPressed: () async{
-                    if (formKey.currentState!.validate() && postAble) {
-                      setState(() {
-                        postAble = false;
-                      });
-                      tags = _controllerTag.getTags!;
-                      PostService postService = new PostService();
-                      await postService.post(widget.files, description, category, tags, withComment);
-                      Future.delayed(Duration(seconds: 2)).then((value) => {
-                        nextScreen(context, HomePage(pageIndex: 0,))
-                      });
+                    try {
+                      if (formKey.currentState!.validate() && postAble) {
+                        setState(() {
+                          postAble = false;
+                        });
+                        tags = _controllerTag.getTags!;
+                        PostService postService = new PostService();
+                        await postService.post(widget.files, description, category, tags, withComment);
+                        Future.delayed(Duration(seconds: 2)).then((value) => {
+                          nextScreen(context, HomePage(pageIndex: 0,))
+                        });
+                      }
+                    } catch(e) {
+                      if (this.mounted) { 
+                        setState(() {
+                          isErrorOccurred = true;
+                        });
+                      }
                     }
                   }, 
                   child: Text("Post"),
@@ -296,7 +322,23 @@ class _PostState extends State<Post> {
           ],
         ),
       ),
-    );
+    );}
+    catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                    isErrorOccurred = false;
+                  });
+                }
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
   }
 
   OutlineInputBorder myinputborder(BuildContext context){ //return type is OutlineInputBorder

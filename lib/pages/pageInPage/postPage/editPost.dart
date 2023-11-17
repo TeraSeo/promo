@@ -26,6 +26,8 @@ class _EditPostState extends State<EditPost> {
   DocumentSnapshot<Map<String, dynamic>>? post;
   bool isPostLoading = true;
 
+  bool isErrorOccurred = false;
+
   List<File> selectedImages = [];
   List<dynamic> images = [];
   final picker = ImagePicker();
@@ -37,6 +39,7 @@ class _EditPostState extends State<EditPost> {
   }
 
   getPost() async {
+    try {
     await postService.getSpecificPost(widget.postId).then((value) => {
       post = value,
       if (this.mounted) {
@@ -52,8 +55,13 @@ class _EditPostState extends State<EditPost> {
           images = post!["images"];
         })
       }
-      
-    });
+    });} catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+    }
   }
 
   final formKey = GlobalKey<FormState>();
@@ -81,7 +89,22 @@ class _EditPostState extends State<EditPost> {
 
   @override
   Widget build(BuildContext context) {
-    return isPostLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
+    try {
+    return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                    isErrorOccurred = false;
+                    Navigator.of(context).pop();
+                  });
+                }
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : isPostLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
       appBar: AppBar(
         title: Text("Edit Post"),
         backgroundColor: Colors.black,
@@ -194,13 +217,24 @@ class _EditPostState extends State<EditPost> {
                     textSeparators: const [' ', ','],
                     letterCase: LetterCase.normal,
                     validator: (String tag) {
-                      if (_controllerTag.getTags!.contains(tag)) {
-                        return 'you already entered that';
+                      try {
+
+                        if (_controllerTag.getTags!.contains(tag)) {
+                          return 'you already entered that';
+                        }
+                        else if (_controllerTag.getTags!.length > 7) {
+                          return 'too many tags';
+                        }
+                        return null;
+
+                      } catch(e) {
+                        if (this.mounted) {
+                          setState(() {
+                            isErrorOccurred = true;
+                          });
+                        }
                       }
-                      else if (_controllerTag.getTags!.length > 7) {
-                        return 'too many tags';
-                      }
-                      return null;
+                      
                     },
                     inputfieldBuilder:
                         (context, tec, fn, error, onChanged, onSubmitted) {
@@ -331,22 +365,30 @@ class _EditPostState extends State<EditPost> {
                 height: MediaQuery.of(context).size.height * 0.057,
                 child: ElevatedButton(
                   onPressed: () async{
-                    if (formKey.currentState!.validate() && postAble) {
-                      setState(() {
-                        postAble = false;
-                      });
-                      tags = _controllerTag.getTags!;
-                      
-                      if (images.isEmpty) {
-                        print(selectedImages);
-                        PostService postService = new PostService();
-                        await postService.updatePost(selectedImages, description, category, tags, withComment, widget.postId, widget.email);
-                        nextScreen(context, HomePage(pageIndex: 0,));
+                    try {
+                      if (formKey.currentState!.validate() && postAble) {
+                        setState(() {
+                          postAble = false;
+                        });
+                        tags = _controllerTag.getTags!;
+                        
+                        if (images.isEmpty) {
+                          print(selectedImages);
+                          PostService postService = new PostService();
+                          await postService.updatePost(selectedImages, description, category, tags, withComment, widget.postId, widget.email);
+                          nextScreen(context, HomePage(pageIndex: 0,));
+                        }
+                        else {
+                          PostService postService = new PostService();
+                          await postService.updatePostWithOutImages(description, category, tags, withComment, widget.postId);
+                          nextScreen(context, HomePage(pageIndex: 0,));
+                        }
                       }
-                      else {
-                        PostService postService = new PostService();
-                        await postService.updatePostWithOutImages(description, category, tags, withComment, widget.postId);
-                        nextScreen(context, HomePage(pageIndex: 0,));
+                    } catch(e) {
+                      if (this.mounted) {
+                        setState(() {
+                          isErrorOccurred = true;
+                        });
                       }
                     }
                   }, 
@@ -364,7 +406,18 @@ class _EditPostState extends State<EditPost> {
         ),
       ),
       )
-    );
+    );} catch(e) { 
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                Navigator.of(context).pop();
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
   }
 
   OutlineInputBorder myinputborder(BuildContext context){ //return type is OutlineInputBorder
@@ -466,7 +519,10 @@ class _EditPostState extends State<EditPost> {
         );
 
     } catch (e) {
-      print(e);
-    }
+      if (this.mounted) {
+      setState(() {
+        isErrorOccurred = true;
+      });
+    }}
   }
 }

@@ -27,6 +27,7 @@ class _EditInfoState extends State<EditInfo> {
   String changedIntro = "";
 
   bool isInfoChanging = false;
+  bool isErrorOccurred = false;
 
   PostService postService = new PostService();
   DatabaseService databaseService = new DatabaseService();
@@ -34,18 +35,51 @@ class _EditInfoState extends State<EditInfo> {
   @override
   void initState() {
     super.initState();
+    try {
+      _controllerName.text = widget.postUser!["name"].toString();
+      _controllerEmail.text = widget.postUser!["email"].toString();
+      _controllerIntroduction.text = widget.postUser!["intro"].toString();
 
-    _controllerName.text = widget.postUser!["name"].toString();
-    _controllerEmail.text = widget.postUser!["email"].toString();
-    _controllerIntroduction.text = widget.postUser!["intro"].toString();
-
-    changedName = widget.postUser!["name"].toString();
-    changedIntro = widget.postUser!["intro"].toString();
+      changedName = widget.postUser!["name"].toString();
+      changedIntro = widget.postUser!["intro"].toString();
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    try {
+    return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                    isErrorOccurred = false;
+                  });
+                }
+                try {
+                  _controllerName.text = widget.postUser!["name"].toString();
+                  _controllerEmail.text = widget.postUser!["email"].toString();
+                  _controllerIntroduction.text = widget.postUser!["intro"].toString();
+
+                  changedName = widget.postUser!["name"].toString();
+                  changedIntro = widget.postUser!["intro"].toString();
+                } catch(e) {
+                  setState(() {
+                    isErrorOccurred = true;
+                  });
+                }
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : Scaffold(
       appBar: AppBar(backgroundColor: Theme.of(context).primaryColor,
       toolbarHeight: MediaQuery.of(context).size.height * 0.08,
       title: Text("Edit information")),
@@ -124,30 +158,41 @@ class _EditInfoState extends State<EditInfo> {
                 height: MediaQuery.of(context).size.height * 0.057,
                 child: ElevatedButton(
                   onPressed: () async{
-                    if (!isInfoChanging) {
-                      if (formKey.currentState!.validate()) {
-                        existing(changedName).then((value) async {
-                        if (value == true || widget.postUser!["name"].toString() == changedName) {
+                    try {
 
-                          setState(() {
-                            isInfoChanging = true;
-                          });
+                      if (!isInfoChanging) {
+                        if (formKey.currentState!.validate()) {
+                          existing(changedName).then((value) async {
+                          if (value == true || widget.postUser!["name"].toString() == changedName) {
 
-                        
-                          Future.delayed(Duration(seconds: 0),() async { 
-                            await databaseService.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
-                            await postService.changeWriterName(changedName, widget.postUser!["posts"]);
-                            nextScreen(context, HomePage(pageIndex: 3,));
-                          });
+                            setState(() {
+                              isInfoChanging = true;
+                            });
+
+                          
+                            Future.delayed(Duration(seconds: 0),() async { 
+                              await databaseService.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
+                              await postService.changeWriterName(changedName, widget.postUser!["posts"]);
+                              nextScreen(context, HomePage(pageIndex: 3,));
+                            });
+                            }
+                          else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Unavailable Name"))
+                            );
                           }
-                        else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text("Unavailable Name"))
-                          );
+                          });
                         }
+                      }
+
+                    } catch(e) {
+                      if (this.mounted) {
+                        setState(() {
+                          isErrorOccurred = true;
                         });
                       }
                     }
+                    
                   }, 
                   child: Text("Edit Profile"),
                   style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
@@ -163,7 +208,42 @@ class _EditInfoState extends State<EditInfo> {
         ),
         )
       )
-    );
+    );} catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                try {
+                  if (this.mounted) {
+                    setState(() {
+                      isErrorOccurred = false;
+                    });
+                  }
+                  try {
+                    _controllerName.text = widget.postUser!["name"].toString();
+                    _controllerEmail.text = widget.postUser!["email"].toString();
+                    _controllerIntroduction.text = widget.postUser!["intro"].toString();
+
+                    changedName = widget.postUser!["name"].toString();
+                    changedIntro = widget.postUser!["intro"].toString();
+                  } catch(e) {
+                    setState(() {
+                      isErrorOccurred = true;
+                    });
+                  }
+                } catch(e) {
+                  if (this.mounted) {
+                    setState(() {
+                      isErrorOccurred = true;
+                    });
+                  }
+                }
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
   }
 
   OutlineInputBorder myinputborder(BuildContext context){ //return type is OutlineInputBorder
@@ -197,6 +277,13 @@ class _EditInfoState extends State<EditInfo> {
   }
 
   Future<bool> existing(String accountName) async {
-    return await DatabaseService(uid: FirebaseAuth.instance.currentUser?.uid).checkExist(accountName);
+    try {
+      return await DatabaseService(uid: FirebaseAuth.instance.currentUser?.uid).checkExist(accountName);
+    } catch(e) {
+      setState(() {
+        isErrorOccurred = true;
+      });
+      return true;
+    }
   }  
 }

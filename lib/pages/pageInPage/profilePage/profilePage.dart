@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
@@ -48,6 +47,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String? uID; 
 
+  bool isErrorOccurred = false;
+
   NetworkImage backgroundImg = NetworkImage("");
 
   List<DocumentSnapshot<Map<String, dynamic>>>? posts;
@@ -66,32 +67,27 @@ class _ProfilePageState extends State<ProfilePage> {
       });
 
       nextScreen(context, EditProfile(image: this.image,email: email, uId: uId, usage: usage));
-    } on PlatformException catch(e) {
-      print("Failed to pick image: $e");
+    } catch(e) {
+      setState(() {
+        isErrorOccurred = true;
+      });
     }
   }
 
   @override
   void initState() {
     super.initState();
-    try {
-      Future.delayed(Duration.zero,() async {
+    Future.delayed(Duration.zero,() async {
       await getUser();
       await getPosts();
-      // getPostLikes(postUser!["posts"]);
-      // getCommentLikes(postUser!["comments"]);
       getUserProfile();
       getUserBackground();
     });
-    } catch(e) {
-      print(e);
-    }
-   
   }
 
   Future getUser() async {
-
-    await HelperFunctions.getUserUIdFromSF().then((value) => {
+    try {
+      await HelperFunctions.getUserUIdFromSF().then((value) => {
         uID = value,
         if (this.mounted) {
           setState(() {
@@ -100,18 +96,25 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       });
 
-    final CollectionReference userCollection = 
-        FirebaseFirestore.instance.collection("user");
+      final CollectionReference userCollection = 
+          FirebaseFirestore.instance.collection("user");
 
-    final user = userCollection.doc(uID);
-    await user.get().then((value) => {
-      postUser = value as DocumentSnapshot<Map<String, dynamic>>,
-      likes = postUser!["wholeLikes"]
-    });
+      final user = userCollection.doc(uID);
+      await user.get().then((value) => {
+        postUser = value as DocumentSnapshot<Map<String, dynamic>>,
+        likes = postUser!["wholeLikes"],
+      });
+    } catch(e) {
+      setState(() {
+
+        isErrorOccurred = true;
+      });
+    }
     
   }
 
   getPosts() async {
+    try {
     PostService postService = new PostService();
      await postService.getProfilePosts(postUser!["posts"]).then((value) => {
       posts = value,
@@ -121,6 +124,11 @@ class _ProfilePageState extends State<ProfilePage> {
         })
       }
     });
+    } catch(e) {
+      setState(() {
+        isErrorOccurred = true;
+      });
+    }
   }
 
   getUserProfile() async {
@@ -139,7 +147,6 @@ class _ProfilePageState extends State<ProfilePage> {
           _isImg = false;
         });
       }
-      logging.message_error(postUser!["name"].toString() + "'s error " + e.toString());
     }
   }
 
@@ -159,7 +166,6 @@ class _ProfilePageState extends State<ProfilePage> {
           _isBackground = false;
         });
       }
-      logging.message_error(postUser!["name"].toString() + "'s error " + e.toString());
     }
   }
 
@@ -167,8 +173,34 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
     double top = MediaQuery.of(context).size.height * 0.026;
+    try {
+    return
+    isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                  setState(() {
+                  if (this.mounted) {
+                    isErrorOccurred = false;
+                    _isImg = true;
+                    _isBackground = true;
+                    isPostLoading = true;
+                    isUIdLoading = true;
+                  }
+                });
+                Future.delayed(Duration.zero,() async {
+                  await getUser();
+                  await getPosts();
+                  getUserProfile();
+                  getUserBackground();
+                });
 
-    return (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) :
+    (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
     RefreshIndicator(
       child: SingleChildScrollView(
       child: Column(
@@ -267,31 +299,66 @@ class _ProfilePageState extends State<ProfilePage> {
       )
     ), 
       onRefresh: () async {
-        await Future.delayed(Duration(seconds: 1)).then((value) => {
-          setState(() {
-            if (this.mounted) {
-              _isImg = true;
-              _isBackground = true;
-              isPostLoading = true;
-              isUIdLoading = true;
-            }
-          })
-        });
         try {
+          setState(() {
+          if (this.mounted) {
+            _isImg = true;
+            _isBackground = true;
+            isPostLoading = true;
+            isUIdLoading = true;
+          }
+          });
           Future.delayed(Duration.zero,() async {
             await getUser();
             await getPosts();
-            // getPostLikes(postUser!["posts"]);
-            // getCommentLikes(postUser!["comments"]);
             getUserProfile();
             getUserBackground();
           });
-        } 
-        catch(e) {
-          print(e);
+        } catch(e) {
+          if (this.mounted) {
+            setState(() {
+              isErrorOccurred = true;
+            });
+          }
         }
+        
       },
-    );
+    );} catch(e) {
+
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                try {
+                  setState(() {
+                    if (this.mounted) {
+                      isErrorOccurred = false;
+                      _isImg = true;
+                      _isBackground = true;
+                      isPostLoading = true;
+                      isUIdLoading = true;
+                    }
+                  });
+                  Future.delayed(Duration.zero,() async {
+                    await getUser();
+                    await getPosts();
+                    getUserProfile();
+                    getUserBackground();
+                  });
+                } catch(e) {
+                  if (this.mounted) {
+                    setState(() {
+                      isErrorOccurred = true;
+                    });
+                  }
+                }
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+
+    }
   }
 
    Widget buildName(DocumentSnapshot<Map<String, dynamic>> user) => Column(
@@ -420,7 +487,7 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (BuildContext context) {
         return Container(
           child: Column(
-            mainAxisSize: MainAxisSize.min,
+            mainAxisSize: MainAxisSize.min, 
             children: [
               ListTile(
                 leading: Icon(Icons.folder),

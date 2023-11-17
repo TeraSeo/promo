@@ -52,6 +52,8 @@ class _PostWidgetState extends State<PostWidget> {
   bool isLoading = true;
   bool? isBookMark;
 
+  bool isErrorOccurred = false;
+
   final pageController = PageController(
     initialPage: 0,
     viewportFraction: 1,
@@ -79,33 +81,42 @@ class _PostWidgetState extends State<PostWidget> {
 
   calTimeDiff() {
 
-    DateTime current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
-    DateTime posted = DateTime.fromMicrosecondsSinceEpoch(widget.posted.microsecondsSinceEpoch);
+    try {
 
+      DateTime current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+      DateTime posted = DateTime.fromMicrosecondsSinceEpoch(widget.posted.microsecondsSinceEpoch);
 
-    if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
-      timeDiff = current.difference(posted).inSeconds.toString() + "s ago";
-    } 
-    else if (current.difference(posted).inMinutes < 60 && current.difference(posted).inMinutes >= 1) {
-      timeDiff = current.difference(posted).inMinutes.toString() + "m ago";
-    } 
-    else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
-      timeDiff = current.difference(posted).inHours.toString() + "h ago";
-    }
-    else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
-      timeDiff = current.difference(posted).inDays.toString() + "d ago";
-    }
-    else if (current.difference(posted).inDays >= 365) {
-      timeDiff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
-    } 
-    else {
-      timeDiff = "now";
+      if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
+        timeDiff = current.difference(posted).inSeconds.toString() + "s ago";
+      } 
+      else if (current.difference(posted).inMinutes < 60 && current.difference(posted).inMinutes >= 1) {
+        timeDiff = current.difference(posted).inMinutes.toString() + "m ago";
+      } 
+      else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
+        timeDiff = current.difference(posted).inHours.toString() + "h ago";
+      }
+      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
+        timeDiff = current.difference(posted).inDays.toString() + "d ago";
+      }
+      else if (current.difference(posted).inDays >= 365) {
+        timeDiff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
+      } 
+      else {
+        timeDiff = "now";
+      }
+
+    } catch(e) {
+      setState(() {
+        if (this.mounted) {
+          isErrorOccurred = true;
+        }
+      });
     }
 
   }
 
   getOwnerProfile() async {
-
+ 
     QuerySnapshot snapshot =
         await DatabaseService().gettingUserData(widget.email!);
 
@@ -122,6 +133,7 @@ class _PostWidgetState extends State<PostWidget> {
     } catch(e) {
       if (this.mounted) {
         setState(() {
+          isErrorOccurred = true;
           isProfileLoading = false;
         });
       }
@@ -130,15 +142,22 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   void getImages() async {
-    Storage storage = new Storage();
-    await storage.loadPostImages(widget.email!, widget.postID!, widget.image!).then((value) => {
-      images = value,
-      if (this.mounted) {
-        setState(() {
-          isLoading = false;
-        })
-      }
-    });
+    try {
+      Storage storage = new Storage();
+      await storage.loadPostImages(widget.email!, widget.postID!, widget.image!).then((value) => {
+        images = value,
+        if (this.mounted) {
+          setState(() {
+            isLoading = false;
+          })
+        }
+      });
+    } catch(e) {
+      setState(() {
+        isErrorOccurred = true;
+      });
+    }
+    
   }
 
   PostService postService = new PostService();
@@ -170,7 +189,7 @@ class _PostWidgetState extends State<PostWidget> {
 
     try {
 
-      return (isLoading || isProfileLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
+      return isErrorOccurred? Container() : (isLoading || isProfileLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
         children: [
           SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
           Container(
@@ -295,24 +314,30 @@ class _PostWidgetState extends State<PostWidget> {
                               smallLike: false,
                               child: IconButton(
                               onPressed: () async {
-                                setState(()  {
-                                  if (!isLike!) {
-                                    isLikeAnimation = true;
-                                    isLike = true;
-                                    likes = likes! + 1;
+                                try {
+                                  setState(()  {
+                                    if (!isLike!) {
+                                      isLikeAnimation = true;
+                                      isLike = true;
+                                      likes = likes! + 1;
+                                    }
+                                    else {
+                                      isLike = false;
+                                      likes = likes! - 1;
+                                    }
+                                  });
+                                  if (isLike!) {
+                                    await postService.postAddLike(widget.postID!);
+                                    await databaseService.addUserLike(widget.postID!);
                                   }
                                   else {
-                                    isLike = false;
-                                    likes = likes! - 1;
+                                    await postService.postRemoveLike(widget.postID!);
+                                    await databaseService.removeUserLike(widget.postID!);
                                   }
-                                });
-                                if (isLike!) {
-                                  await postService.postAddLike(widget.postID!);
-                                  await databaseService.addUserLike(widget.postID!);
-                                }
-                                else {
-                                  await postService.postRemoveLike(widget.postID!);
-                                  await databaseService.removeUserLike(widget.postID!);
+                                } catch(e) {
+                                  if (this.mounted) {
+                                    isErrorOccurred = true;
+                                  }
                                 }
                               }, 
                                 icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -333,23 +358,31 @@ class _PostWidgetState extends State<PostWidget> {
                             child: SizedBox(
                             width: iconWidth,
                               child: IconButton(onPressed: () async {
-                                setState(() {
+                                try {
+                                  setState(() {
+                                    if (isBookMark!) {
+                                      isBookMark = false;
+                                    }
+                                    else {
+                                      isBookMark = true;
+                                    }
+                                  });
+
                                   if (isBookMark!) {
-                                    isBookMark = false;
+
+                                    await databaseService.addUserBookMark(widget.postID!);
+                                    await postService.addBookMark(widget.postID!, widget.uId!);
+
+                                  } else {
+                                    await databaseService.removeUserBookMark(widget.postID!);
+                                    await postService.removeBookMark(widget.postID!, widget.uId!);
                                   }
-                                  else {
-                                    isBookMark = true;
+                                } catch(e) {
+                                  if (this.mounted) {
+                                    setState(() {
+                                      isErrorOccurred = true;
+                                    });
                                   }
-                                });
-
-                                if (isBookMark!) {
-
-                                  await databaseService.addUserBookMark(widget.postID!);
-                                  await postService.addBookMark(widget.postID!, widget.uId!);
-
-                                } else {
-                                  await databaseService.removeUserBookMark(widget.postID!);
-                                  await postService.removeBookMark(widget.postID!, widget.uId!);
                                 }
 
                               },
@@ -497,24 +530,32 @@ class _PostWidgetState extends State<PostWidget> {
                               smallLike: false,
                               child: IconButton(
                               onPressed: () async {
-                                setState(()  {
-                                  if (!isLike!) {
-                                    isLikeAnimation = true;
-                                    isLike = true;
-                                    likes = likes! + 1;
+                                try {
+                                  setState(()  {
+                                    if (!isLike!) {
+                                      isLikeAnimation = true;
+                                      isLike = true;
+                                      likes = likes! + 1;
+                                    }
+                                    else {
+                                      isLike = false;
+                                      likes = likes! - 1;
+                                    }
+                                  });
+                                  if (isLike!) {
+                                    await postService.postAddLike(widget.postID!);
+                                    await databaseService.addUserLike(widget.postID!);
                                   }
                                   else {
-                                    isLike = false;
-                                    likes = likes! - 1;
+                                    await postService.postRemoveLike(widget.postID!);
+                                    await databaseService.removeUserLike(widget.postID!);
                                   }
-                                });
-                                if (isLike!) {
-                                  await postService.postAddLike(widget.postID!);
-                                  await databaseService.addUserLike(widget.postID!);
-                                }
-                                else {
-                                  await postService.postRemoveLike(widget.postID!);
-                                  await databaseService.removeUserLike(widget.postID!);
+                                } catch(e) {
+                                  if (this.mounted) {
+                                    setState(() {
+                                      isErrorOccurred = true;
+                                    });
+                                  }
                                 }
                               }, 
                                 icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -536,25 +577,32 @@ class _PostWidgetState extends State<PostWidget> {
                             child: SizedBox(
                             width: iconWidth,
                               child: IconButton(onPressed: () async {
-                                setState(() {
+                                try {
+                                  setState(() {
+                                    if (isBookMark!) {
+                                      isBookMark = false;
+                                    }
+                                    else {
+                                      isBookMark = true;
+                                    }
+                                  });
+
                                   if (isBookMark!) {
-                                    isBookMark = false;
+
+                                    await databaseService.addUserBookMark(widget.postID!);
+                                    await postService.addBookMark(widget.postID!, widget.uId!);
+
+                                  } else {
+                                    await databaseService.removeUserBookMark(widget.postID!);
+                                    await postService.removeBookMark(widget.postID!, widget.uId!);
                                   }
-                                  else {
-                                    isBookMark = true;
+                                } catch(e) {
+                                  if (this.mounted) {
+                                    setState(() {
+                                      isErrorOccurred = true;
+                                    });
                                   }
-                                });
-
-                                if (isBookMark!) {
-
-                                  await databaseService.addUserBookMark(widget.postID!);
-                                  await postService.addBookMark(widget.postID!, widget.uId!);
-
-                                } else {
-                                  await databaseService.removeUserBookMark(widget.postID!);
-                                  await postService.removeBookMark(widget.postID!, widget.uId!);
                                 }
-
                               },
                               icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
                             )
@@ -683,56 +731,71 @@ class _PostWidgetState extends State<PostWidget> {
                   leading: Icon(Icons.favorite),
                   title: Text('Like this post'),
                   onTap: () async{
-                    DatabaseService databaseService = DatabaseService(uid: widget.uId);
-                    setState(()  {
-                        if (!isLike!) {
-                            isLikeAnimation = true;
-                            isLike = true;
-                            likes = likes! + 1;
+                    try {
+                      DatabaseService databaseService = DatabaseService(uid: widget.uId);
+                      setState(()  {
+                          if (!isLike!) {
+                              isLikeAnimation = true;
+                              isLike = true;
+                              likes = likes! + 1;
+                            }
+                            else {
+                              isLike = false;
+                              likes = likes! - 1;
+                            }
+                          });
+                          if (isLike!) {
+                            await postService.postAddLike(widget.postID!);
+                            await databaseService.addUserLike(widget.postID!);
                           }
                           else {
-                            isLike = false;
-                            likes = likes! - 1;
+                            await postService.postRemoveLike(widget.postID!);
+                            await databaseService.removeUserLike(widget.postID!);
                           }
+                      Navigator.pop(context);
+                    } catch(e) {
+                      if (this.mounted) {
+                        setState(() {
+                          isErrorOccurred = true;
                         });
-                        if (isLike!) {
-                          await postService.postAddLike(widget.postID!);
-                          await databaseService.addUserLike(widget.postID!);
-                        }
-                        else {
-                          await postService.postRemoveLike(widget.postID!);
-                          await databaseService.removeUserLike(widget.postID!);
-                        }
-                    Navigator.pop(context);
+                      }
+                    }
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.favorite),
                   title: Text('Bookmark this post'),
                   onTap: () async{
-                    DatabaseService databaseService = DatabaseService(uid: widget.uId);
-                    setState(()  {
+                    try {
+                      DatabaseService databaseService = DatabaseService(uid: widget.uId);
+                      setState(()  {
+                          if (isBookMark!) {
+                            isBookMark = false;
+                          }
+                          else {
+                            isBookMark = true;
+                          }
+                        });
 
                         if (isBookMark!) {
-                          isBookMark = false;
+
+                          await databaseService.addUserBookMark(widget.postID!);
+                          await postService.addBookMark(widget.postID!, widget.uId!);
+
+                        } else {
+                          await databaseService.removeUserBookMark(widget.postID!);
+                          await postService.removeBookMark(widget.postID!, widget.uId!);
                         }
-                        else {
-                          isBookMark = true;
-                        }
-                      });
-
-                      if (isBookMark!) {
-
-                        await databaseService.addUserBookMark(widget.postID!);
-                        await postService.addBookMark(widget.postID!, widget.uId!);
-
-                      } else {
-                        await databaseService.removeUserBookMark(widget.postID!);
-                        await postService.removeBookMark(widget.postID!, widget.uId!);
+                        
+                      Navigator.pop(context);
+                    } catch(e) {
+                      if (this.mounted) {
+                        setState(() {
+                          isErrorOccurred = true;
+                        });
                       }
-                      
-                    Navigator.pop(context);
-                  },
+                    }
+                  }
                 ),
                 ListTile(
                   leading: Icon(Icons.person),

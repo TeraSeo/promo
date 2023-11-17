@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/storage.dart';
@@ -28,22 +27,27 @@ class _EditProfileState extends State<EditProfile> {
   DatabaseService databaseService = new DatabaseService();
 
   bool isProfileChanging = false;
+  bool isErrorOccurred = false;
 
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
     try {
       final image = await ImagePicker().pickImage(source: source);
       if (image == null) return;
 
-      // final imageTemporary = File(image.path);
       final imageTemporary = await storage.compressImage(File(image.path));
       setState(() {
         this.image = imageTemporary;
 
       });
 
-      nextScreen(context, EditProfile(image: this.image, email: email, uId: uId, usage: usage));
-    } on PlatformException catch(e) {
-      print("Failed to pick image: $e");
+      nextScreenReplace(context, EditProfile(image: this.image, email: email, uId: uId, usage: usage));
+    } catch(e) {
+      setState(() {
+        if (this.mounted) {
+          isErrorOccurred = true;
+          Navigator.of(context).pop();
+        }
+      });
     }
   }
   
@@ -54,7 +58,22 @@ class _EditProfileState extends State<EditProfile> {
     double bigger = MediaQuery.of(context).size.width + MediaQuery.of(context).size.height * 0.35;
     double smaller = MediaQuery.of(context).size.height;
 
-    return Scaffold(
+    try {
+    return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                setState(() {                  
+                  if (this.mounted) {
+                    isErrorOccurred = true;
+                    Navigator.of(context).pop();
+                  }
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : Scaffold(
       appBar: AppBar(backgroundColor: Theme.of(context).primaryColor,
       toolbarHeight: MediaQuery.of(context).size.height * 0.08,
       title: Text("EditProfile")),
@@ -134,12 +153,12 @@ class _EditProfileState extends State<EditProfile> {
                         style: TextStyle(color: Colors.white, fontSize: MediaQuery.of(context).size.height * 0.016),
                       ),
                       onPressed: () async{
-                        if (!isProfileChanging) {
-
+                        try {if (!isProfileChanging) {
+                          if (this.mounted) {
                           setState(() {
                             isProfileChanging = true;
                           });
-                          
+                          }
                           Future.delayed(Duration(seconds: 0),() async {
                             if (widget.usage == "profile") {
                               await databaseService.setUserProfile(widget.uId, widget.image.path, widget.image.path.split('/').last, widget.email);
@@ -150,6 +169,12 @@ class _EditProfileState extends State<EditProfile> {
                             nextScreen(context, HomePage(pageIndex: 3,));
                           });
 
+                        }} catch(e) {
+                          if (this.mounted) {
+                            setState(() {
+                              isErrorOccurred = true;
+                            });
+                          }
                         }
                       },
                     )
@@ -186,6 +211,22 @@ class _EditProfileState extends State<EditProfile> {
         ),
       )
       )
-    );
+    );} catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                setState(() {                  
+                  if (this.mounted) {
+                    isErrorOccurred = true;
+                    Navigator.of(context).pop();
+                  }
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
   }
 }
