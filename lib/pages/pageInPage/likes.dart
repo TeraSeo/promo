@@ -4,6 +4,7 @@ import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class LikesRanking extends StatefulWidget {
   const LikesRanking({super.key});
@@ -28,6 +29,8 @@ class _LikesRankingState extends State<LikesRanking> {
 
   bool isUIdLoading = true;
 
+  var logger = Logger();
+
   @override
   void initState() {
     getUId();
@@ -46,10 +49,13 @@ class _LikesRankingState extends State<LikesRanking> {
       });
 
     } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "Error occurred while getting uId\nerror: " + e.toString());
 
-      setState(() {
-        isErrorOccurred = true;
-      });
 
     }
   }
@@ -73,13 +79,12 @@ class _LikesRankingState extends State<LikesRanking> {
           isprofLoadings[index] = false;
         });
       }
+      logger.log(Level.error, "Error occurred while getting profile");
     }
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     try {   
     return 
       isErrorOccurred? Center(
@@ -117,7 +122,9 @@ class _LikesRankingState extends State<LikesRanking> {
             FutureBuilder(
             future: future,
             builder: (context, snapshot) {
-              if (!snapshot.hasData) {
+              try {
+
+                if (!snapshot.hasData) {
                 return Center(
                   child: CircularProgressIndicator(),
                 );
@@ -176,13 +183,28 @@ class _LikesRankingState extends State<LikesRanking> {
                 );
               }
               }
+                
+              } catch(e) {
+                logger.log(Level.error, "Error occurred while getting ranks\nerror: " + e.toString());
+                return Center(
+                    child: Column(
+                      children: [
+                        IconButton(onPressed: () {
+                          if (this.mounted) {
+                          setState(() {
+                            isErrorOccurred = false;
+                            isUIdLoading = false;
+                          });}
+                          getUId();
+                        }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+                        Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                      ],
+                    )
+                );
+              }
             }
-            // )
-          )
-          ,
-        
+          ),
           SizedBox(height: 30,),
-
           Card(
             shadowColor: Colors.grey,
             elevation: 10,
@@ -198,12 +220,16 @@ class _LikesRankingState extends State<LikesRanking> {
       ),
     ), 
     onRefresh: () async {
+      try {
         if (this.mounted) {
         setState(() {
           isUIdLoading = true;
         });
         getUId();
-    }}
+      }} catch(e) {
+        logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
+      } 
+    }
   );} 
   catch(e) {
     return Center(

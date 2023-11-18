@@ -5,6 +5,7 @@ import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class EditInfo extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>>? postUser;
@@ -32,6 +33,8 @@ class _EditInfoState extends State<EditInfo> {
   PostService postService = new PostService();
   DatabaseService databaseService = new DatabaseService();
 
+  var logger = Logger();
+
   @override
   void initState() {
     super.initState();
@@ -48,6 +51,7 @@ class _EditInfoState extends State<EditInfo> {
           isErrorOccurred = true;
         });
       }
+      logger.log(Level.error, "Error occurred while getting edit informaiton");
     }
   }
 
@@ -110,7 +114,8 @@ class _EditInfoState extends State<EditInfo> {
               height: MediaQuery.of(context).size.height * 0.007,
             ),
             TextFormField(
-              maxLength: 20,
+              // maxLength: 20,
+              enabled: false,
               style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
               controller: _controllerName,
               validator: (val) {
@@ -159,11 +164,10 @@ class _EditInfoState extends State<EditInfo> {
                 child: ElevatedButton(
                   onPressed: () async{
                     try {
-
                       if (!isInfoChanging) {
                         if (formKey.currentState!.validate()) {
-                          existing(changedName).then((value) async {
-                          if (value == true || widget.postUser!["name"].toString() == changedName) {
+                          // existing(changedName).then((value) async {
+                          // if (value == true || widget.postUser!["name"].toString() == changedName) {
 
                             setState(() {
                               isInfoChanging = true;
@@ -172,16 +176,16 @@ class _EditInfoState extends State<EditInfo> {
                           
                             Future.delayed(Duration(seconds: 0),() async { 
                               await databaseService.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
-                              await postService.changeWriterName(changedName, widget.postUser!["posts"]);
+                              // await postService.changeWriterName(changedName, widget.postUser!["posts"]);
                               nextScreen(context, HomePage(pageIndex: 3,));
                             });
-                            }
-                          else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Unavailable Name"))
-                            );
-                          }
-                          });
+                            // }
+                          // else {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     SnackBar(content: Text("Unavailable Name"))
+                          //   );
+                          // }
+                          // });
                         }
                       }
 
@@ -191,6 +195,7 @@ class _EditInfoState extends State<EditInfo> {
                           isErrorOccurred = true;
                         });
                       }
+                      logger.log(Level.error, "Error occurred while editing information");
                     }
                     
                   }, 
@@ -280,9 +285,12 @@ class _EditInfoState extends State<EditInfo> {
     try {
       return await DatabaseService(uid: FirebaseAuth.instance.currentUser?.uid).checkExist(accountName);
     } catch(e) {
-      setState(() {
-        isErrorOccurred = true;
-      });
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "Error occurred while check name existence");
       return true;
     }
   }  

@@ -15,6 +15,7 @@ import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class ProfilePage extends StatefulWidget {
 
@@ -55,6 +56,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   CommentService commentService = new CommentService();
 
+  var logger = Logger();
+
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
     try {
       final image = await ImagePicker().pickImage(source: source);
@@ -71,6 +74,8 @@ class _ProfilePageState extends State<ProfilePage> {
       setState(() {
         isErrorOccurred = true;
       });
+      logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
+
     }
   }
 
@@ -105,10 +110,10 @@ class _ProfilePageState extends State<ProfilePage> {
         likes = postUser!["wholeLikes"],
       });
     } catch(e) {
-      setState(() {
-
+      if (this.mounted) {setState(() {
         isErrorOccurred = true;
-      });
+      });}
+      logger.log(Level.error, "Error occurred while getting user information");
     }
     
   }
@@ -125,9 +130,12 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     });
     } catch(e) {
-      setState(() {
-        isErrorOccurred = true;
-      });
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "Error occurred while getting posts\nerror: " + e.toString());
     }
   }
 
@@ -147,6 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _isImg = false;
         });
       }
+      logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
     }
   }
 
@@ -166,6 +175,7 @@ class _ProfilePageState extends State<ProfilePage> {
           _isBackground = false;
         });
       }
+      logger.log(Level.error, "Error occurred while getting background profiles\nerror: " + e.toString());
     }
   }
 
@@ -291,7 +301,45 @@ class _ProfilePageState extends State<ProfilePage> {
           Column(
             children: 
                 List.generate(posts!.length, (index) {
-                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true,);
+                  try {
+
+                   return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true,);
+                  } catch(e) {
+
+                    return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                try {
+                  setState(() {
+                    if (this.mounted) {
+                      isErrorOccurred = false;
+                      _isImg = true;
+                      _isBackground = true;
+                      isPostLoading = true;
+                      isUIdLoading = true;
+                    }
+                  });
+                  Future.delayed(Duration.zero,() async {
+                    await getUser();
+                    await getPosts();
+                    getUserProfile();
+                    getUserBackground();
+                  });
+                } catch(e) {
+                  if (this.mounted) {
+                    setState(() {
+                      isErrorOccurred = true;
+                    });
+                  }
+                }
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+
+                  }
                 }
             )
           ),
@@ -320,6 +368,7 @@ class _ProfilePageState extends State<ProfilePage> {
               isErrorOccurred = true;
             });
           }
+          logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
         }
         
       },

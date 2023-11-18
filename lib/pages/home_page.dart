@@ -12,6 +12,7 @@ import 'package:like_app/pages/pageInPage/profilePage/profilePage.dart';
 import 'package:like_app/pages/pageInPage/search.dart';
 import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 
 class HomePage extends StatefulWidget {
@@ -38,6 +39,8 @@ class _HomePageState extends State<HomePage> {
 
   int selectedIndex = 0;
 
+  var logger = Logger();
+
   @override
   void initState() {
     selectedIndex = widget.pageIndex;
@@ -62,11 +65,12 @@ class _HomePageState extends State<HomePage> {
         })
       });
 
-      } catch(e) {
-        setState(() {
-          isErrorOccurred = true;
-        });
-      }
+    } catch(e) {
+      if (this.mounted) {setState(() {
+        isErrorOccurred = true;
+      });}
+      logger.log(Level.error, "error occurred while getting user data\nerror: " + e.toString());
+    }
   }
 
   final PageController _pageController = PageController();
@@ -104,7 +108,22 @@ class _HomePageState extends State<HomePage> {
     
     try {
       
-      return
+      return isErrorOccurred ? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                  selectedIndex = 0;
+                });
+                gettingUserData();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) :
        Scaffold(
         resizeToAvoidBottomInset: false,
           appBar: AppBar(
@@ -313,11 +332,13 @@ class _HomePageState extends State<HomePage> {
         );
 
     } catch (e) {
-      setState(() {
-        isErrorOccurred = true;
-        selectedIndex = 0;
-      });
-      print(e);
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+          selectedIndex = 0;
+        });
+      }
+      logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
     }
   }
 
@@ -365,6 +386,7 @@ class _HomePageState extends State<HomePage> {
                         isErrorOccurred = true;
                       });
                     }
+                    logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
                   }
                 },
               ),

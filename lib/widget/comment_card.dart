@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/storage.dart';
@@ -9,6 +8,7 @@ import 'package:like_app/services/userService.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widget/edit_comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class CommentCard extends StatefulWidget {
 
@@ -49,7 +49,8 @@ class _CommentCardState extends State<CommentCard> {
 
   DatabaseService databaseService = new DatabaseService();
 
-  Logging logging = new Logging();
+  var logger = Logger();
+  bool isErrorOccurred = false;
 
   @override
   void initState() {
@@ -83,54 +84,73 @@ class _CommentCardState extends State<CommentCard> {
           isProfileLoading = false;
         });
       }
-      logging.message_error(widget.name! + "'s error " + e.toString());
+      logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
     }
   }
 
   getCommentInfo() async {
-    CommentService commentService = new CommentService(commentId: widget.commentId);
-    await commentService.getCommentInfo().then((value) => {
-      commentInfo = value,
-      if (mounted) {
+    try {
+
+      CommentService commentService = new CommentService(commentId: widget.commentId);
+      await commentService.getCommentInfo().then((value) => {
+        commentInfo = value,
+        if (mounted) {
+          setState(() {
+
+            isCommentLike = widget.isCommentLike!;
+            likes = widget.likes;
+
+            isOwnComment = widget.uId == widget.commentOwnerUid;
+            current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+
+            calcTime(current!, widget.posted!);
+
+          })
+        }
+      });
+
+    } catch(e) {
+      if (this.mounted) {
         setState(() {
-
-          isCommentLike = widget.isCommentLike!;
-          likes = widget.likes;
-
-          isOwnComment = widget.uId == widget.commentOwnerUid;
-          current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
-
-          calcTime(current!, widget.posted!);
-
-        })
+          isErrorOccurred = true;
+        });
       }
-    });
+      logger.log(Level.error, "Error occurred while getting comments\nerror: " + e.toString());
+    }
+    
   }
 
   calcTime(DateTime current, DateTime posted) {
 
-    if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
-      diff = current.difference(posted).inSeconds.toString() + "s ago";
-    } 
-    else if (current.difference(posted).inMinutes < 60 && current.difference(posted).inMinutes >= 1) {
-      diff = current.difference(posted).inMinutes.toString() + "m ago";
-    } 
-    else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
-      diff = current.difference(posted).inHours.toString() + "h ago";
-    }
-    else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
-      diff = current.difference(posted).inDays.toString() + "d ago";
-    }
-    else if (current.difference(posted).inDays >= 365) {
-      diff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
-    } 
-    else {
-      diff = "now";
-    }
+    try {
 
-    setState(() {
-      isLoading = false;
-    });
+      if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
+        diff = current.difference(posted).inSeconds.toString() + "s ago";
+      } 
+      else if (current.difference(posted).inMinutes < 60 && current.difference(posted).inMinutes >= 1) {
+        diff = current.difference(posted).inMinutes.toString() + "m ago";
+      } 
+      else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
+        diff = current.difference(posted).inHours.toString() + "h ago";
+      }
+      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
+        diff = current.difference(posted).inDays.toString() + "d ago";
+      }
+      else if (current.difference(posted).inDays >= 365) {
+        diff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
+      } 
+      else {
+        diff = "now";
+      }
+
+      setState(() {
+        isLoading = false;
+      });
+    }
+    catch(e) {
+      diff = "";
+      logger.log(Level.error, "Error occurred while calculating time\nerror: " + e.toString());
+    }
 
   }
 
@@ -153,32 +173,42 @@ class _CommentCardState extends State<CommentCard> {
       fontSize = MediaQuery.of(context).size.width * 0.037;
       radiusWidth = MediaQuery.of(context).size.width * 0.035;
       iconSize = MediaQuery.of(context).size.width * 0.038;
-
     }
 
     try {
-
-      return (isLoading || isProfileLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+      return isErrorOccurred ? Container() : (isLoading || isProfileLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
       GestureDetector(
         onDoubleTap: () async {
+          try {
           setState(() {
+
+              if (isCommentLike!) {
+                isCommentLike = false;
+                likes = likes! - 1;
+                commentService.removeCommentLikeUser(widget.uId!);
+              } else {
+                isCommentLike = true;
+                likes = likes! + 1;
+                commentService.addCommentLikeUser(widget.uId!);
+              }
+            });
+
             if (isCommentLike!) {
-              isCommentLike = false;
-              likes = likes! - 1;
-              commentService.removeCommentLikeUser(widget.uId!);
+              await databaseService.plusCommentLike(widget.commentOwnerUid!);
+
             } else {
-              isCommentLike = true;
-              likes = likes! + 1;
-              commentService.addCommentLikeUser(widget.uId!);
+              await databaseService.minusCommentLike(widget.commentOwnerUid!);
             }
-          });
 
-          if (isCommentLike!) {
-            await databaseService.plusCommentLike(widget.commentOwnerUid!);
-
-          } else {
-            await databaseService.minusCommentLike(widget.commentOwnerUid!);
+          } catch(e) {
+            if (this.mounted) {
+              setState(() {
+                isErrorOccurred = true;
+              });
+            }
+            logger.log(Level.error, "Error occurred while comment liking\nerror: " + e.toString());
           }
+            
         },
         child: Container(
           padding: EdgeInsets.symmetric(
@@ -261,25 +291,32 @@ class _CommentCardState extends State<CommentCard> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.04,
                 child: IconButton(onPressed: () async {
-                  setState(() {
+                  try {
+
+                    setState(() {
+                      if (isCommentLike!) {
+                        isCommentLike = false;
+                        likes = likes! - 1;
+                        commentService.removeCommentLikeUser(widget.uId!);
+                        
+                      } else {
+                        isCommentLike = true;
+                        likes = likes! + 1;
+                        commentService.addCommentLikeUser(widget.uId!);
+                      }
+                    });
+
                     if (isCommentLike!) {
-                      isCommentLike = false;
-                      likes = likes! - 1;
-                      commentService.removeCommentLikeUser(widget.uId!);
-                      
+                      await databaseService.plusCommentLike(widget.uId!);
+
                     } else {
-                      isCommentLike = true;
-                      likes = likes! + 1;
-                      commentService.addCommentLikeUser(widget.uId!);
+                      await databaseService.minusCommentLike(widget.uId!);
                     }
-                  });
 
-                  if (isCommentLike!) {
-                    await databaseService.plusCommentLike(widget.uId!);
-
-                  } else {
-                    await databaseService.minusCommentLike(widget.uId!);
+                  } catch(e) {
+                    logger.log(Level.error, "Error occurred while comment liking\nerror: " + e.toString());
                   }
+                  
                 }, icon: isCommentLike!? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
               ),
               IconButton(onPressed: () {
@@ -295,24 +332,29 @@ class _CommentCardState extends State<CommentCard> {
               SizedBox(
                 width: MediaQuery.of(context).size.width * 0.08,
                 child: IconButton(onPressed: () async {
-                  setState(() {
+                  try {
+                    setState(() {
+                      if (isCommentLike!) {
+                        isCommentLike = false;
+                        likes = likes! - 1;
+                        commentService.removeCommentLikeUser(widget.uId!);
+                      } else {
+                        isCommentLike = true;
+                        likes = likes! + 1;
+                        commentService.addCommentLikeUser(widget.uId!);
+                      }
+                    });
+
                     if (isCommentLike!) {
-                      isCommentLike = false;
-                      likes = likes! - 1;
-                      commentService.removeCommentLikeUser(widget.uId!);
+                      await databaseService.plusCommentLike(widget.uId!);
+
                     } else {
-                      isCommentLike = true;
-                      likes = likes! + 1;
-                      commentService.addCommentLikeUser(widget.uId!);
+                      await databaseService.minusCommentLike(widget.uId!);
                     }
-                  });
-
-                  if (isCommentLike!) {
-                    await databaseService.plusCommentLike(widget.uId!);
-
-                  } else {
-                    await databaseService.minusCommentLike(widget.uId!);
+                  } catch(e) {
+                    logger.log(Level.error, "Error occurred while comment liking\nerror: " + e.toString());
                   }
+                  
                 }, icon: isCommentLike!? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
               ),
             ],
@@ -323,8 +365,6 @@ class _CommentCardState extends State<CommentCard> {
       );
 
     } catch(e) {
-      
-      print(e);
       return Container();
     }
 
@@ -356,10 +396,15 @@ class _CommentCardState extends State<CommentCard> {
                   leading: Icon(Icons.remove_circle),
                   title: Text('Remove Comment'),
                   onTap: () async{
-                    CommentService commentService = new CommentService();
-                    await commentService.removeComment(widget.commentId!, widget.postId!).then((value) {
-                      nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,));
-                    });
+                    try {
+                      CommentService commentService = new CommentService();
+                      await commentService.removeComment(widget.commentId!, widget.postId!).then((value) {
+                        nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,));
+                      });
+                    } catch(e) {
+                      logger.log(Level.error, "Error occurred while removing comments\nerror: " + e.toString());
+                    }
+                    
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02,)

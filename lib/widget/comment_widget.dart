@@ -6,6 +6,7 @@ import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class CommentWidget extends StatefulWidget {
 
@@ -27,11 +28,15 @@ class _CommentWidgetState extends State<CommentWidget> {
   bool isCommentSubmitting = false;
   bool isEmailLoading = true;
 
+  bool isErrorOccurred = false;
+
   String email = "";
 
   bool isLoadingMorePostsPossible = true;
   bool isMoreLoading = false;
   int wholePostsLength = 0;
+  
+  var logger = Logger();
 
   @override
   void initState() {
@@ -42,42 +47,79 @@ class _CommentWidgetState extends State<CommentWidget> {
   }
 
   getComments() async {
-    CommentService commentService = new CommentService(postId: widget.postId);
-    await commentService.getComments(widget.postId!).then((value) => {
-      comments = value,
+    try {
+
+      CommentService commentService = new CommentService(postId: widget.postId);
+      await commentService.getComments(widget.postId!).then((value) => {
+        comments = value,
+        if (this.mounted) {
+          setState(() {
+            isLoading = false;
+          })
+        }
+      });
+
+    } catch(e) {
+
       if (this.mounted) {
         setState(() {
-          isLoading = false;
-        })
+          isErrorOccurred = true;
+        });
       }
-    });
+      logger.log(Level.error, "Error occurred while getting comments\nerror: " + e.toString());
+
+    }
+    
   }
 
   getEmail() async {
-    HelperFunctions.getUserEmailFromSF().then((value) => {
-      email = value!,
+    try {
+
+      HelperFunctions.getUserEmailFromSF().then((value) => {
+        email = value!,
+        if (this.mounted) {
+          setState(() {
+            isEmailLoading = false;
+          })
+        }
+      });
+
+    } catch(e) {
       if (this.mounted) {
         setState(() {
-          isEmailLoading = false;
-        })
+          isErrorOccurred = true;
+        });
       }
-    });
+      logger.log(Level.error, "Error occurred while getting email\nerror: " + e.toString());
+
+    }
   }
 
   getMoreComments() async {
-    CommentService commentService = new CommentService(postId: widget.postId);
-    await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!).then((value) => {
-      for (int i = 0; i < value.length; i++) {
-        setState(() {
-          comments![comments!.length] = value[i];
-        })
-      },
+    try {
+      CommentService commentService = new CommentService(postId: widget.postId);
+      await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!).then((value) => {
+        for (int i = 0; i < value.length; i++) {
+          setState(() {
+            comments![comments!.length] = value[i];
+          })
+        },
+        if (this.mounted) {
+          setState(() {
+            isMoreLoading = false;
+          })
+        }
+      });
+    } catch(e){
       if (this.mounted) {
         setState(() {
-          isMoreLoading = false;
-        })
+          isErrorOccurred = true;
+        });
       }
-    });
+      logger.log(Level.error, "Error occurred while getting more comments\nerror: " + e.toString());
+
+    }
+    
   }
 
   final CollectionReference commentCollection = 
@@ -87,12 +129,23 @@ class _CommentWidgetState extends State<CommentWidget> {
   bool isWholeCommentLengthLoading = true;
 
   void getCommentLength() async {
-    await commentCollection.get().then((value) => {
-      wholeCommentLength = value.docs.length,
-      setState(() {
-        isWholeCommentLengthLoading = false;
-      }),
-    });
+    try {
+      await commentCollection.get().then((value) => {
+        wholeCommentLength = value.docs.length,
+        setState(() {
+          isWholeCommentLengthLoading = false;
+        }),
+      });
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "Error occurred while getting comment length\nerror: " + e.toString());
+
+    }
+    
   }
 
   @override
@@ -135,14 +188,28 @@ class _CommentWidgetState extends State<CommentWidget> {
       radiusWidth = MediaQuery.of(context).size.width * 0.045;
 
     }
-
     try {
 
-    } catch(e) {
-      
-    }
-
-    return (isLoading || isWholeCommentLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
+      return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                  isLoading = true;
+                  isEmailLoading = true;
+                  isWholeCommentLengthLoading = true;
+                });
+                getEmail();
+                getComments();
+                getCommentLength();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : (isLoading || isWholeCommentLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
@@ -169,12 +236,38 @@ class _CommentWidgetState extends State<CommentWidget> {
           padding: const EdgeInsets.all(8),
           itemCount: comments!.length,
           itemBuilder: (BuildContext context, int index) {
-            return Container(
-              child: CommentCard(likes: comments![index]["likedUsers"].length, isCommentLike: comments![index]["likedUsers"].contains(widget.uId),
-                                 commentOwnerUid: comments![index]["uId"], email: comments![index]["email"], name: comments![index]["username"], 
-                                 posted: DateTime.fromMicrosecondsSinceEpoch(comments![index]["posted"].microsecondsSinceEpoch), 
-                                 commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId,),
-            );
+            try {
+
+              return Container(
+                child: CommentCard(likes: comments![index]["likedUsers"].length, isCommentLike: comments![index]["likedUsers"].contains(widget.uId),
+                                  commentOwnerUid: comments![index]["uId"], email: comments![index]["email"], name: comments![index]["username"], 
+                                  posted: DateTime.fromMicrosecondsSinceEpoch(comments![index]["posted"].microsecondsSinceEpoch), 
+                                  commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId,),
+              );
+              
+            } catch(e){
+
+              return Center(
+                  child: Column(
+                    children: [
+                      IconButton(onPressed: () {
+                        
+                        setState(() {
+                          isErrorOccurred = false;
+                          isLoading = true;
+                          isEmailLoading = true;
+                          isWholeCommentLengthLoading = true;
+                        });
+                        getEmail();
+                        getComments();
+                        getCommentLength();
+                        
+                      }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+                      Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                    ],
+                  )
+              );
+            }
           }
         )
       )) : Container(),
@@ -241,5 +334,31 @@ class _CommentWidgetState extends State<CommentWidget> {
           ),
         )),
     );
+
+    } catch(e) {
+      
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                  isLoading = true;
+                  isEmailLoading = true;
+                  isWholeCommentLengthLoading = true;
+                });
+                getEmail();
+                getComments();
+                getCommentLength();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+
+    }
+    
   }
 }

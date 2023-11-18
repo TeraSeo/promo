@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
+import 'package:logger/logger.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -29,6 +30,9 @@ class _HomeState extends State<Home> {
 
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("post");
+
+
+  var logger = Logger();
 
   @override
   void initState() {
@@ -57,6 +61,7 @@ class _HomeState extends State<Home> {
           isErrorOccurred = true;
         });
       }
+      logger.log(Level.error, "error occurred while getting posts\nerror: " + e.toString());
     }
   }
 
@@ -78,6 +83,7 @@ class _HomeState extends State<Home> {
           isErrorOccurred = true;
         });
       }
+      logger.log(Level.error, "Error occurred while getting uId\nerror: " + e.toString());
     }
     
   }
@@ -98,6 +104,7 @@ class _HomeState extends State<Home> {
           isErrorOccurred = true;
         });
       }
+      logger.log(Level.error, "Error occurred while getting post length\nerror: " + e.toString());
     }
   }
 
@@ -152,6 +159,7 @@ class _HomeState extends State<Home> {
                         isErrorOccurred = true;
                       });
                     }
+                    logger.log(Level.error, "error occurred while getting more posts\nerror: " + e.toString());
                   }
                   return true;
                 },
@@ -175,6 +183,7 @@ class _HomeState extends State<Home> {
                 isErrorOccurred = true;
               });
             }
+            logger.log(Level.error, "error occurred while refreshing\nerror: " + e.toString());
           }
         },
         child: SingleChildScrollView(
@@ -184,9 +193,33 @@ class _HomeState extends State<Home> {
           Column(
             children: 
             List.generate(posts!.length, (index) {
-              return Container(
-                child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true,),
-              );
+              try {
+                return Container(
+                  child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true,),
+                );
+              } catch(e) {
+                return Center(
+                    child: Column(
+                      children: [
+                        IconButton(onPressed: () {
+                          if (this.mounted) {
+                            setState(() {
+                              isErrorOccurred = false;
+                              isUIdLoading = false;
+                              isLoading = false;
+                              isWholePostLengthLoading = false;
+                            });
+                          }
+                          getUId();
+                          getPosts();
+                          getPostLength();
+                          
+                        }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+                        Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                      ],
+                    )
+                );
+              }
             })),
             isMoreLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Container()
             ],

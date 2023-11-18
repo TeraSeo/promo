@@ -6,6 +6,7 @@ import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class Post extends StatefulWidget {
@@ -51,6 +52,7 @@ class _PostState extends State<Post> {
   bool withComment = true;
 
   bool postAble = true;
+  var logger = Logger();
 
   @override
   Widget build(BuildContext context) {
@@ -307,6 +309,7 @@ class _PostState extends State<Post> {
                           isErrorOccurred = true;
                         });
                       }
+                      logger.log(Level.error, "Error occurred while posting\nerror: " + e.toString());
                     }
                   }, 
                   child: Text("Post"),

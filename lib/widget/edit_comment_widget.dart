@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class EditCommentWidget extends StatefulWidget {
 
@@ -29,6 +29,9 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
   bool isLoading = true;
   bool isCommentSubmitting = false;
   bool isMoreLoading = false;
+  bool isErrorOccurred = false;
+
+  var logger = Logger();
 
   @override
   void initState() {
@@ -41,31 +44,52 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
   }
 
   getComments() async {
-    CommentService commentService = new CommentService(postId: widget.postId);
-    await commentService.getComments(widget.postId!).then((value) => {
-      comments = value,
+    try {
+      CommentService commentService = new CommentService(postId: widget.postId);
+      await commentService.getComments(widget.postId!).then((value) => {
+        comments = value,
+        if (this.mounted) {
+          setState(() {
+            isLoading = false;
+          })
+        }
+      });
+    } catch(e) {
       if (this.mounted) {
         setState(() {
-          isLoading = false;
-        })
-      }
-    });
+          isErrorOccurred = true;
+        });
+      } 
+      logger.log(Level.error, "Error occurred while getting comments\nerror: " + e.toString());
+    }
+    
   }
 
   getMoreComments() async {
-    CommentService commentService = new CommentService(postId: widget.postId);
-    await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!).then((value) => {
-      for (int i = 0; i < value.length; i++) {
-        setState(() {
-          comments![comments!.length] = value[i];
-        })
-      },
+    try {
+      CommentService commentService = new CommentService(postId: widget.postId);
+      await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!).then((value) => {
+        for (int i = 0; i < value.length; i++) {
+          setState(() {
+            comments![comments!.length] = value[i];
+          })
+        },
+        if (this.mounted) {
+          setState(() {
+            isMoreLoading = false;
+          })
+        }
+      });
+    } catch(e) {
       if (this.mounted) {
         setState(() {
-          isMoreLoading = false;
-        })
+          isErrorOccurred = true;
+        });
       }
-    });
+      logger.log(Level.error, "Error occurred while getting more comments\nerror: " + e.toString());
+
+    }
+    
   }
 
   final CollectionReference commentCollection = 
@@ -75,12 +99,22 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
   bool isWholeCommentLengthLoading = true;
 
   void getCommentLength() async {
-    await commentCollection.get().then((value) => {
-      wholeCommentLength = value.docs.length,
-      setState(() {
-        isWholeCommentLengthLoading = false;
-      }),
-    });
+    try {
+      await commentCollection.get().then((value) => {
+        wholeCommentLength = value.docs.length,
+        setState(() {
+          isWholeCommentLengthLoading = false;
+        }),
+      });
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+        logger.log(Level.error, "Error occurred while getting comment length\nerror: " + e.toString());
+      }
+    }
+    
   }
 
   @override
@@ -124,7 +158,26 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
 
     }
 
-    return isLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
+    try {
+
+      return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                  isLoading = true;
+                  isWholeCommentLengthLoading = true;
+                });
+                getComments();
+                getCommentLength();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : isLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
@@ -151,12 +204,36 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
           padding: const EdgeInsets.all(8),
           itemCount: comments!.length,
           itemBuilder: (BuildContext context, int index) {
-            return Container(
+            try {
+
+              return Container(
               child: CommentCard(likes: comments![index]["likedUsers"].length, isCommentLike: comments![index]["likedUsers"].contains(widget.uId),
                                  commentOwnerUid: comments![index]["uId"], email: comments![index]["email"], name: comments![index]["username"], 
                                  posted: DateTime.fromMicrosecondsSinceEpoch(comments![index]["posted"].microsecondsSinceEpoch), 
                                  commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId,),
             );
+
+            } catch(e) {
+               return Center(
+                  child: Column(
+                    children: [
+                      IconButton(onPressed: () {
+                        
+                        setState(() {
+                          isErrorOccurred = false;
+                          isLoading = true;
+                          isWholeCommentLengthLoading = true;
+                        });
+                        getComments();
+                        getCommentLength();
+                        
+                      }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+                      Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                    ],
+                  )
+              );
+            }
+            
           }
         ))
       ) : Container(),
@@ -200,18 +277,30 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
                           disabledColor: Colors.black,
                           focusColor: Colors.blue,
                           onPressed: () async {
-                            if (!isCommentSubmitting) {
-                              if (content!.length > 0) {
+                            try {
+
+                              if (!isCommentSubmitting) {
+                                if (content!.length > 0) {
+                                  setState(() {
+                                  isCommentSubmitting = true;
+                                  });
+                                  CommentService commnetService = new CommentService(description: content);
+                                  await commnetService.updateComment(widget.commentId!);
+                                  Future.delayed(Duration(seconds: 1)).then((value) => {
+                                    nextScreen(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
+                                  });
+                                }
+                              }
+
+                            } catch(e) {
+                              if (this.mounted) {
                                 setState(() {
-                                isCommentSubmitting = true;
-                                });
-                                CommentService commnetService = new CommentService(description: content);
-                                await commnetService.updateComment(widget.commentId!);
-                                Future.delayed(Duration(seconds: 1)).then((value) => {
-                                  nextScreen(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
+                                  isErrorOccurred = true;
                                 });
                               }
+                              logger.log(Level.error, "Error occurred while updating comment\nerror: " + e.toString());
                             }
+                            
                           },
                           icon: Icon(Icons.post_add_rounded, size: logoSize,)
                         )
@@ -224,5 +313,26 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
           ),
         )),
     );
+
+    } catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                
+                setState(() {
+                  isErrorOccurred = false;
+                  isLoading = true;
+                  isWholeCommentLengthLoading = true;
+                });
+                getComments();
+                getCommentLength();
+                
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
   }
 }

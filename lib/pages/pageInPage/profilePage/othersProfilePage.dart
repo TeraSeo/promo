@@ -10,6 +10,7 @@ import 'package:like_app/widget/numbers_widget.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/userService.dart';
+import 'package:logger/logger.dart';
 
 class OthersProfilePages extends StatefulWidget {
 
@@ -51,6 +52,8 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
   List<DocumentSnapshot<Map<String, dynamic>>>? posts;
 
+  var logger = Logger();
+
   @override
   void initState() {
     super.initState();
@@ -81,6 +84,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           isErrorOccurred = true;
         });
       }
+      logger.log(Level.error, "Error occurred while getting user\nerror: " + e.toString());
     }
     
   }
@@ -102,6 +106,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           isErrorOccurred = true;
         });
       }
+      logger.log(Level.error, "Error occurred while getting posts\nerror: " + e.toString());
     }
     
   }
@@ -122,6 +127,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           _isImg = false;
         });
       }
+      logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
     }
   }
 
@@ -141,6 +147,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           _isBackground = false;
         });
       }
+      logger.log(Level.error, "Error occurred while getting background profiles\nerror: " + e.toString());
     }
   }
 
@@ -258,7 +265,31 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           Column(
             children: 
                 List.generate(posts!.length, (index) {
-                  return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: false,);
+                  try {
+                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: false,);
+                  } catch(e) {
+                    return Center(
+                        child: Column(
+                          children: [
+                            IconButton(onPressed: () {
+                                setState(() {
+                                if (this.mounted) {
+                                  isErrorOccurred = false;
+                                  _isImg = true;
+                                  _isBackground = true;
+                                  isPostLoading = true;
+                                }
+                              });
+                              Future.delayed(Duration.zero,() async {
+                                await getUser();
+                              });
+
+                            }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+                            Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                          ],
+                        )
+                    );
+                  }
                 }
             )
           ),

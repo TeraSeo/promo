@@ -208,7 +208,7 @@ class DatabaseService {
       final user = FirebaseFirestore.instance.collection("user").doc(uId);
 
       await user.update({
-        "name" : name,
+        // "name" : name,
         "intro" : intro
       });
 

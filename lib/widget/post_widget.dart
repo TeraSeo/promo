@@ -12,6 +12,7 @@ import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class PostWidget extends StatefulWidget {
@@ -60,6 +61,8 @@ class _PostWidgetState extends State<PostWidget> {
   );
 
   String timeDiff = "";
+
+  var logger = Logger();
 
   @override
   void initState() {
@@ -188,7 +191,6 @@ class _PostWidgetState extends State<PostWidget> {
     }
 
     try {
-
       return isErrorOccurred? Container() : (isLoading || isProfileLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
         children: [
           SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
@@ -335,9 +337,7 @@ class _PostWidgetState extends State<PostWidget> {
                                     await databaseService.removeUserLike(widget.postID!);
                                   }
                                 } catch(e) {
-                                  if (this.mounted) {
-                                    isErrorOccurred = true;
-                                  }
+                                  logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
                                 }
                               }, 
                                 icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -378,13 +378,8 @@ class _PostWidgetState extends State<PostWidget> {
                                     await postService.removeBookMark(widget.postID!, widget.uId!);
                                   }
                                 } catch(e) {
-                                  if (this.mounted) {
-                                    setState(() {
-                                      isErrorOccurred = true;
-                                    });
-                                  }
+                                  logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
                                 }
-
                               },
                               icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
                             )
@@ -440,25 +435,29 @@ class _PostWidgetState extends State<PostWidget> {
                   children: [
                       GestureDetector(
                         onDoubleTap: () async {
-                          setState(()  {
-                            if (!isLike!) {
-                                isLikeAnimation = true;
-                                isLike = true;
-                                likes = likes! + 1;
+                          try {
+                            setState(()  {
+                              if (!isLike!) {
+                                  isLikeAnimation = true;
+                                  isLike = true;
+                                  likes = likes! + 1;
+                                }
+                                else {
+                                  isLike = false;
+                                  likes = likes! - 1;
+                                }
+                              });
+                              if (isLike!) {
+                                await postService.postAddLike(widget.postID!);
+                                await databaseService.addUserLike(widget.postID!);
                               }
                               else {
-                                isLike = false;
-                                likes = likes! - 1;
+                                await postService.postRemoveLike(widget.postID!);
+                                await databaseService.removeUserLike(widget.postID!);
                               }
-                            });
-                            if (isLike!) {
-                              await postService.postAddLike(widget.postID!);
-                              await databaseService.addUserLike(widget.postID!);
-                            }
-                            else {
-                              await postService.postRemoveLike(widget.postID!);
-                              await databaseService.removeUserLike(widget.postID!);
-                            }
+                          } catch(e) {
+                            logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
+                          }
                         }, 
                         child: Stack(
                           alignment: Alignment.center ,
@@ -551,11 +550,7 @@ class _PostWidgetState extends State<PostWidget> {
                                     await databaseService.removeUserLike(widget.postID!);
                                   }
                                 } catch(e) {
-                                  if (this.mounted) {
-                                    setState(() {
-                                      isErrorOccurred = true;
-                                    });
-                                  }
+                                  logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
                                 }
                               }, 
                                 icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -597,11 +592,7 @@ class _PostWidgetState extends State<PostWidget> {
                                     await postService.removeBookMark(widget.postID!, widget.uId!);
                                   }
                                 } catch(e) {
-                                  if (this.mounted) {
-                                    setState(() {
-                                      isErrorOccurred = true;
-                                    });
-                                  }
+                                  logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
                                 }
                               },
                               icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
@@ -702,8 +693,19 @@ class _PostWidgetState extends State<PostWidget> {
                   leading: Icon(Icons.remove_circle),
                   title: Text('Remove this post'),
                   onTap: () async {
-                    await postService.removePost(widget.postID!, widget.email!);
-                    nextScreen(context, HomePage(pageIndex: 0,));
+                    try {
+
+                      await postService.removePost(widget.postID!, widget.email!);
+                      nextScreen(context, HomePage(pageIndex: 0,));
+
+                    } catch(e) {
+                      if (this.mounted) {
+                        setState(() {
+                          isErrorOccurred = true;
+                          logger.log(Level.error, "error occurred while user removes post\nerror : " + e.toString());
+                        });
+                      }
+                    }                    
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
@@ -754,11 +756,7 @@ class _PostWidgetState extends State<PostWidget> {
                           }
                       Navigator.pop(context);
                     } catch(e) {
-                      if (this.mounted) {
-                        setState(() {
-                          isErrorOccurred = true;
-                        });
-                      }
+                      logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
                     }
                   },
                 ),
@@ -789,11 +787,7 @@ class _PostWidgetState extends State<PostWidget> {
                         
                       Navigator.pop(context);
                     } catch(e) {
-                      if (this.mounted) {
-                        setState(() {
-                          isErrorOccurred = true;
-                        });
-                      }
+                      logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
                     }
                   }
                 ),

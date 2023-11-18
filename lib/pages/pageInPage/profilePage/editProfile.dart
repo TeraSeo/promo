@@ -6,6 +6,7 @@ import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class EditProfile extends StatefulWidget {
 
@@ -29,6 +30,8 @@ class _EditProfileState extends State<EditProfile> {
   bool isProfileChanging = false;
   bool isErrorOccurred = false;
 
+  var logger = Logger();
+
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
     try {
       final image = await ImagePicker().pickImage(source: source);
@@ -48,6 +51,8 @@ class _EditProfileState extends State<EditProfile> {
           Navigator.of(context).pop();
         }
       });
+      logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
+
     }
   }
   
