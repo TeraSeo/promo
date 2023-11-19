@@ -4,6 +4,7 @@ import 'package:like_app/widget/searchName.dart';
 import 'package:like_app/widget/searchTag.dart';
 import 'package:like_app/widget/searchUser.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class Search extends StatefulWidget {
 
@@ -29,6 +30,8 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   int _currentIndex = 0;
 
+  var logger = Logger();
+
   @override
   void initState() {
     try {
@@ -43,7 +46,6 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         setState(() {
           _currentIndex = _tabController.index;
         });
-        print("Selected Index: " + _tabController.index.toString());
       });
     } catch(e) {
       if (this.mounted) {
@@ -73,9 +75,12 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
         }
       });
     } catch(e) {
-      setState(() {
-        isErrorOccurred = true;
-      });
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "Error occurred while getting uId\nerror: " + e.toString());
     }
   }
 
@@ -83,18 +88,38 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
 
     final _tabContent = <Widget>[
-      searchController!.text == "" ? 
-            Container() : 
-            SearchName(searchedName: searchController!.text, uId: uId!),
-      searchController!.text == "" ? 
-            Container() :
-            SearchUser(searchedName: searchController!.text, uId: uId!),
-      searchController!.text == "" ? 
-            Container() :
-            SearchTag(searchedName: searchController!.text, uId: uId!)
-    ];
+        searchController!.text == "" ? 
+              Container() : 
+              SearchName(searchedName: searchController!.text, uId: uId!),
+        searchController!.text == "" ? 
+              Container() :
+              SearchUser(searchedName: searchController!.text, uId: uId!),
+        searchController!.text == "" ? 
+              Container() :
+              SearchTag(searchedName: searchController!.text, uId: uId!)
+      ];
 
-    return isUIdLoading ? 
+    try {
+
+      return isErrorOccurred ? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      isErrorOccurred = false;
+                      isUIdLoading = true;
+                    }
+                  );
+                }
+                Future.delayed(Duration.zero,() async {
+                  getUId();
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : isUIdLoading ? 
       Center(
         child: CircularProgressIndicator(),
       )
@@ -140,11 +165,33 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               )
           ),
         body:
-
         IndexedStack(
           index: _currentIndex,
           children: _tabContent,
         ),
       );
+
+    } catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      isErrorOccurred = false;
+                      isUIdLoading = true;
+                    }
+                  );
+                }
+                Future.delayed(Duration.zero,() async {
+                  getUId();
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
+    
   }
 }

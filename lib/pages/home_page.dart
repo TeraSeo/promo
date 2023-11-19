@@ -131,12 +131,29 @@ class _HomePageState extends State<HomePage> {
           
           actions: [
             IconButton(onPressed: (){
-              nextScreen(context, Search(searchName: "",));
+              try {
+                nextScreen(context, Search(searchName: "",));
+              } catch(e) {
+                if (this.mounted) {
+                  setState(() {
+                    isErrorOccurred = true;
+                  });
+                }
+              }
+              
             },
             icon: IconButton(
               icon: Icon(Icons.search,),
               onPressed: () {
-                nextScreen(context, Search(searchName: "",));
+                try {
+                  nextScreen(context, Search(searchName: "",));
+                } catch(e) {
+                  if (this.mounted) {
+                    setState(() {
+                      isErrorOccurred = true;
+                    });
+                  }
+                }
               },
             )) 
           ],

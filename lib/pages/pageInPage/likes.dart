@@ -94,6 +94,8 @@ class _LikesRankingState extends State<LikesRanking> {
                 setState(() {
                   isErrorOccurred = false;
                   isUIdLoading = false;
+                  isprofLoadings = [];
+                  profileURLs = [];
                 });
                 getUId();
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
@@ -194,6 +196,8 @@ class _LikesRankingState extends State<LikesRanking> {
                           setState(() {
                             isErrorOccurred = false;
                             isUIdLoading = false;
+                            isprofLoadings = [];
+                            profileURLs = [];
                           });}
                           getUId();
                         }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
@@ -240,6 +244,8 @@ class _LikesRankingState extends State<LikesRanking> {
                 setState(() {
                   isErrorOccurred = false;
                   isUIdLoading = false;
+                  isprofLoadings = [];
+                  profileURLs = [];
                 });}
                 getUId();
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),

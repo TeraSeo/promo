@@ -5,6 +5,7 @@ import 'package:like_app/widget/searchName.dart';
 import 'package:like_app/widget/searchTag.dart';
 import 'package:like_app/widget/searchUser.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class SearchByTag extends StatefulWidget {
 
@@ -25,6 +26,9 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
   bool isUIdLoading = true;
 
   int _currentIndex = 2;
+
+  bool isErrorOccurred = false;
+  var logger = Logger();
 
   @override
   void initState() {
@@ -47,14 +51,25 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
   }
 
   void getUId() async{
-    await HelperFunctions.getUserUIdFromSF().then((value) => {
-      uId = value,
+    try {
+      await HelperFunctions.getUserUIdFromSF().then((value) => {
+        uId = value,
+        if (this.mounted) {
+          setState(() {
+            isUIdLoading = false;
+          })
+        }
+      });
+
+    } catch(e) {
       if (this.mounted) {
         setState(() {
-          isUIdLoading = false;
-        })
+          isErrorOccurred = true;
+        });
       }
-    });
+      logger.log(Level.error, "error occurred while getting uId\nerror: " + e.toString());
+    }
+    
   }
 
   @override
@@ -74,7 +89,26 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
             SearchTag(searchedName: searchController!.text, uId: uId!)
     ];
 
-    return isUIdLoading? 
+    try {
+      return isErrorOccurred ? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      isErrorOccurred = false;
+                      isUIdLoading = true;
+                    }
+                  );
+                }
+                Future.delayed(Duration.zero,() async {
+                  getUId();
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : isUIdLoading? 
       Center(
         child: CircularProgressIndicator(),
       )
@@ -129,5 +163,28 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
           children: _tabContent,
         ),
       );
+
+    } catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      isErrorOccurred = false;
+                      isUIdLoading = true;
+                    }
+                  );
+                }
+                Future.delayed(Duration.zero,() async {
+                  getUId();
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
+    
   }
 }

@@ -4,6 +4,7 @@ import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
 
 class SearchUser extends StatefulWidget {
 
@@ -24,6 +25,9 @@ class _SesarchUserState extends State<SearchUser> {
   bool isMoreLoading = false;
   bool isProfileLoading = true;
 
+  bool isErrorOccurred = false;
+  var logger = Logger();
+
   List<bool> isprofLoadings = [];
   List<String> profileURLs = [];
 
@@ -43,60 +47,93 @@ class _SesarchUserState extends State<SearchUser> {
   }
 
   Future getUsersBySearchName(String searchedName) async {
-    DatabaseService databaseService = new DatabaseService();
-    databaseService.getUserBySearchedName(searchedName).then((value) => {
-      users = value,
+    try {
+      DatabaseService databaseService = new DatabaseService();
+      databaseService.getUserBySearchedName(searchedName).then((value) => {
+        users = value,
+        if (this.mounted) {
+          setState(() {
+            isUserLoading = false;
+          })
+        },
+        setProfileUrls()
+      });
+
+    } catch(e) {
       if (this.mounted) {
         setState(() {
-          isUserLoading = false;
-        })
-      },
-      setProfileUrls()
-    });
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "error occurred while getting user by name\nerror: " + e.toString());
+    }
+    
   }
 
   Future getMoreUsersBySearchName(String searchedName, String uId) async {
-    DatabaseService databaseService = new DatabaseService();
-     await databaseService.loadMoreUsersBySearchedName(searchedName, uId).then((value) => {
-      if (value.length == 0) {
+    try {
+      
+      DatabaseService databaseService = new DatabaseService();
+      await databaseService.loadMoreUsersBySearchedName(searchedName, uId).then((value) => {
+        if (value.length == 0) {
+          if (this.mounted) {
+            setState(() {
+              isLoadingMoreUsersPossible = false;
+            })
+          }
+        }
+        else {
+          if (this.mounted) {
+            for (int i = 0; i < value.length; i++) {
+                setState(() {
+                  users![users!.length] = value[i];
+                })
+            }
+          },
+          setProfileUrls()
+        },
+        
         if (this.mounted) {
           setState(() {
-            isLoadingMoreUsersPossible = false;
+            isMoreLoading = false;
           })
         }
-      }
-      else {
-        if (this.mounted) {
-          for (int i = 0; i < value.length; i++) {
-              setState(() {
-                users![users!.length] = value[i];
-              })
-          }
-        },
-        setProfileUrls()
-      },
-      
+      });
+
+    } catch(e) {
       if (this.mounted) {
         setState(() {
-          isMoreLoading = false;
-        })
+          isErrorOccurred = true;
+        });
       }
-    });
+      logger.log(Level.error, "error occurred while getting more users by name\nerror: " + e.toString());
+    }
   }
 
   setProfileUrls() async {
+    try {
 
-    while (profileURLs.length < users!.length) {
-      profileURLs.add("");
-      isprofLoadings.add(true);
-      await getProfileURL(users![profileURLs.length - 1]["email"], users![profileURLs.length - 1]["profilePic"], profileURLs.length - 1);
-    }
+      while (profileURLs.length < users!.length) {
+        profileURLs.add("");
+        isprofLoadings.add(true);
+        await getProfileURL(users![profileURLs.length - 1]["email"], users![profileURLs.length - 1]["profilePic"], profileURLs.length - 1);
+      }
 
-    if (this.mounted) {
-      setState(() {
-        isProfileLoading = false;
-      });
+      if (this.mounted) {
+        setState(() {
+          isProfileLoading = false;
+        });
+      }
+
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "error occurred while setting profil urls\nerror: " + e.toString());
     }
+    
   }
 
   getProfileURL(String email, String profile, int index) async {
@@ -122,22 +159,59 @@ class _SesarchUserState extends State<SearchUser> {
   }
 
   void getAccountsLength(String searchedName) async {
+    try {
 
-    await FirebaseFirestore.instance.collection("user").
-      where('name', isGreaterThanOrEqualTo: searchedName).
-      get().then((value) => {
-        wholeAccountsLength = value.docs.length,
-        if (this.mounted) {
-          setState(() {
-            isWholeAccountsLengthLoading = false;
-          }),
-        }
-    });
+      await FirebaseFirestore.instance.collection("user").
+        where('name', isGreaterThanOrEqualTo: searchedName).
+        get().then((value) => {
+          wholeAccountsLength = value.docs.length,
+          if (this.mounted) {
+            setState(() {
+              isWholeAccountsLengthLoading = false;
+            }),
+          }
+      });
+
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "error occurred while getting accounts length\nerror: " + e.toString());
+    }
+    
   }
 
   @override
   Widget build(BuildContext context) {
-    return (isWholeAccountsLengthLoading || isUserLoading || isProfileLoading) ? Center(child:  CircularProgressIndicator(),) :
+    try {
+
+      return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      isErrorOccurred = false;
+                      isUserLoading = true;
+                      isLoadingMoreUsersPossible = true;
+                      isMoreLoading = false;
+                      isProfileLoading = true;
+                      isprofLoadings = [];
+                      profileURLs = [];
+                    }
+                  );
+                }
+                Future.delayed(Duration(seconds: 0)).then((value) async {
+                  await getUsersBySearchName(widget.searchedName);
+                  getAccountsLength(widget.searchedName);
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : (isWholeAccountsLengthLoading || isUserLoading || isProfileLoading) ? Center(child:  CircularProgressIndicator(),) :
              NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
                 if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && isLoadingMoreUsersPossible && !isMoreLoading && wholeAccountsLength! > users!.length) {
@@ -154,19 +228,32 @@ class _SesarchUserState extends State<SearchUser> {
               },
               child: RefreshIndicator(
                 onRefresh: () async {
-                  if (this.mounted) {
-                    setState(() {
-                      isWholeAccountsLengthLoading = true;
-                      isUserLoading = true;
-                      isProfileLoading = true;
-                    });
+                  try {
+
+                    if (this.mounted) {
+                      setState(() {
+                        isWholeAccountsLengthLoading = true;
+                        isUserLoading = true;
+                        isProfileLoading = true;
+                      });
+                    }
+                    await getUsersBySearchName(widget.searchedName);
+                    getAccountsLength(widget.searchedName);
+
+                  } catch(e) {
+                    if (this.mounted) {
+                      setState(() {
+                        isErrorOccurred = true;
+                      });
+                    }
+                    logger.log(Level.error, "error occurred while refreshing\nerror: " + e.toString());
                   }
-                  await getUsersBySearchName(widget.searchedName);
-                  getAccountsLength(widget.searchedName);
                   
                 },
                 child: SingleChildScrollView(
                   child: Wrap(children: List.generate(users!.length, (index) {
+                      try {
+
                         return 
                           isprofLoadings[index] ? Center(
                             child: CircularProgressIndicator(),
@@ -202,9 +289,67 @@ class _SesarchUserState extends State<SearchUser> {
                               ),
                             )
                          );
+
+                      } catch(e) {
+                        return Center(
+                          child: Column(
+                            children: [
+                              IconButton(onPressed: () {
+                                if (this.mounted) {
+                                  setState(() {
+                                      isErrorOccurred = false;
+                                      isUserLoading = true;
+                                      isLoadingMoreUsersPossible = true;
+                                      isMoreLoading = false;
+                                      isProfileLoading = true;
+                                      isprofLoadings = [];
+                                      profileURLs = [];
+                                    }
+                                  );
+                                }
+                                Future.delayed(Duration(seconds: 0)).then((value) async {
+                                  await getUsersBySearchName(widget.searchedName);
+                                  getAccountsLength(widget.searchedName);
+                                });
+                              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+                              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                            ],
+                          )
+                      );
+                      }
+                        
                       },
                     )),
                 )
               ));
+
+    } catch(e) {
+      return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      isErrorOccurred = false;
+                      isUserLoading = true;
+                      isLoadingMoreUsersPossible = true;
+                      isMoreLoading = false;
+                      isProfileLoading = true;
+                      isprofLoadings = [];
+                      profileURLs = [];
+                    }
+                  );
+                }
+                Future.delayed(Duration(seconds: 0)).then((value) async {
+                  await getUsersBySearchName(widget.searchedName);
+                  getAccountsLength(widget.searchedName);
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
+    
   }
 }
