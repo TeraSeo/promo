@@ -31,6 +31,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   DatabaseService databaseService = new DatabaseService();
   Storage storage = new Storage();
+  PostService postService = new PostService();
 
   bool _isImg = true;
   bool _isBackground = true;
@@ -211,183 +212,183 @@ class _ProfilePageState extends State<ProfilePage> {
           )
       ) :
     (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
-    RefreshIndicator(
-      child: SingleChildScrollView(
-      child: Column(
-        children: [
-          Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.center,
-            children: [
-              BackgroundWidget(background_url: background_url),
-              Positioned(
-                top: top,
-                child: Column(
-                  children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.18,),
-                    ProfileWidget(
-                    imagePath: img_url,   // user image
-                    onClicked: () async {},
-                    ),
-                    SizedBox(height: sizedBoxinCard),
-                    buildName(postUser!),
-                    SizedBox(height: sizedBoxinCard),
-                    SizedBox(height: sizedBoxinCard),
-                    NumbersWidget(postUser!, likes),
-                    SizedBox(height: sizedBoxinCard * 2),
-                  ],
-                ),
-              ),
-              Positioned(
-                width: MediaQuery.of(context).size.width,
-                top: MediaQuery.of(context).size.height * 0.55,
-                child: Column(
-                  children: [
-                    SizedBox(height: sizedBoxinCard * 1.5),
-                    Card(
-                      shape: RoundedRectangleBorder( 
-                        borderRadius: BorderRadius.circular(20),
+      RefreshIndicator(
+        child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
+              children: [
+                BackgroundWidget(background_url: background_url),
+                Positioned(
+                  top: top,
+                  child: Column(
+                    children: [
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.18,),
+                      ProfileWidget(
+                      imagePath: img_url,   // user image
+                      onClicked: () async {},
                       ),
-                      elevation: (MediaQuery.of(context).size.height * 0.026) / 6, 
-                      child: Column(
-                        children: [
-                          buildAbout(postUser!),
-                          SizedBox(height: MediaQuery.of(context).size.height * 0.1, width: MediaQuery.of(context).size.width,)
+                      SizedBox(height: sizedBoxinCard),
+                      buildName(postUser!),
+                      SizedBox(height: sizedBoxinCard),
+                      SizedBox(height: sizedBoxinCard),
+                      NumbersWidget(postUser!, likes),
+                      SizedBox(height: sizedBoxinCard * 2),
+                    ],
+                  ),
+                ),
+                Positioned(
+                  width: MediaQuery.of(context).size.width,
+                  top: MediaQuery.of(context).size.height * 0.55,
+                  child: Column(
+                    children: [
+                      SizedBox(height: sizedBoxinCard * 1.5),
+                      Card(
+                        shape: RoundedRectangleBorder( 
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        elevation: (MediaQuery.of(context).size.height * 0.026) / 6, 
+                        child: Column(
+                          children: [
+                            buildAbout(postUser!),
+                            SizedBox(height: MediaQuery.of(context).size.height * 0.1, width: MediaQuery.of(context).size.width,)
+                          ]
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.05
+                      ),
+                      Row(
+                        children: <Widget>[
+                            Expanded(
+                              child: Divider(   
+                                indent: 20.0,
+                                endIndent: 10.0,
+                                thickness: 1,
+                              ),
+                            ),     
+                            Text("Posts"),        
+                            Expanded(
+                              child: Divider(
+                                indent: 20.0,
+                                endIndent: 10.0,
+                                thickness: 1,
+                              ),
+                            ),    
                         ]
                       ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.05
-                    ),
-                    Row(
-                      children: <Widget>[
-                          Expanded(
-                            child: Divider(   
-                              indent: 20.0,
-                              endIndent: 10.0,
-                              thickness: 1,
-                            ),
-                          ),     
-                          Text("Posts"),        
-                          Expanded(
-                            child: Divider(
-                              indent: 20.0,
-                              endIndent: 10.0,
-                              thickness: 1,
-                            ),
-                          ),    
-                      ]
-                    ),
-                    SizedBox(height: 30,),
-                  ]
+                      SizedBox(height: 30,),
+                    ]
+                  )
+                ),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+            Row(
+              children: [
+                SizedBox(width: MediaQuery.of(context).size.width * 0.5 + MediaQuery.of(context).size.height * 0.047 * 3.1 / 5,),
+                GestureDetector(
+                  child: buildEditIcon(Theme.of(context).primaryColor, context),
+                  onTap: _showShareMenu,
                 )
-              ),
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
-          Row(
-            children: [
-              SizedBox(width: MediaQuery.of(context).size.width * 0.5 + MediaQuery.of(context).size.height * 0.047 * 3.1 / 5,),
-              GestureDetector(
-                child: buildEditIcon(Theme.of(context).primaryColor, context),
-                onTap: _showShareMenu,
-              )
-            ],
-          ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.5,),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.05 * postUser!["intro"].toString().split("\n").length,),
+              ],
+            ),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.5,),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.05 * postUser!["intro"].toString().split("\n").length,),
 
 
-          Column(
-            children: 
-                List.generate(posts!.length, (index) {
+            Column(
+              children: 
+                  List.generate(posts!.length, (index) {
+                    try {
+
+                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true,);
+                    } catch(e) {
+
+                      return Center(
+            child: Column(
+              children: [
+                IconButton(onPressed: () {
                   try {
-
-                   return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true,);
-                  } catch(e) {
-
-                    return Center(
-          child: Column(
-            children: [
-              IconButton(onPressed: () {
-                try {
-                  setState(() {
-                    if (this.mounted) {
-                      isErrorOccurred = false;
-                      _isImg = true;
-                      _isBackground = true;
-                      isPostLoading = true;
-                      isUIdLoading = true;
-                    }
-                  });
-                  Future.delayed(Duration.zero,() async {
-                    await getUser();
-                    await getPosts();
-                    getUserProfile();
-                    getUserBackground();
-                  });
-                } catch(e) {
-                  if (this.mounted) {
                     setState(() {
-                      isErrorOccurred = true;
+                      if (this.mounted) {
+                        isErrorOccurred = false;
+                        _isImg = true;
+                        _isBackground = true;
+                        isPostLoading = true;
+                        isUIdLoading = true;
+                      }
                     });
+                    Future.delayed(Duration.zero,() async {
+                      await getUser();
+                      await getPosts();
+                      getUserProfile();
+                      getUserBackground();
+                    });
+                  } catch(e) {
+                    if (this.mounted) {
+                      setState(() {
+                        isErrorOccurred = true;
+                      });
+                    }
                   }
-                }
-              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
-            ],
-          )
-      );
-
-                  }
-                }
+                }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+                Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              ],
             )
-          ),
-        ],
-      )
-    ), 
-      onRefresh: () async {
-        try {
-          setState(() {
-          if (this.mounted) {
-            _isImg = true;
-            _isBackground = true;
-            isPostLoading = true;
-            isUIdLoading = true;
-          }
-          });
-          Future.delayed(Duration.zero,() async {
-            await getUser();
-            await getPosts();
-            getUserProfile();
-            getUserBackground();
-          });
-        } catch(e) {
-          if (this.mounted) {
-            setState(() {
-              isErrorOccurred = true;
-            });
-          }
-          logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
-        }
-        
-      },
-    );} catch(e) {
+        );
 
+                    }
+                  }
+              )
+            ),
+          ],
+        )
+      ), 
+        onRefresh: () async {
+          try {
+            setState(() {
+            if (this.mounted) {
+              _isImg = true;
+              _isBackground = true;
+              isPostLoading = true;
+              isUIdLoading = true;
+            }
+            });
+            Future.delayed(Duration.zero,() async {
+              await getUser();
+              await getPosts();
+              getUserProfile();
+              getUserBackground();
+            });
+          } catch(e) {
+            if (this.mounted) {
+              setState(() {
+                isErrorOccurred = true;
+              });
+            }
+            logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
+          }
+          
+        },
+      );
+    } catch(e) {
       return Center(
           child: Column(
             children: [
               IconButton(onPressed: () {
                 try {
-                  setState(() {
-                    if (this.mounted) {
+                  if (this.mounted) {
+                    setState(() {
                       isErrorOccurred = false;
                       _isImg = true;
                       _isBackground = true;
                       isPostLoading = true;
                       isUIdLoading = true;
-                    }
-                  });
+                    });
+                  }
                   Future.delayed(Duration.zero,() async {
                     await getUser();
                     await getPosts();

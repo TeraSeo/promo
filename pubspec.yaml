@@ -37,6 +37,7 @@ dependencies:
   email_otp: ^2.0.1
   firebase_auth: ^4.5.0
   firebase_core: ^2.11.0
+  firebase_messaging: ^14.7.5
   firebase_storage: ^11.2.4
   flutter:
     sdk: flutter

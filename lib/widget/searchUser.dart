@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/storage.dart';
@@ -31,15 +30,11 @@ class _SesarchUserState extends State<SearchUser> {
   List<bool> isprofLoadings = [];
   List<String> profileURLs = [];
 
-  int? wholeAccountsLength = 0;
-  bool isWholeAccountsLengthLoading = true;
-
   @override
   void initState() {
 
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await getUsersBySearchName(widget.searchedName);
-      getAccountsLength(widget.searchedName);
     });
 
 
@@ -158,31 +153,6 @@ class _SesarchUserState extends State<SearchUser> {
     }
   }
 
-  void getAccountsLength(String searchedName) async {
-    try {
-
-      await FirebaseFirestore.instance.collection("user").
-        where('name', isGreaterThanOrEqualTo: searchedName).
-        get().then((value) => {
-          wholeAccountsLength = value.docs.length,
-          if (this.mounted) {
-            setState(() {
-              isWholeAccountsLengthLoading = false;
-            }),
-          }
-      });
-
-    } catch(e) {
-      if (this.mounted) {
-        setState(() {
-          isErrorOccurred = true;
-        });
-      }
-      logger.log(Level.error, "error occurred while getting accounts length\nerror: " + e.toString());
-    }
-    
-  }
-
   @override
   Widget build(BuildContext context) {
     try {
@@ -205,16 +175,15 @@ class _SesarchUserState extends State<SearchUser> {
                 }
                 Future.delayed(Duration(seconds: 0)).then((value) async {
                   await getUsersBySearchName(widget.searchedName);
-                  getAccountsLength(widget.searchedName);
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (isWholeAccountsLengthLoading || isUserLoading || isProfileLoading) ? Center(child:  CircularProgressIndicator(),) :
+      ) : (isUserLoading || isProfileLoading) ? Center(child:  CircularProgressIndicator(),) :
              NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
-                if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && isLoadingMoreUsersPossible && !isMoreLoading && wholeAccountsLength! > users!.length) {
+                if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && isLoadingMoreUsersPossible && !isMoreLoading) {
                   
                   setState(() {
                     isMoreLoading = true;
@@ -232,13 +201,12 @@ class _SesarchUserState extends State<SearchUser> {
 
                     if (this.mounted) {
                       setState(() {
-                        isWholeAccountsLengthLoading = true;
                         isUserLoading = true;
                         isProfileLoading = true;
+                        isLoadingMoreUsersPossible = true;
                       });
                     }
                     await getUsersBySearchName(widget.searchedName);
-                    getAccountsLength(widget.searchedName);
 
                   } catch(e) {
                     if (this.mounted) {
@@ -309,7 +277,6 @@ class _SesarchUserState extends State<SearchUser> {
                                 }
                                 Future.delayed(Duration(seconds: 0)).then((value) async {
                                   await getUsersBySearchName(widget.searchedName);
-                                  getAccountsLength(widget.searchedName);
                                 });
                               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
                               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
@@ -342,7 +309,6 @@ class _SesarchUserState extends State<SearchUser> {
                 }
                 Future.delayed(Duration(seconds: 0)).then((value) async {
                   await getUsersBySearchName(widget.searchedName);
-                  getAccountsLength(widget.searchedName);
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))

@@ -19,10 +19,8 @@ class _HomeState extends State<Home> {
   bool isLoading = true;
   bool isUIdLoading = true;
   bool isMoreLoading = false;
-  bool isWholePostLengthLoading = true;
   bool isErrorOccurred = false;
-
-  int? wholePostLength;
+  bool isLoadingMorePostsPossible = true;
 
   String? uId; 
 
@@ -39,7 +37,6 @@ class _HomeState extends State<Home> {
     super.initState();
     getUId();
     getPosts();
-    getPostLength();
   }
 
 
@@ -88,26 +85,6 @@ class _HomeState extends State<Home> {
     
   }
 
-  void getPostLength() async {
-    try {
-      
-      await postCollection.get().then((value) => {
-        wholePostLength = value.docs.length,
-        setState(() {
-          isWholePostLengthLoading = false;
-        }),
-      });
-
-    } catch(e) {
-      if (this.mounted) {
-        setState(() {
-          isErrorOccurred = true;
-        });
-      }
-      logger.log(Level.error, "Error occurred while getting post length\nerror: " + e.toString());
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     try {
@@ -121,31 +98,40 @@ class _HomeState extends State<Home> {
                     isErrorOccurred = false;
                     isUIdLoading = false;
                     isLoading = false;
-                    isWholePostLengthLoading = false;
+                    isLoadingMorePostsPossible = true;
                   });
                 }
                 getUId();
                 getPosts();
-                getPostLength();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) : 
-      (isUIdLoading || isLoading || isWholePostLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+      (isUIdLoading || isLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
         NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
                   try {
-                    if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && scrollNotification.metrics.atEdge && !isMoreLoading && wholePostLength! > posts!.length) {
+                    if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && scrollNotification.metrics.atEdge && !isMoreLoading && isLoadingMorePostsPossible) {
                       isMoreLoading = true;
+                      print("load more");
                       postService.loadMore(posts![posts!.length - 1]['postNumber']).then((value) => {
-                        for (int i = 0; i < value.length; i++) {
-                          setState(() {
-                            posts![posts!.length] = value[i];
-                          })
+                        if (value.length == 0) {
+                          if (this.mounted) {
+                            setState(() {
+                              isLoadingMorePostsPossible = false;
+                            })
+                          }
+                        }
+                        else {
+                          for (int i = 0; i < value.length; i++) {
+                            setState(() {
+                              posts![posts!.length] = value[i];
+                            })
+                          },
                         },
-
+                        
                         setState(() {
                           isMoreLoading = false;
                         })
@@ -172,6 +158,7 @@ class _HomeState extends State<Home> {
                 isUIdLoading = true;
                 isLoading = true;
                 isMoreLoading = false;
+                isLoadingMorePostsPossible = true;
               }
             })
             });
@@ -207,12 +194,10 @@ class _HomeState extends State<Home> {
                               isErrorOccurred = false;
                               isUIdLoading = false;
                               isLoading = false;
-                              isWholePostLengthLoading = false;
                             });
                           }
                           getUId();
                           getPosts();
-                          getPostLength();
                           
                         }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
                         Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
@@ -237,12 +222,11 @@ class _HomeState extends State<Home> {
                     isErrorOccurred = false;
                     isUIdLoading = false;
                     isLoading = false;
-                    isWholePostLengthLoading = false;
+                    isLoadingMorePostsPossible = true;
                   });
                 }
                 getUId();
                 getPosts();
-                getPostLength();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))

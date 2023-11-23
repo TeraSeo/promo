@@ -173,6 +173,7 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
                   setState(() {
                       isErrorOccurred = false;
                       isUIdLoading = true;
+                      
                     }
                   );
                 }
