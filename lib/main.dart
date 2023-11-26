@@ -1,12 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/login_page.dart';
 import 'package:like_app/shared/constants.dart';
 
 void main() async {
+
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(options: FirebaseOptions(
@@ -18,6 +20,13 @@ void main() async {
   else {
     await Firebase.initializeApp();
   }
+
+  // FireStoreNotification fireStoreNotification = new FireStoreNotification();
+
+  FireStoreNotification().initNotificaiton();
+
+  // fireStoreNotification.requestPermission();
+
   runApp(const MyApp());
 }
 

@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/storage.dart';
 
@@ -18,6 +19,8 @@ class DatabaseService {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
 
+    final fcmToken = await FirebaseMessaging.instance.getToken();
+
     // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString();
     // int size = await userCollection.get()
     //     .then((value) => value.size);  // collection 크기 받기
@@ -25,6 +28,7 @@ class DatabaseService {
     return await userCollection.doc(uid).set({
       "name" : name,
       "email" : email,
+      "token" : fcmToken,
       "profilePic" : "",
       "backgroundPic" : "",
       "uid" : uid,
