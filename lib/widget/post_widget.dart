@@ -136,7 +136,6 @@ class _PostWidgetState extends State<PostWidget> {
     } catch(e) {
       if (this.mounted) {
         setState(() {
-          isErrorOccurred = true;
           isProfileLoading = false;
         });
       }

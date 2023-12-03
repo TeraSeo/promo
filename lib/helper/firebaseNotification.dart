@@ -14,9 +14,6 @@ class FireStoreNotification {
   Future initNotificaiton() async {
     await _firebaseMessaging.requestPermission();
 
-    final fCMToken = await _firebaseMessaging.getToken();
-
-    print("Token: $fCMToken");
   }
 
   void requestPermission() async {
@@ -43,6 +40,7 @@ class FireStoreNotification {
   }
 
   void sendPushMessage(String body, String title, String token) async {
+    print("push");
     try {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),

@@ -21,11 +21,7 @@ void main() async {
     await Firebase.initializeApp();
   }
 
-  // FireStoreNotification fireStoreNotification = new FireStoreNotification();
-
   FireStoreNotification().initNotificaiton();
-
-  // fireStoreNotification.requestPermission();
 
   runApp(const MyApp());
 }

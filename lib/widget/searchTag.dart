@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:logger/logger.dart';
@@ -23,6 +25,10 @@ class _SearchTagState extends State<SearchTag> {
 
   bool isErrorOccurred = false;
   var logger = Logger();
+
+  String? userName;
+
+  bool isUserNameLoading = false;
 
   final categoryItems = [
     '',

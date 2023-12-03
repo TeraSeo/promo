@@ -122,10 +122,11 @@ class _LikesRankingState extends State<LikesRanking> {
           SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
           // SingleChildScrollView(child: 
             FutureBuilder(
-            future: future,
+            future: FirebaseFirestore.instance.collection("user").
+                      orderBy("commentLikes", descending: true)
+                      .limit(50).get(),
             builder: (context, snapshot) {
               try {
-
                 if (!snapshot.hasData) {
                 return Center(
                   child: CircularProgressIndicator(),
@@ -140,9 +141,11 @@ class _LikesRankingState extends State<LikesRanking> {
                 else {
 
               return ListView.builder(
+              
                       shrinkWrap: true,
                       itemCount: (snapshot.data! as dynamic).docs.length,
                       itemBuilder: (context, index) {
+
                         if (profileURLs.length < (snapshot.data! as dynamic).docs.length) {
                         profileURLs.add("");
                         isprofLoadings.add(true);

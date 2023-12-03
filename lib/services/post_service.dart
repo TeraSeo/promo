@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/postDB_service.dart';
@@ -279,8 +280,20 @@ class PostService {
       try {
         
         String? uId; 
+        String? userName;
+        String? token;
+
         await HelperFunctions.getUserUIdFromSF().then((value) => {
           uId = value
+        });
+
+        final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+        user.get().then((value) => {
+
+          userName = value["name"],
+          token = value["token"]
+          
         });
 
         final post = FirebaseFirestore.instance.collection("post").doc(postId);
@@ -296,6 +309,8 @@ class PostService {
           });
 
         });
+
+        FireStoreNotification().sendPushMessage("$userName liked your post!", "Like notification", token!);
 
         return true;
 

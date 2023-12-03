@@ -26,24 +26,36 @@ class _LoginPageState extends State<OtpScreen> {
   void initState() {
     super.initState();
     verify();
+  }
+
+  bool isVerifying = true;
+
+  
+  getData() async{
+    try {
+      await HelperFunctions.getUserEmailFromSF().then((value) => {
+        setState(() {
+          email = value!;
+          print(value);
+        })
+      });
+    } catch(e) {
+      print(e);
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+    }
     
   }
 
-  getData() async{
-    await HelperFunctions.getUserEmailFromSF().then((value) => {
-      setState(() {
-        email = value!;
-      })
-    });
-    // await HelperFunctions.saveUserEmailSF("");
-  }
 
   final formKey = GlobalKey<FormState>();
 
   List<String> codes = ["","","",""];
 
-
-  bool _isLoading = false;
+  bool isErrorOccurred = false;
 
   EmailOTP myauth = EmailOTP();
 
@@ -54,10 +66,30 @@ class _LoginPageState extends State<OtpScreen> {
     double padding = MediaQuery.of(context).size.height * 0.027;
     double signInBtnHeight = MediaQuery.of(context).size.height * 0.04;
 
-    return Scaffold(
+    try {
+
+      return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      isErrorOccurred = false;
+                      isVerifying = true;
+                    }
+                  );
+                }
+                Future.delayed(Duration.zero,() async {
+                  verify();
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) :  Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
-        child: _isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) :  SingleChildScrollView(
+        child: SingleChildScrollView(
           child: Container(
             constraints: BoxConstraints(
               maxHeight: MediaQuery.of(context).size.height,
@@ -260,6 +292,29 @@ class _LoginPageState extends State<OtpScreen> {
         ),
       ),
     );
+
+    } catch(e) {
+        return Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      isErrorOccurred = false;
+                      isVerifying = true;
+                    }
+                  );
+                }
+                Future.delayed(Duration.zero,() async {
+                  verify();
+                });
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      );
+    }
+    
   }
 
   _textFieldOtp({required bool first, last, required int code}) {
@@ -314,34 +369,66 @@ class _LoginPageState extends State<OtpScreen> {
   }
 
   checkOTP() async {
-    String otpCode = codes[0] + codes[1] + codes[2] + codes[3];
-    if (await myauth.verifyOTP(otp: otpCode) == true) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("OTP is verified")));
-      verified();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text("Invalid OTP")));
+    try {
+       String otpCode = codes[0] + codes[1] + codes[2] + codes[3];
+      if (myauth.verifyOTP(otp: otpCode) == true) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("OTP is verified")));
+        verified();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text("Invalid OTP")));
+      }
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
     }
+   
   }
 
   verify() async {
-    await getData();
-    myauth.setConfig(
-          appEmail: "seotj0413@gmail.com",
-          appName: "Email OTP",
-          userEmail: email,
-          otpLength: 4,
-          otpType: OTPType.digitsOnly
-        );
-    if (await myauth.sendOTP() == true) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("OTP has been sent"),));
-     
-    } else {
-      ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(
-          content: Text("Oops, OTP send failed")));
-    } 
+    try {
+      await getData();
+      myauth.setConfig(
+            appEmail: "seotj0413@gmail.com",
+            appName: "Email OTP",
+            userEmail: email,
+            otpLength: 4,
+            otpType: OTPType.digitsOnly
+          );
+      if (await myauth.sendOTP() == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("OTP has been sent"),));
+
+          if (this.mounted) {
+            setState(() {
+              isVerifying = false;
+            });
+          }
+      
+      } else {
+        ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(
+            content: Text("Oops, OTP send failed")));
+
+          if (this.mounted) {
+            setState(() {
+              isVerifying = false;
+            });
+          }
+
+      } 
+    } catch(e) {
+      print(e);
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+    }
+    
   }
 }

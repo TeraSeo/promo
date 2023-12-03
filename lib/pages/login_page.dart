@@ -1,4 +1,3 @@
-import 'package:email_otp/email_otp.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
@@ -29,25 +28,8 @@ class _LoginPageState extends State<LoginPage> {
     RoundedLoadingButtonController();
 
   TextEditingController _emailController = TextEditingController();
-  EmailOTP myauth = EmailOTP();
 
-  // Future<void> _googleSignIn() async {
-  //   final googleSignIn = GoogleSignIn();
-  //   final googleAccount = await googleSignIn.signIn();
-  //   if (googleAccount != null) {
-  //     final googleAuth = await googleAccount.authentication;
-  //     if (googleAuth.accessToken != null && googleAuth.idToken != null) {
-  //       try {
-  //         await FirebaseAuth.instance.signInWithCredential(GoogleAuthProvider.credential(
-  //           idToken: googleAuth.idToken,
-  //           accessToken: googleAuth.accessToken
-  //         ));
-  //       } on FirebaseException catch(error) {
-  //       } catch (error) {
-  //       } finally {}
-  //     }
-  //   }
-  // }
+    bool isErrorOccurred = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,10 +43,24 @@ class _LoginPageState extends State<LoginPage> {
     double sizedBoxWidth = MediaQuery.of(context).size.height * 0.016;
     double fontSize = MediaQuery.of(context).size.height * 0.018;
 
-    return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Theme.of(context).primaryColor,
-      // ),
+
+    return isErrorOccurred? 
+      Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                if (this.mounted) {
+                  setState(() {
+                      _isLoading = false;
+                      isErrorOccurred = false;
+                    }
+                  );
+                }
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0),
         child: _isLoading? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) :  SingleChildScrollView(
@@ -336,24 +332,33 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   login() async  {
-    if (formKey.currentState!.validate()) {
-      setState(() {
-        _isLoading = true;
-      });
-      await authServie.loginWithUserNameandPassword(email, password)
-      .then((value) async {
-        if (value == true) {
-          await HelperFunctions.saveUserEmailSF(email);
-          nextScreen(context, const OtpScreen());
+    try {
+      if (formKey.currentState!.validate()) {
+        setState(() {
+          _isLoading = true;
+        });
+        await authServie.loginWithUserNameandPassword(email, password)
+        .then((value) async {
+          if (value == true) {
+            await HelperFunctions.saveUserEmailSF(email);
+            nextScreen(context, const OtpScreen());
 
-        } else {
-          setState(() {
-            showSnackbar(context, Colors.red, value);
-            _isLoading = false; 
-          });
-        }
-      });
+          } else {
+            setState(() {
+              showSnackbar(context, Colors.red, value);
+              _isLoading = false; 
+            });
+          }
+        });
+      }
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
     }
+    
   }
 
   // signInWithGoogle() async {

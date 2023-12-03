@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/login_page.dart';
 import 'package:like_app/pages/pageInPage/home.dart';
@@ -49,10 +47,6 @@ class _HomePageState extends State<HomePage> {
 
     super.initState();
     gettingUserData();
-
-    // FireStoreNotification fireStoreNotification = new FireStoreNotification();
-    // fireStoreNotification.requestPermission();
-    // fireStoreNotification.sendPushMessage("body", "title", "fpk-hw3CRENZgWDmj52Mgz:APA91bFEuKCJdEIsyCnZ1HCHQNyeZh7mj8pwhMDG-dFxjV6XN1JSsMslXB88Eux7fTabySuF4GajypsfVBdlpu9hX9ht0kQ27NRvOVohD6Mmec2dRVGFZYBb8CfWsjITBmP2BHwc1wYa");
 
   }
 
