@@ -79,11 +79,11 @@ class _SearchNameState extends State<SearchName> {
   } 
 
 
-  Future getMorePostsBySearchName(String searchedName, String postId) async {
+  Future getMorePostsBySearchName(String searchedName, String postId, String searchedTxt) async {
     try {
 
       PostService postService = new PostService();
-      await postService.loadMorePostsPostsBySearchName(searchedName, postId).then((value) => {
+      await postService.loadMorePostsPostsBySearchName(searchedName, postId, searchedTxt).then((value) => {
         if (value.length == 0) {
           if (this.mounted) {
             setState(() {
@@ -121,7 +121,6 @@ class _SearchNameState extends State<SearchName> {
   @override
   Widget build(BuildContext context) {
     try {
-
       return isErrorOccurred ? Center(
           child: Column(
             children: [
@@ -146,7 +145,7 @@ class _SearchNameState extends State<SearchName> {
           if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && isLoadingMorePostsPossible && !isMoreLoading) {
 
             isMoreLoading = true;
-            getMorePostsBySearchName(posts![posts!.length - 1]['description'], posts![posts!.length - 1]['postId']);
+            getMorePostsBySearchName(posts![posts!.length - 1]['description'], posts![posts!.length - 1]['postId'], widget.searchedName);
 
           }
           return true;

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,6 +12,7 @@ import 'package:like_app/pages/pageInPage/postPage/post.dart';
 import 'package:like_app/pages/pageInPage/profilePage/profilePage.dart';
 import 'package:like_app/pages/pageInPage/search.dart';
 import 'package:like_app/services/auth_service.dart';
+import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -47,6 +49,11 @@ class _HomePageState extends State<HomePage> {
 
     super.initState();
     gettingUserData();
+
+    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+      DatabaseService userService = new DatabaseService();
+      userService.updateMessagingToken(newToken);
+    });
 
   }
 

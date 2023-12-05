@@ -34,12 +34,14 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   bool _isBackground = true;
   bool isPostLoading = true;
   bool isLikesLoading = true;
-
   bool isErrorOccurred = false;
+  bool isRankingLoading = true;
 
   CommentService commentService = new CommentService();
 
   int likes = 0;
+
+  int? ranking = 0;
 
   Logging logging = new Logging();
 
@@ -59,6 +61,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
     super.initState();
     try {
       getUser();
+      getRanking();
     } catch(e) {
       setState(() {
         isErrorOccurred = true;
@@ -87,6 +90,17 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
       logger.log(Level.error, "Error occurred while getting user\nerror: " + e.toString());
     }
     
+  }
+
+  getRanking() async {
+    await databaseService.getRanking(widget.uId).then((value) => {
+        ranking = value,
+        if (this.mounted) {
+          setState(() {
+            isRankingLoading = false;
+          })
+        }
+      });
   }
 
   getPosts() async {
@@ -168,6 +182,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                     _isImg = true;
                     _isBackground = true;
                     isPostLoading = true;
+                    isRankingLoading = true;
                   }
                 });
                 Future.delayed(Duration.zero,() async {
@@ -178,7 +193,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (_isImg || _isBackground || isPostLoading)? Center(child: CircularProgressIndicator(color: Colors.white),) : Scaffold(
+      ) : (_isImg || _isBackground || isPostLoading || isRankingLoading)? Center(child: CircularProgressIndicator(color: Colors.white),) : Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
@@ -186,7 +201,10 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           onPressed: () => Navigator.of(context).pop(),
         )
       ),
-      body: SingleChildScrollView(
+      body: 
+      RefreshIndicator(
+        child:
+      SingleChildScrollView(
       child: Column(
         children: [
           Stack(
@@ -207,7 +225,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                     buildName(postUser!),
                     SizedBox(height: sizedBoxinCard),
                     SizedBox(height: sizedBoxinCard),
-                    NumbersWidget(postUser!, likes),
+                    NumbersWidget(postUser!, likes, ranking!),
                     SizedBox(height: sizedBoxinCard * 2),
                   ],
                 ),
@@ -278,6 +296,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                                   _isImg = true;
                                   _isBackground = true;
                                   isPostLoading = true;
+                                  isRankingLoading = true;
                                 }
                               });
                               Future.delayed(Duration.zero,() async {
@@ -295,6 +314,29 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           ),
         ],
       )
+    ),
+    onRefresh: () async {
+
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = false;
+          _isImg = true;
+          _isBackground = true;
+          isPostLoading = true;
+          isRankingLoading = true;
+        });
+      }
+
+      try {
+        getUser();
+      } catch(e) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+
+
+    }
     )
     );} catch(e) {
       return Center(
@@ -307,6 +349,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                     _isImg = true;
                     _isBackground = true;
                     isPostLoading = true;
+                    isRankingLoading = true;
                   }
                 });
                 Future.delayed(Duration.zero,() async {

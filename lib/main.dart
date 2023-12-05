@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:like_app/firebase_options.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
@@ -18,7 +19,7 @@ void main() async {
       projectId: Constants.projectId));
   }
   else {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform );
   }
 
   FireStoreNotification().initNotificaiton();

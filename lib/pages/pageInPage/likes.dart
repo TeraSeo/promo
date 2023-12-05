@@ -23,9 +23,9 @@ class _LikesRankingState extends State<LikesRanking> {
 
   bool isErrorOccurred = false;
 
-  final future = FirebaseFirestore.instance.collection("user").
-                      orderBy("commentLikes", descending: true)
-                      .limit(50).get();
+  // final future = FirebaseFirestore.instance.collection("user").
+  //                     orderBy("commentLikes", descending: true)
+  //                     .limit(50).get();
 
   bool isUIdLoading = true;
 
@@ -85,6 +85,11 @@ class _LikesRankingState extends State<LikesRanking> {
 
   @override
   Widget build(BuildContext context) {
+
+    var future = FirebaseFirestore.instance.collection("user").
+                      orderBy("wholeLikes", descending: true)
+                      .limit(50).get();
+
     try {   
     return 
       isErrorOccurred? Center(
@@ -116,15 +121,13 @@ class _LikesRankingState extends State<LikesRanking> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               SizedBox(width: 10,),
-              Text("Ranking", textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23))
+              Text("Ranking", textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23)),
             ],
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
           // SingleChildScrollView(child: 
             FutureBuilder(
-            future: FirebaseFirestore.instance.collection("user").
-                      orderBy("commentLikes", descending: true)
-                      .limit(50).get(),
+            future: future,
             builder: (context, snapshot) {
               try {
                 if (!snapshot.hasData) {
@@ -150,8 +153,8 @@ class _LikesRankingState extends State<LikesRanking> {
                         profileURLs.add("");
                         isprofLoadings.add(true);
                         getProfileURL(snapshot.data!.docs[index]["email"], snapshot.data!.docs[index]["profilePic"], index);
+                        print(snapshot.data!.docs[index]["wholeLikes"]);
                         }
-
                         return Card(
                           child: InkWell(
                             onTap: () {
@@ -178,12 +181,14 @@ class _LikesRankingState extends State<LikesRanking> {
                                 "#" + (index + 1).toString() + "  " + snapshot.data!.docs[index]["name"],
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
-                              subtitle: Text(
+                              subtitle: 
+                              Text(
                                 snapshot.data!.docs[index]["email"] + "  / " + snapshot.data!.docs[index]["wholeLikes"].toString() + " likes"
                               ),
                             ),
                           )
                         );
+                        
                       }
                 );
               }
@@ -231,6 +236,9 @@ class _LikesRankingState extends State<LikesRanking> {
         if (this.mounted) {
         setState(() {
           isUIdLoading = true;
+          isprofLoadings = [];
+          profileURLs = [];
+
         });
         getUId();
       }} catch(e) {
@@ -258,4 +266,12 @@ class _LikesRankingState extends State<LikesRanking> {
       );
   }
   }
+
+  DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
+    value: item,
+    child: Text(
+      item,
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+    )
+  );
 }

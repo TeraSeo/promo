@@ -329,11 +329,11 @@ class _PostWidgetState extends State<PostWidget> {
                                   });
                                   if (isLike!) {
                                     await postService.postAddLike(widget.postID!);
-                                    await databaseService.addUserLike(widget.postID!);
+                                    await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
                                   }
                                   else {
                                     await postService.postRemoveLike(widget.postID!);
-                                    await databaseService.removeUserLike(widget.postID!);
+                                    await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                                   }
                                 } catch(e) {
                                   logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
@@ -448,11 +448,11 @@ class _PostWidgetState extends State<PostWidget> {
                               });
                               if (isLike!) {
                                 await postService.postAddLike(widget.postID!);
-                                await databaseService.addUserLike(widget.postID!);
+                                await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
                               }
                               else {
                                 await postService.postRemoveLike(widget.postID!);
-                                await databaseService.removeUserLike(widget.postID!);
+                                await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                               }
                           } catch(e) {
                             logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
@@ -542,11 +542,11 @@ class _PostWidgetState extends State<PostWidget> {
                                   });
                                   if (isLike!) {
                                     await postService.postAddLike(widget.postID!);
-                                    await databaseService.addUserLike(widget.postID!);
+                                    await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
                                   }
                                   else {
                                     await postService.postRemoveLike(widget.postID!);
-                                    await databaseService.removeUserLike(widget.postID!);
+                                    await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                                   }
                                 } catch(e) {
                                   logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
@@ -747,11 +747,11 @@ class _PostWidgetState extends State<PostWidget> {
                           });
                           if (isLike!) {
                             await postService.postAddLike(widget.postID!);
-                            await databaseService.addUserLike(widget.postID!);
+                            await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
                           }
                           else {
                             await postService.postRemoveLike(widget.postID!);
-                            await databaseService.removeUserLike(widget.postID!);
+                            await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                           }
                       Navigator.pop(context);
                     } catch(e) {

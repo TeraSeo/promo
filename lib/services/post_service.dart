@@ -192,14 +192,15 @@ class PostService {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
     await FirebaseFirestore.instance.collection("post").
-      where('description', isGreaterThanOrEqualTo: searchedName).
-      // orderBy("description", descending: false).
+      orderBy("description", descending: false).
       // orderBy("postNumber", descending: true).
-      limit(7).get().then((value) => {
+      limit(40).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
-        posts[i] = post;
-        i += 1;
+        if (post['description'].contains(searchedName)) {
+          posts[i] = post;
+          i += 1;
+        }
       })
     });
 
@@ -207,16 +208,23 @@ class PostService {
 
   }
 
-  Future<Map<dynamic, dynamic>> loadMorePostsPostsBySearchName(String searchedName, String postId) async {
+  Future<Map<dynamic, dynamic>> loadMorePostsPostsBySearchName(String searchedName, String postId, String searchedTxt) async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
+
     await FirebaseFirestore.instance.collection("post").
-      where('description', isGreaterThanOrEqualTo: searchedName).limit(7).get().then((value) => {
+      where('description', isGreaterThanOrEqualTo: searchedName).
+      // orderBy('description', descending: false).
+      limit(40).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+
+
         if (post["postId"] != postId) {
-          posts[i] = post;
-          i += 1;
+          if (post['description'].contains(searchedTxt)) {
+            posts[i] = post;
+            i += 1;
+          }
         }
       })
     });
@@ -231,7 +239,7 @@ class PostService {
     await FirebaseFirestore.instance.collection("post").
       where('tags', arrayContains: searchedName).
       orderBy("postNumber", descending: true).
-      limit(7).get().then((value) => {
+      limit(50).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> tag = element.data() as Map<String, dynamic>;
         tags[i] = tag;
@@ -280,21 +288,20 @@ class PostService {
       try {
         
         String? uId; 
-        String? userName;
-        String? token;
+        // String? userName;
+        // String? token;
 
         await HelperFunctions.getUserUIdFromSF().then((value) => {
           uId = value
         });
 
-        final user = FirebaseFirestore.instance.collection("user").doc(uId);
+        // final user = FirebaseFirestore.instance.collection("user").doc(uId);
 
-        user.get().then((value) => {
+        // user.get().then((value) => {
 
-          userName = value["name"],
-          token = value["token"]
+        //   userName = value["name"],
           
-        });
+        // });
 
         final post = FirebaseFirestore.instance.collection("post").doc(postId);
 
@@ -310,7 +317,7 @@ class PostService {
 
         });
 
-        FireStoreNotification().sendPushMessage("$userName liked your post!", "Like notification", token!);
+        // FireStoreNotification().sendPushMessage("$userName liked your post!", "Like notification", token!);
 
         return true;
 

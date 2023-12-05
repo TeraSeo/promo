@@ -186,11 +186,13 @@ class CommentService {
     
   }
 
-  Future addCommentLikeUser(String uId) async {
+  Future addCommentLikeUser(String uId, String commentOwnerUid) async {
 
     final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
 
     List<dynamic> likedUsers;
+
+    DatabaseService databaseService = new DatabaseService();
 
     comment.get().then((value) => {
 
@@ -198,7 +200,8 @@ class CommentService {
 
       if (!likedUsers.contains(uId)) {
 
-        likedUsers.add(uId)
+        likedUsers.add(uId),
+        databaseService.plusCommentLike(commentOwnerUid)
 
       },
 
@@ -209,9 +212,11 @@ class CommentService {
     });
   }
 
-  Future removeCommentLikeUser(String uId) async {
+  Future removeCommentLikeUser(String uId, String commentOwnerUid) async {
 
     final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
+
+    DatabaseService databaseService = new DatabaseService();
 
     List<dynamic> likedUsers;
 
@@ -221,7 +226,9 @@ class CommentService {
 
       if (likedUsers.contains(uId)) {
 
-        likedUsers.remove(uId)
+        likedUsers.remove(uId),
+
+        databaseService.minusCommentLike(commentOwnerUid)
 
       },
 

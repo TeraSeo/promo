@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/storage.dart';
+import 'package:logger/logger.dart';
 
 class DatabaseService {
   final String? uid;
@@ -59,6 +60,23 @@ class DatabaseService {
     }
   }
 
+  Future updateMessagingToken(String updatedToken) async {
+    try {
+      final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      user.get().then((value) {
+
+        user.update({
+          "token" : updatedToken
+        });
+
+      });
+
+    } catch(e) {
+      print(e);
+    }
+  }
+
   Future addUserPost(String postId) async {
 
     try {
@@ -80,24 +98,34 @@ class DatabaseService {
     }
   }
 
-  Future addUserLike(String postId) async {
-
-    int wholeLikes;
+  Future addUserLike(String postId, String postOwnerUId) async {
 
     try {
 
+      print("uid: $uid owner: $postOwnerUId");
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      final postUser = FirebaseFirestore.instance.collection("user").doc(postOwnerUId);
 
       user.get().then((value) {
         List<dynamic> likes = value['likes'];
-        wholeLikes = value["wholeLikes"];
 
-        likes.add(postId);
+        if (!likes.contains(postId)) {
+          likes.add(postId);
 
-        user.update({
-          "likes" : likes,
-          "wholeLikes" : wholeLikes + 1
-        });
+          user.update({
+            "likes" : likes,
+          });
+
+          postUser.get().then((value) {
+          int wholeLikes = value["wholeLikes"];
+
+          postUser.update({
+            "wholeLikes" : wholeLikes + 1
+          });
+
+      });
+        }
 
       });
 
@@ -106,26 +134,37 @@ class DatabaseService {
     }
   }
 
-  Future removeUserLike(String postId) async {
+  Future removeUserLike(String postId, String postOwnerUId) async {
 
     int wholeLikes;
 
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
 
+      final postUser = FirebaseFirestore.instance.collection("user").doc(postOwnerUId);
+
+
       user.get().then((value) {
         
         List<dynamic> likes = value['likes'];
-        wholeLikes = value["wholeLikes"];
 
         if (likes.contains(postId)) {
           likes.remove(postId);
-        }
 
-        user.update({
-          "likes" : likes,
-          "wholeLikes" : wholeLikes - 1
+          user.update({
+            "likes" : likes,
+          });
+
+          postUser.get().then((value) {
+
+          wholeLikes = value["wholeLikes"];
+
+          postUser.update({
+            "wholeLikes" : wholeLikes - 1
+          });
+
         });
+        }
 
       });
 
@@ -496,5 +535,25 @@ class DatabaseService {
     return users;
 
   }
+
+ Future<int> getRanking(String uId) async {
+  Logger logger = new Logger();
+
+  try {
+    final user = FirebaseFirestore.instance.collection("user").orderBy("wholeLikes", descending: true);
+    final querySnapshot = await user.get();
+
+    for (int i = 0; i < querySnapshot.docs.length; i++) {
+      if (querySnapshot.docs[i]["uid"] == uId) {
+        return i + 1;
+      }
+    }
+
+    return 0;
+  } catch (e) {
+    logger.log(Level.error, "Failed to get $uId's ranking");
+    return 0;
+  }
+}
 
 }

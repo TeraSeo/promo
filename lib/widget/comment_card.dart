@@ -181,24 +181,16 @@ class _CommentCardState extends State<CommentCard> {
         onDoubleTap: () async {
           try {
           setState(() {
-
               if (isCommentLike!) {
                 isCommentLike = false;
                 likes = likes! - 1;
-                commentService.removeCommentLikeUser(widget.uId!);
+                commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
               } else {
                 isCommentLike = true;
                 likes = likes! + 1;
-                commentService.addCommentLikeUser(widget.uId!);
+                commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
               }
             });
-
-            if (isCommentLike!) {
-              await databaseService.plusCommentLike(widget.commentOwnerUid!);
-
-            } else {
-              await databaseService.minusCommentLike(widget.commentOwnerUid!);
-            }
 
           } catch(e) {
             if (this.mounted) {
@@ -297,21 +289,14 @@ class _CommentCardState extends State<CommentCard> {
                       if (isCommentLike!) {
                         isCommentLike = false;
                         likes = likes! - 1;
-                        commentService.removeCommentLikeUser(widget.uId!);
+                        commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
                         
                       } else {
                         isCommentLike = true;
                         likes = likes! + 1;
-                        commentService.addCommentLikeUser(widget.uId!);
+                        commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
                       }
                     });
-
-                    if (isCommentLike!) {
-                      await databaseService.plusCommentLike(widget.uId!);
-
-                    } else {
-                      await databaseService.minusCommentLike(widget.uId!);
-                    }
 
                   } catch(e) {
                     logger.log(Level.error, "Error occurred while comment liking\nerror: " + e.toString());
@@ -337,20 +322,15 @@ class _CommentCardState extends State<CommentCard> {
                       if (isCommentLike!) {
                         isCommentLike = false;
                         likes = likes! - 1;
-                        commentService.removeCommentLikeUser(widget.uId!);
+                        commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
                       } else {
                         isCommentLike = true;
                         likes = likes! + 1;
-                        commentService.addCommentLikeUser(widget.uId!);
+                        commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
                       }
                     });
 
-                    if (isCommentLike!) {
-                      await databaseService.plusCommentLike(widget.uId!);
-
-                    } else {
-                      await databaseService.minusCommentLike(widget.uId!);
-                    }
+                    
                   } catch(e) {
                     logger.log(Level.error, "Error occurred while comment liking\nerror: " + e.toString());
                   }

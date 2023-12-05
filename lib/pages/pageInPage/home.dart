@@ -24,6 +24,21 @@ class _HomeState extends State<Home> {
 
   String? uId; 
 
+  final popularItems = [
+    'Popular',
+    'Not popular'
+  ];
+
+
+  String popularSort = "Popular";
+
+  final sortedBy = [
+    'Latest',
+    'Oldest',
+  ];
+
+  String sort = "Latest";
+
   PostService postService = new PostService();
 
   final CollectionReference postCollection = 
@@ -177,6 +192,54 @@ class _HomeState extends State<Home> {
         child: 
         Column(
           children: [
+            Row(
+                children: [
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    width: MediaQuery.of(context).size.width * 0.43,
+                    height: MediaQuery.of(context).size.height * 0.04,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(13)),
+                      border: Border.all(width: MediaQuery.of(context).size.height * 0.002)
+                    ),
+                    child: DropdownButton<String>(
+                      value: popularSort,
+                      isExpanded: true,
+                      items: popularItems.map(buildMenuItem).toList(),
+                      onChanged: (value) {
+                        if (this.mounted) {
+                          setState(() {
+                            popularSort = value!;
+                          });
+                        }
+                      } 
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    width: MediaQuery.of(context).size.width * 0.43,
+                    height: MediaQuery.of(context).size.height * 0.04,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(13)),
+                      border: Border.all(width: MediaQuery.of(context).size.height * 0.002)
+                    ),
+                    child: DropdownButton<String>(
+                      value: sort,
+                      isExpanded: true,
+                      items: sortedBy.map(buildMenuItem).toList(),
+                      onChanged: (value) async {
+                        if (this.mounted) {
+                          setState(() {
+                            sort = value!;
+                          });
+                        }
+                      } 
+                    ),
+                  )
+                ],
+              ),
           Column(
             children: 
             List.generate(posts!.length, (index) {
@@ -236,5 +299,13 @@ class _HomeState extends State<Home> {
 
     }
   }
+
+  DropdownMenuItem<String> buildMenuItem(String item) => DropdownMenuItem(
+    value: item,
+    child: Text(
+      item,
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
+    )
+  );
 
 }

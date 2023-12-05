@@ -50,6 +50,10 @@ class _ProfilePageState extends State<ProfilePage> {
   String? uID; 
 
   bool isErrorOccurred = false;
+  
+  bool isRankingLoading = true;
+
+  int? ranking = 0;
 
   NetworkImage backgroundImg = NetworkImage("");
 
@@ -99,8 +103,18 @@ class _ProfilePageState extends State<ProfilePage> {
           setState(() {
             isUIdLoading = false;
           })
+        },
+      });
+
+      await databaseService.getRanking(uID!).then((value) => {
+        ranking = value,
+        if (this.mounted) {
+          setState(() {
+            isRankingLoading = false;
+          })
         }
       });
+      
 
       final CollectionReference userCollection = 
           FirebaseFirestore.instance.collection("user");
@@ -197,6 +211,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     _isBackground = true;
                     isPostLoading = true;
                     isUIdLoading = true;
+                    isRankingLoading = true;
                   }
                 });
                 Future.delayed(Duration.zero,() async {
@@ -211,7 +226,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           )
       ) :
-    (_isImg || _isBackground || isPostLoading || isUIdLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+    (_isImg || _isBackground || isPostLoading || isUIdLoading || isRankingLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
       RefreshIndicator(
         child: SingleChildScrollView(
         child: Column(
@@ -234,7 +249,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       buildName(postUser!),
                       SizedBox(height: sizedBoxinCard),
                       SizedBox(height: sizedBoxinCard),
-                      NumbersWidget(postUser!, likes),
+                      NumbersWidget(postUser!, likes, ranking!),
                       SizedBox(height: sizedBoxinCard * 2),
                     ],
                   ),
@@ -319,6 +334,7 @@ class _ProfilePageState extends State<ProfilePage> {
                         _isBackground = true;
                         isPostLoading = true;
                         isUIdLoading = true;
+                        isRankingLoading = true;
                       }
                     });
                     Future.delayed(Duration.zero,() async {
@@ -355,6 +371,7 @@ class _ProfilePageState extends State<ProfilePage> {
               _isBackground = true;
               isPostLoading = true;
               isUIdLoading = true;
+              isRankingLoading = true;
             }
             });
             Future.delayed(Duration.zero,() async {
@@ -387,6 +404,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       _isBackground = true;
                       isPostLoading = true;
                       isUIdLoading = true;
+                      isRankingLoading = true;
                     });
                   }
                   Future.delayed(Duration.zero,() async {

@@ -4,14 +4,15 @@ import 'package:flutter/material.dart';
 class NumbersWidget extends StatelessWidget {
   DocumentSnapshot<Map<String, dynamic>> user;
   int likes;
+  int ranking;
 
-  NumbersWidget(this.user, this.likes);
+  NumbersWidget(this.user, this.likes, this.ranking);
 
   @override
   Widget build(BuildContext context) => Row(     //////
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          buildButton(context, 0.toString(), 'Ranking'),
+          buildButton(context, ranking.toString(), 'Ranking'),
           buildDivider(context),
           buildButton(context, likes.toString(), 'Likes'),
           buildDivider(context),
