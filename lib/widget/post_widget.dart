@@ -101,6 +101,9 @@ class _PostWidgetState extends State<PostWidget> {
       else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
         timeDiff = current.difference(posted).inDays.toString() + "d ago";
       }
+      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 7) {
+        timeDiff = (current.difference(posted).inDays / 7).toInt().toString() + "w ago";
+      }
       else if (current.difference(posted).inDays >= 365) {
         timeDiff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
       } 

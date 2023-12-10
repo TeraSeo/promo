@@ -24,18 +24,13 @@ class _HomeState extends State<Home> {
 
   String? uId; 
 
-  final popularItems = [
-    'Popular',
-    'Not popular'
-  ];
-
-
-  String popularSort = "Popular";
-
-  final sortedBy = [
+  final sortItems = [
     'Latest',
     'Oldest',
+    'Popular',
+    'Not popular',
   ];
+
 
   String sort = "Latest";
 
@@ -58,7 +53,7 @@ class _HomeState extends State<Home> {
   void getPosts() async {
     try {
       PostService postService = new PostService();
-      await postService.getPosts().then((value) => {
+      await postService.getPosts(sort).then((value) => {
         posts = value,
         if (this.mounted) {
             setState(() {
@@ -131,7 +126,7 @@ class _HomeState extends State<Home> {
                     if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && scrollNotification.metrics.atEdge && !isMoreLoading && isLoadingMorePostsPossible) {
                       isMoreLoading = true;
                       print("load more");
-                      postService.loadMore(posts![posts!.length - 1]['postNumber']).then((value) => {
+                      postService.loadMore(posts![posts!.length - 1]['postNumber'], sort, posts![posts!.length - 1]['likes'].length, posts![posts!.length - 1]['postId']).then((value) => {
                         if (value.length == 0) {
                           if (this.mounted) {
                             setState(() {
@@ -204,40 +199,22 @@ class _HomeState extends State<Home> {
                       border: Border.all(width: MediaQuery.of(context).size.height * 0.002)
                     ),
                     child: DropdownButton<String>(
-                      value: popularSort,
+                      value: sort,
                       isExpanded: true,
-                      items: popularItems.map(buildMenuItem).toList(),
+                      items: sortItems.map(buildMenuItem).toList(),
                       onChanged: (value) {
                         if (this.mounted) {
                           setState(() {
-                            popularSort = value!;
+                            sort = value!;
+                            isLoading = true;
+                            isLoadingMorePostsPossible = true;
                           });
                         }
+                        getPosts();
                       } 
                     ),
                   ),
-                  Container(
-                    margin: EdgeInsets.all(10),
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                    width: MediaQuery.of(context).size.width * 0.43,
-                    height: MediaQuery.of(context).size.height * 0.04,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(13)),
-                      border: Border.all(width: MediaQuery.of(context).size.height * 0.002)
-                    ),
-                    child: DropdownButton<String>(
-                      value: sort,
-                      isExpanded: true,
-                      items: sortedBy.map(buildMenuItem).toList(),
-                      onChanged: (value) async {
-                        if (this.mounted) {
-                          setState(() {
-                            sort = value!;
-                          });
-                        }
-                      } 
-                    ),
-                  )
+
                 ],
               ),
           Column(

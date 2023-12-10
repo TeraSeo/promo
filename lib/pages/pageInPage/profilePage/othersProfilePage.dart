@@ -5,6 +5,7 @@ import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
+import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/background_widget.dart';
 import 'package:like_app/widget/numbers_widget.dart';
 import 'package:like_app/widget/post_widget.dart';
@@ -195,6 +196,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           )
       ) : (_isImg || _isBackground || isPostLoading || isRankingLoading)? Center(child: CircularProgressIndicator(color: Colors.white),) : Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Constants().iconColor),
         backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),

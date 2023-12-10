@@ -21,6 +21,9 @@ class _LikesRankingState extends State<LikesRanking> {
   List<bool> isprofLoadings = [];
   List<String> profileURLs = [];
 
+  String profileURL = "";
+  bool isProfileLoading = true;
+
   bool isErrorOccurred = false;
 
   // final future = FirebaseFirestore.instance.collection("user").
@@ -30,6 +33,12 @@ class _LikesRankingState extends State<LikesRanking> {
   bool isUIdLoading = true;
 
   var logger = Logger();
+
+  int myRank = 0;
+  String myUName = "";
+  String myEmail = "";
+  int myLikes = 0;
+  bool isMyLoading = true;
 
   @override
   void initState() {
@@ -45,7 +54,8 @@ class _LikesRankingState extends State<LikesRanking> {
           setState(() {
             isUIdLoading = false;
           })
-        }
+        },
+        getMyRank(uId!)
       });
 
     } catch(e) {
@@ -58,6 +68,64 @@ class _LikesRankingState extends State<LikesRanking> {
 
 
     }
+  }
+
+  getMyProfile(String email, String profile) async {
+    Storage storage = new Storage();
+
+    try {
+      await storage.loadProfileFile(email, profile).then((value) => {
+        profileURL = value,
+        if (this.mounted) {
+          setState(() {
+            isProfileLoading = false;
+          })
+        }
+      });
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isProfileLoading = false;
+        });
+      }
+      logger.log(Level.error, "Error occurred while getting profile");
+    }
+  }
+
+  getMyRank(String uId) async {
+
+    final myUser = FirebaseFirestore.instance.collection("user").doc(uId);
+
+    final user = FirebaseFirestore.instance.collection("user");
+
+    int i = 1;
+
+    await myUser.get().then((value) => {
+
+      myUName = value["name"],
+      myLikes = value["wholeLikes"],
+      myEmail = value["email"],
+
+      getMyProfile(value["email"], value["profilePic"]),
+
+      user.get().then((value) => {
+      value.docs.forEach((element) {
+        if (element["name"] != myUName) {
+          i++;
+        }
+        else {
+          myRank = i;
+          if (this.mounted){
+            setState(() {
+              isMyLoading = false;
+            });
+          }
+        }
+      }),
+    })
+
+    });
+   
   }
 
   getProfileURL(String email, String profile, int index) async {
@@ -98,9 +166,11 @@ class _LikesRankingState extends State<LikesRanking> {
               IconButton(onPressed: () {
                 setState(() {
                   isErrorOccurred = false;
-                  isUIdLoading = false;
+                  isUIdLoading = true;
                   isprofLoadings = [];
                   profileURLs = [];
+                  isMyLoading = true;
+                  isProfileLoading = true;
                 });
                 getUId();
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
@@ -108,7 +178,7 @@ class _LikesRankingState extends State<LikesRanking> {
             ],
           )
       ) :
-     isUIdLoading? Center(
+     (isUIdLoading || isMyLoading) ? Center(
         child: CircularProgressIndicator(),
       ) : 
       RefreshIndicator(
@@ -153,7 +223,6 @@ class _LikesRankingState extends State<LikesRanking> {
                         profileURLs.add("");
                         isprofLoadings.add(true);
                         getProfileURL(snapshot.data!.docs[index]["email"], snapshot.data!.docs[index]["profilePic"], index);
-                        print(snapshot.data!.docs[index]["wholeLikes"]);
                         }
                         return Card(
                           child: InkWell(
@@ -203,9 +272,11 @@ class _LikesRankingState extends State<LikesRanking> {
                           if (this.mounted) {
                           setState(() {
                             isErrorOccurred = false;
-                            isUIdLoading = false;
+                            isUIdLoading = true;
                             isprofLoadings = [];
                             profileURLs = [];
+                            isMyLoading = true;
+                            isProfileLoading = true;
                           });}
                           getUId();
                         }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
@@ -218,14 +289,36 @@ class _LikesRankingState extends State<LikesRanking> {
           ),
           SizedBox(height: 30,),
           Card(
-            shadowColor: Colors.grey,
-            elevation: 10,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                SizedBox(width: 10,),
-                Text("#", textAlign: TextAlign.center,style: TextStyle(fontSize: 15, height: 5))
-              ],
+            child: InkWell(
+              onTap: () {
+                nextScreen(context, OthersProfilePages(uId: uId!, postOwnerUId: uId!));
+              },
+              child: ListTile(
+                leading: Container(
+                  width: MediaQuery.of(context).size.height * 0.05,
+                  height: MediaQuery.of(context).size.height * 0.05,
+                  decoration: BoxDecoration(
+                    color: const Color(0xff7c94b6),
+                    image: DecorationImage(
+                      image: NetworkImage(profileURL),
+                      fit: BoxFit.cover,
+                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
+                    border: Border.all(
+                      color: Colors.white,
+                      width: MediaQuery.of(context).size.height * 0.005,
+                    ),
+                  ),
+                ),
+                title: Text(
+                  "#" + (myRank).toString() + "  " + myUName,
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+                subtitle: 
+                Text(
+                  myEmail + "  / " + myLikes.toString() + " likes"
+                ),
+              ),
             )
           )
         ],
@@ -236,8 +329,10 @@ class _LikesRankingState extends State<LikesRanking> {
         if (this.mounted) {
         setState(() {
           isUIdLoading = true;
+          isMyLoading = true;
           isprofLoadings = [];
           profileURLs = [];
+          isProfileLoading = true;
 
         });
         getUId();
@@ -254,9 +349,11 @@ class _LikesRankingState extends State<LikesRanking> {
                 if (this.mounted) {
                 setState(() {
                   isErrorOccurred = false;
-                  isUIdLoading = false;
+                  isUIdLoading = true;
                   isprofLoadings = [];
                   profileURLs = [];
+                  isMyLoading = true;
+                  isProfileLoading = true;
                 });}
                 getUId();
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),

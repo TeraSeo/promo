@@ -154,36 +154,145 @@ class PostService {
 
   }
 
-  Future<Map<dynamic, dynamic>> getPosts() async {
-    Map posts = new HashMap<int, Map<String, dynamic>>();
-    int i = 0;
-    // .where("postNumber", isLessThan: postNumber)
-    await postCollection.orderBy("postNumber", descending: true).limit(7).get().then((value) => {
-      value.docs.forEach((element) {
-        Map<String, dynamic> post = element.data() as Map<String, dynamic>;
-        posts[i] = post;
-        i += 1;
-      })
-    });
+  Future<Map<dynamic, dynamic>> getPosts(String sort) async {
+    try {
 
-    return posts;
+      Map posts = new HashMap<int, Map<String, dynamic>>();
+      int i = 0;
+
+      if (sort == "Latest") {
+        await postCollection.
+          orderBy("postNumber", descending: true).limit(7).get().then((value) => {
+          value.docs.forEach((element) {
+            Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+            posts[i] = post;
+            i += 1;
+          })
+        });
+      } 
+      else if (sort == "Oldest") {
+        await postCollection.
+          orderBy("postNumber", descending: false).limit(7).get().then((value) => {
+          value.docs.forEach((element) {
+            Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+            posts[i] = post;
+            i += 1;
+          })
+        });
+      }
+      else if (sort == "Popular") {
+        await postCollection.
+          orderBy("wholeLikes", descending: true).
+            orderBy("postNumber", descending: true)
+          .limit(7).get().then((value) => {
+          value.docs.forEach((element) {
+            Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+            posts[i] = post;
+            i += 1;
+          })
+        });
+      }
+      else if (sort == "Not popular") {
+        await postCollection.
+          orderBy("wholeLikes", descending: false).
+            orderBy("postNumber", descending: true)
+          .limit(7).get().then((value) => {
+          value.docs.forEach((element) {
+            Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+            posts[i] = post;
+            i += 1;
+          })
+        });
+      }
+
+      return posts;
+
+    } catch(e) {
+
+      return new HashMap<int, Map<String, dynamic>>();
+
+    }
 
   }
 
-  Future loadMore(int postNumber) async {
+  Future loadMore(int postNumber, String sort, int likesSum, String postId) async {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
-    await postCollection.
-          where("postNumber", isLessThan: postNumber).
-          orderBy("postNumber", descending: true).
-          limit(7).get().then((value) => {
-      value.docs.forEach((element) {
-        Map<String, dynamic> post = element.data() as Map<String, dynamic>;
-        posts[i] = post;
-        i += 1;
-      })
-    });
 
+    if (sort == "Latest") {
+
+      await postCollection.
+        where("postNumber", isLessThan: postNumber).
+        orderBy("postNumber", descending: true).
+        limit(7).get().then((value) => {
+          value.docs.forEach((element) {
+            Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+            posts[i] = post;
+            i += 1;
+          })
+      });
+
+    } 
+    else if (sort == "Oldest") {
+      await postCollection.
+            where("postNumber", isGreaterThan: postNumber).
+            orderBy("postNumber", descending: false).
+            limit(7).get().then((value) => {
+        value.docs.forEach((element) {
+          Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+          posts[i] = post;
+          i += 1;
+        })
+      });
+    }
+    else if (sort == "Popular") {
+      await postCollection.
+            where("wholeLikes", isLessThanOrEqualTo: likesSum).
+            orderBy("wholeLikes", descending: true).
+            orderBy("postNumber", descending: true).
+            limit(7).get().then((value) => {
+        value.docs.forEach((element) {
+          Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+          if (post["postId"] != postId) {
+            if (post["wholeLikes"] == likesSum) {
+              if (postNumber > post["postNumber"]) {
+                posts[i] = post;
+                i += 1;
+              }
+            }
+             else {
+              posts[i] = post;
+              i += 1;
+            }
+          }
+        })
+      });
+
+    } 
+    else if (sort == "Not popular") {
+      await postCollection.
+            where("wholeLikes", isGreaterThanOrEqualTo: likesSum).
+            orderBy("wholeLikes", descending: false).
+            orderBy("postNumber", descending: true).
+            limit(7).get().then((value) => {
+        value.docs.forEach((element) {
+          Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+          if (post["postId"] != postId) {
+            if (post["wholeLikes"] == likesSum) {
+              if (postNumber > post["postNumber"]) {
+                posts[i] = post;
+                i += 1;
+              }
+            }
+             else {
+              posts[i] = post;
+              i += 1;
+            }
+          }
+        })
+      });
+    }
+  
     return posts;
 
   }
@@ -312,7 +421,8 @@ class PostService {
           }
           
           post.update({
-            "likes" : likes
+            "likes" : likes,
+            "wholeLikes" : likes.length
           });
 
         });
@@ -345,7 +455,8 @@ class PostService {
           }
           
           post.update({
-            "likes" : likes
+            "likes" : likes,
+            "wholeLikes" : likes.length
           });
 
         });

@@ -50,7 +50,8 @@ class PostDBService {
       "withComment" : withComment,
       'postNumber' : size,
       'uId' : uId,
-      'bookMarks' : []
+      'bookMarks' : [],
+      'wholeLikes' : 0
     });
   }
 }

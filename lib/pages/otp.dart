@@ -319,7 +319,7 @@ class _LoginPageState extends State<OtpScreen> {
 
   _textFieldOtp({required bool first, last, required int code}) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.093,
+      height: MediaQuery.of(context).size.height * 0.11,
       child: AspectRatio(
         aspectRatio: MediaQuery.of(context).size.height * 0.00085,
         child: TextField(

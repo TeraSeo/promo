@@ -7,6 +7,7 @@ class Constants {
   static String projectId = "likeapp-adff4";
 
   final primaryColor = Color.fromARGB(255, 0, 0, 0);
+  final iconColor = Colors.white;
   // final primaryColor = const Color(0xFFee7b64);
 
 }

@@ -13,6 +13,7 @@ import 'package:like_app/pages/pageInPage/profilePage/profilePage.dart';
 import 'package:like_app/pages/pageInPage/search.dart';
 import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/services/userService.dart';
+import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
@@ -134,6 +135,7 @@ class _HomePageState extends State<HomePage> {
        Scaffold(
         resizeToAvoidBottomInset: false,
           appBar: AppBar(
+          iconTheme: IconThemeData(color: Constants().iconColor),
           toolbarHeight: toolbarHeight,
           
           actions: [
@@ -150,7 +152,7 @@ class _HomePageState extends State<HomePage> {
               
             },
             icon: IconButton(
-              icon: Icon(Icons.search,),
+              icon: Icon(Icons.search, color: Constants().iconColor,),
               onPressed: () {
                 try {
                   nextScreen(context, Search(searchName: "",));
@@ -162,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                   }
                 }
               },
-            )) 
+            ),) 
           ],
 
           elevation: 0,

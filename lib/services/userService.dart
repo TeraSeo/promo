@@ -102,7 +102,6 @@ class DatabaseService {
 
     try {
 
-      print("uid: $uid owner: $postOwnerUId");
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
 
       final postUser = FirebaseFirestore.instance.collection("user").doc(postOwnerUId);
