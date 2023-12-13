@@ -73,6 +73,7 @@ class _EditPostState extends State<EditPost> {
     'News',
     'Entertainment',
     'Sports',
+    'Food'
     'Economy',
     'Stock',
     'Shopping',
@@ -392,7 +393,7 @@ class _EditPostState extends State<EditPost> {
                       }
                     }
                   }, 
-                  child: Text("Edit Post"),
+                  child: Text("Edit Post", style: TextStyle(color: Colors.white),),
                   style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
                   elevation: 3,
                   shape: RoundedRectangleBorder(

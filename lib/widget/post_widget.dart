@@ -465,7 +465,7 @@ class _PostWidgetState extends State<PostWidget> {
                           alignment: Alignment.center ,
                           children: [
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.38,
+                              height: MediaQuery.of(context).size.height * 0.5,
                               child: PageView.builder(
                                 controller: pageController,
                                 itemBuilder: (_, index) {
@@ -473,8 +473,11 @@ class _PostWidgetState extends State<PostWidget> {
                                     animation: pageController,
                                     builder: (ctx, child) {
                                       return SizedBox(
+                                        height: MediaQuery.of(context).size.height * 0.5,
+                                        
                                         child: Image(
-                                          image: NetworkImage(images![index]),fit: BoxFit.fill
+                                          image: NetworkImage(images![index]),
+                                          fit: BoxFit.fitWidth,
                                         ));
                                     }
                                   );

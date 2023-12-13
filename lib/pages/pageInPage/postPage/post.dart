@@ -39,6 +39,7 @@ class _PostState extends State<Post> {
     'News',
     'Entertainment',
     'Sports',
+    'Food'
     'Economy',
     'Stock',
     'Shopping',
@@ -312,7 +313,7 @@ class _PostState extends State<Post> {
                       logger.log(Level.error, "Error occurred while posting\nerror: " + e.toString());
                     }
                   }, 
-                  child: Text("Post"),
+                  child: Text("Post", style: TextStyle(color: Colors.white),),
                   style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
                   elevation: 3,
                   shape: RoundedRectangleBorder(

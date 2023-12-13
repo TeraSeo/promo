@@ -65,10 +65,7 @@ class Storage {
       }
   }
 
-  Future<File> compressBackground(File file) async {
-    File compressFile = await FlutterNativeImage.compressImage(file.path, quality: 50);
-    return compressFile;
-  }
+
 
 
   Future<void> uploadPostImage(String filePath, String fileName, String email, String postID) async {

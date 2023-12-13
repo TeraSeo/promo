@@ -555,4 +555,8 @@ class DatabaseService {
   }
 }
 
+getImages() {
+  
+}
+
 }

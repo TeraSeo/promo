@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/searchName.dart';
 import 'package:like_app/widget/searchTag.dart';
 import 'package:like_app/widget/searchUser.dart';
@@ -126,12 +127,14 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       : 
       Scaffold(
         appBar: AppBar(
+          iconTheme: IconThemeData(color: Constants().iconColor),
           toolbarHeight: MediaQuery.of(context).size.height * 0.07,
           backgroundColor: Theme.of(context).primaryColor,
           title: TextFormField(
               style: TextStyle(color: Colors.white),
               controller: searchController,
               decoration: InputDecoration(
+                fillColor: Color.fromARGB(255, 87, 84, 84),
                 filled: true,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),

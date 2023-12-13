@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
+import 'package:like_app/pages/pageInPage/ImagePicker/InstagramMediaPicker.dart';
+import 'package:like_app/pages/pageInPage/ImagePicker/StatelessPicker.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editInfo.dart';
-import 'package:like_app/pages/pageInPage/profilePage/editProfile.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
@@ -64,24 +65,26 @@ class _ProfilePageState extends State<ProfilePage> {
   var logger = Logger();
 
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
-    try {
-      final image = await ImagePicker().pickImage(source: source);
-      if (image == null) return;
+    // try {
+    //   final image = await ImagePicker().pickImage(source: source);
+    //   if (image == null) return;
 
-      final imageTemporary = await storage.compressImage(File(image.path));
+    //   final imageTemporary = await storage.compressImage(File(image.path));
 
-      setState(() {
-        this.image = imageTemporary;
-      });
+    //   setState(() {
+    //     this.image = imageTemporary;
+    //   });
 
-      nextScreen(context, EditProfile(image: this.image,email: email, uId: uId, usage: usage));
-    } catch(e) {
-      setState(() {
-        isErrorOccurred = true;
-      });
-      logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
+    //   nextScreen(context, EditProfile(image: this.image,email: email, uId: uId, usage: usage));
+    // } catch(e) {
+    //   setState(() {
+    //     isErrorOccurred = true;
+    //   });
+    //   logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
 
-    }
+    // }
+    nextScreen(context, SinglePicker());
+
   }
 
   @override
@@ -196,6 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
     double top = MediaQuery.of(context).size.height * 0.026;
     try {
@@ -564,13 +568,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   pickImage(ImageSource.gallery, post_user!["email"].toString(), post_user!["uid"].toString(), usage);
                 },
               ),
-              ListTile(
-                leading: Icon(Icons.camera_alt_outlined),
-                title: Text('From camera'),
-                onTap: () {
-                  pickImage(ImageSource.camera, post_user!["email"].toString(), post_user!["uid"].toString(), usage);
-                },
-              ),
+              // ListTile(
+              //   leading: Icon(Icons.camera_alt_outlined),
+              //   title: Text('From camera'),
+              //   onTap: () {
+              //     pickImage(ImageSource.camera, post_user!["email"].toString(), post_user!["uid"].toString(), usage);
+              //   },
+              // ),
               ListTile(
                 leading: Icon(Icons.cancel),
                 title: Text('Cancel'),

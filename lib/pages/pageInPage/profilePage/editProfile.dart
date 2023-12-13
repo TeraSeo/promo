@@ -45,12 +45,13 @@ class _EditProfileState extends State<EditProfile> {
 
       nextScreenReplace(context, EditProfile(image: this.image, email: email, uId: uId, usage: usage));
     } catch(e) {
-      setState(() {
         if (this.mounted) {
+
+      setState(() {
           isErrorOccurred = true;
           Navigator.of(context).pop();
         }
-      });
+      );}
       logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
 
     }
