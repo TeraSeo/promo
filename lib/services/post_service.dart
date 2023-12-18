@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/comment_service.dart';
@@ -16,7 +17,7 @@ class PostService {
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("post");
 
-  Future post(List<File> images, String description, String category, List<String> tags, bool withComment) async {
+  Future post(List<dynamic> images, String description, String category, List<String> tags, bool withComment) async {
   
     try {
       

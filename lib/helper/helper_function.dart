@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HelperFunctions {
@@ -80,4 +82,23 @@ class HelperFunctions {
     }
   }
 
+  bool isVideoFile(File file) {
+    String extension = file.path.split('.').last.toLowerCase();
+
+    List<String> videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv'];
+
+    return videoExtensions.contains(extension);
+  }
+
+  bool isVideoFileWString(String fileName) {
+
+    List<String> videoExtensions = ['mp4', 'mov', 'avi', 'mkv', 'flv', 'wmv'];
+
+    for (int i = 0; i < videoExtensions.length; i++) {
+      if (fileName.contains(videoExtensions[i])) {
+         return true;
+      }
+    }
+    return false;
+  }
 }

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
-import 'package:like_app/pages/pageInPage/ImagePicker/InstagramMediaPicker.dart';
 import 'package:like_app/pages/pageInPage/ImagePicker/StatelessPicker.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editInfo.dart';
 import 'package:like_app/services/comment_service.dart';

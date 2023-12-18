@@ -31,6 +31,7 @@ class _SearchNameState extends State<SearchName> {
     'News',
     'Entertainment',
     'Sports',
+    'Food',
     'Economy',
     'Stock',
     'Shopping',

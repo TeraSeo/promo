@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
@@ -472,13 +473,28 @@ class _PostWidgetState extends State<PostWidget> {
                                   return AnimatedBuilder(
                                     animation: pageController,
                                     builder: (ctx, child) {
-                                      return SizedBox(
+                                      try {
+
+                                        if (!HelperFunctions().isVideoFileWString(images![index])) {
+
+                                        return SizedBox(
                                         height: MediaQuery.of(context).size.height * 0.5,
                                         
                                         child: Image(
                                           image: NetworkImage(images![index]),
-                                          fit: BoxFit.fitWidth,
+                                          fit: BoxFit.contain,
                                         ));
+                                      }
+                                      else {
+
+                                        return Container();
+                                      }
+                                     
+                                      } catch(e) {
+                                        print(e);
+                                        return Container();
+                                      }
+                                       
                                     }
                                   );
                                 },

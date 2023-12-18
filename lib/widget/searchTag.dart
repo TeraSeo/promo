@@ -33,6 +33,7 @@ class _SearchTagState extends State<SearchTag> {
     'News',
     'Entertainment',
     'Sports',
+    'Food',
     'Economy',
     'Stock',
     'Shopping',

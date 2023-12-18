@@ -125,7 +125,6 @@ class _HomeState extends State<Home> {
                   try {
                     if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && scrollNotification.metrics.atEdge && !isMoreLoading && isLoadingMorePostsPossible) {
                       isMoreLoading = true;
-                      print("load more");
                       postService.loadMore(posts![posts!.length - 1]['postNumber'], sort, posts![posts!.length - 1]['likes'].length, posts![posts!.length - 1]['postId']).then((value) => {
                         if (value.length == 0) {
                           if (this.mounted) {

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
@@ -10,8 +8,9 @@ import 'package:logger/logger.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class Post extends StatefulWidget {
-  final List<File> files;
-  const Post({super.key, required this.files});
+  // final List<File> files;
+  final List<dynamic> images;
+  const Post({super.key, required this.images});
 
   @override
   State<Post> createState() => _PostState();
@@ -39,7 +38,7 @@ class _PostState extends State<Post> {
     'News',
     'Entertainment',
     'Sports',
-    'Food'
+    'Food',
     'Economy',
     'Stock',
     'Shopping',
@@ -299,7 +298,7 @@ class _PostState extends State<Post> {
                         });
                         tags = _controllerTag.getTags!;
                         PostService postService = new PostService();
-                        await postService.post(widget.files, description, category, tags, withComment);
+                        await postService.post(widget.images, description, category, tags, withComment);
                         Future.delayed(Duration(seconds: 2)).then((value) => {
                           nextScreen(context, HomePage(pageIndex: 0,))
                         });

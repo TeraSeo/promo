@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/login_page.dart';
@@ -92,7 +93,7 @@ class _HomePageState extends State<HomePage> {
   final _widgetOptions = <Widget>[
     Home(),
     LikesRanking(),
-    Post(files: selectedImages),
+    Post(images: []),
     ProfilePage()
   ];
 
@@ -330,8 +331,8 @@ class _HomePageState extends State<HomePage> {
   Future getImages() async {
     selectedImages = [];
     try {
-      final pickedFile = await picker.pickMultiImage(
-        imageQuality: 50, maxHeight: 1000, maxWidth: 1000);
+      final pickedFile = await picker.pickMultipleMedia(
+        imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
         List<XFile> xfilePick = pickedFile;
         setState(
           () {
@@ -368,6 +369,50 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  Future<List<dynamic>> cropImages(List<File> medias) async {
+    List<dynamic> files = [];
+
+    for (var media in medias) {
+      bool isVideo = HelperFunctions().isVideoFile(media);
+      if (!isVideo) {
+        var croppedFile = await ImageCropper().cropImage(
+          sourcePath: media.path,
+          aspectRatioPresets: [
+            CropAspectRatioPreset.square,
+            CropAspectRatioPreset.ratio3x2,
+            CropAspectRatioPreset.original,
+            CropAspectRatioPreset.ratio4x3,
+            CropAspectRatioPreset.ratio16x9
+          ],
+          uiSettings: [
+            AndroidUiSettings(
+                toolbarTitle: 'Cropper',
+                toolbarColor: Colors.deepOrange,
+                toolbarWidgetColor: Colors.white,
+                initAspectRatio: CropAspectRatioPreset.original,
+                lockAspectRatio: false),
+            IOSUiSettings(
+              title: 'Cropper',
+            ),
+            WebUiSettings(
+              context: context,
+            ),
+          ],
+        );
+
+        if (croppedFile != null) {
+          files.add(croppedFile);
+        }
+      }
+      else {
+        files.add(media);
+      }
+      
+    }
+
+    return files;
+  }
+
   void _showPicMenu() {
     showModalBottomSheet(
       context: context,
@@ -387,7 +432,7 @@ class _HomePageState extends State<HomePage> {
                 title: Text('No photo'),
                 onTap: () {
                   setState(() {
-                    _widgetOptions[2] = Post(files: []);
+                    _widgetOptions[2] = Post(images: []);
                     selectedIndex = 2;
                   });
                   Navigator.pop(context);
@@ -399,13 +444,16 @@ class _HomePageState extends State<HomePage> {
                 onTap: () async{
                   try {
                     await getImages();
-                    if (this.mounted) {
-                      setState(() {
-                        _widgetOptions[2] = Post(files: selectedImages);
-                        selectedIndex = 2;
-                      });
-                    }
-                    Navigator.pop(context);
+                    await cropImages(selectedImages).then((value) {
+                      if (this.mounted) {
+                        setState(() {
+                          _widgetOptions[2] = Post(images: value);
+                            selectedIndex = 2;
+                        });
+                      }
+                      Navigator.pop(context);
+                    });
+                    
                   } catch(e) {
                     if (this.mounted) {
                       setState(() {
