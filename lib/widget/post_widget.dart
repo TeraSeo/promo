@@ -7,6 +7,7 @@ import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
+import 'package:like_app/widget/VideoPlayerWidget.dart';
 import 'package:like_app/widget/searchByTag.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
@@ -15,6 +16,7 @@ import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:video_player/video_player.dart';
 
 class PostWidget extends StatefulWidget {
   final String? email;
@@ -477,18 +479,21 @@ class _PostWidgetState extends State<PostWidget> {
 
                                         if (!HelperFunctions().isVideoFileWString(images![index])) {
 
-                                        return SizedBox(
-                                        height: MediaQuery.of(context).size.height * 0.5,
+                                          return SizedBox(
+                                          height: MediaQuery.of(context).size.height * 0.5,
+                                          
+                                          child: Image(
+                                            image: NetworkImage(images![index]),
+                                            fit: BoxFit.contain,
+                                          ));
+                                        }
+                                        else {
                                         
-                                        child: Image(
-                                          image: NetworkImage(images![index]),
-                                          fit: BoxFit.contain,
-                                        ));
-                                      }
-                                      else {
 
-                                        return Container();
-                                      }
+                                          return SizedBox(
+                                            height: MediaQuery.of(context).size.height * 0.5,
+                                            child: VideoPlayerWidget(videoUrl: images![index]));
+                                        }
                                      
                                       } catch(e) {
                                         print(e);
