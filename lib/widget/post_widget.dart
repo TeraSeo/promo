@@ -16,7 +16,6 @@ import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
-import 'package:video_player/video_player.dart';
 
 class PostWidget extends StatefulWidget {
   final String? email;
@@ -101,11 +100,14 @@ class _PostWidgetState extends State<PostWidget> {
       else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
         timeDiff = current.difference(posted).inHours.toString() + "h ago";
       }
-      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
+      else if (current.difference(posted).inDays < 7 && current.difference(posted).inDays >= 1) {
         timeDiff = current.difference(posted).inDays.toString() + "d ago";
       }
       else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 7) {
-        timeDiff = (current.difference(posted).inDays / 7).toInt().toString() + "w ago";
+        timeDiff = (current.difference(posted).inDays ~/ 7).toInt().toString() + "w ago";
+      }
+      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 31) {
+        timeDiff = (current.difference(posted).inDays ~/ 31).toInt().toString() + "w ago";
       }
       else if (current.difference(posted).inDays >= 365) {
         timeDiff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
@@ -468,7 +470,7 @@ class _PostWidgetState extends State<PostWidget> {
                           alignment: Alignment.center ,
                           children: [
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.5,
+                              height: MediaQuery.of(context).size.height * 0.6,
                               child: PageView.builder(
                                 controller: pageController,
                                 itemBuilder: (_, index) {
@@ -476,25 +478,18 @@ class _PostWidgetState extends State<PostWidget> {
                                     animation: pageController,
                                     builder: (ctx, child) {
                                       try {
-
                                         if (!HelperFunctions().isVideoFileWString(images![index])) {
-
-                                          return SizedBox(
-                                          height: MediaQuery.of(context).size.height * 0.5,
-                                          
-                                          child: Image(
-                                            image: NetworkImage(images![index]),
-                                            fit: BoxFit.contain,
-                                          ));
+                                          return
+                                            Image(
+                                              image: NetworkImage(images![index]),
+                                              fit: BoxFit.contain, // use this
+                                            );
                                         }
                                         else {
-                                        
-
                                           return SizedBox(
                                             height: MediaQuery.of(context).size.height * 0.5,
                                             child: VideoPlayerWidget(videoUrl: images![index]));
                                         }
-                                     
                                       } catch(e) {
                                         print(e);
                                         return Container();
@@ -587,6 +582,7 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: iconWidth,
                             child: IconButton(onPressed: () {
+
                               nextScreen(context, CommentWidget(postId: widget.postID, uId: widget.uId,));
                             }, icon: Icon(Icons.comment_outlined, size: logoSize),),
                           ) : SizedBox()

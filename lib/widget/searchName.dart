@@ -47,7 +47,6 @@ class _SearchNameState extends State<SearchName> {
   String category = "";
   String sort = "related";
 
-
   @override
   void initState() {
 

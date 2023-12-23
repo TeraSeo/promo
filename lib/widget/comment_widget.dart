@@ -98,7 +98,7 @@ class _CommentWidgetState extends State<CommentWidget> {
   getMoreComments() async {
     try {
       CommentService commentService = new CommentService(postId: widget.postId);
-      await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!).then((value) => {
+      await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch), comments![comments!.length - 1]["commentId"]).then((value) => {
         for (int i = 0; i < value.length; i++) {
           setState(() {
             comments![comments!.length] = value[i];

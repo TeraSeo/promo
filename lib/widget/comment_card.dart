@@ -133,8 +133,14 @@ class _CommentCardState extends State<CommentCard> {
       else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
         diff = current.difference(posted).inHours.toString() + "h ago";
       }
-      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 1) {
+      else if (current.difference(posted).inDays < 7 && current.difference(posted).inDays >= 1) {
         diff = current.difference(posted).inDays.toString() + "d ago";
+      }
+      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 7) {
+        diff = (current.difference(posted).inDays ~/ 7).toInt().toString() + "w ago";
+      }
+      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 31) {
+        diff = (current.difference(posted).inDays ~/ 31).toInt().toString() + "w ago";
       }
       else if (current.difference(posted).inDays >= 365) {
         diff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";

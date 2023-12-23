@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:image/image.dart' as img;
+
 
 class HomePage extends StatefulWidget {
 
@@ -375,24 +378,27 @@ class _HomePageState extends State<HomePage> {
     for (var media in medias) {
       bool isVideo = HelperFunctions().isVideoFile(media);
       if (!isVideo) {
+
+        bool isHorizontal = await isImageHorizontal(media);
+        print(isHorizontal);
         var croppedFile = await ImageCropper().cropImage(
           sourcePath: media.path,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio3x2,
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.ratio4x3,
-            CropAspectRatioPreset.ratio16x9
-          ],
+          aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
+          // aspectRatioPresets: [
+          //   isHorizontal? CropAspectRatioPreset.original :
+          //   CropAspectRatioPreset.ratio16x9
+          // ],
           uiSettings: [
             AndroidUiSettings(
                 toolbarTitle: 'Cropper',
                 toolbarColor: Colors.deepOrange,
-                toolbarWidgetColor: Colors.white,
-                initAspectRatio: CropAspectRatioPreset.original,
-                lockAspectRatio: false),
+                toolbarWidgetColor: Colors.white,),
             IOSUiSettings(
               title: 'Cropper',
+              aspectRatioLockEnabled: true, 
+              resetAspectRatioEnabled: false,
+              aspectRatioPickerButtonHidden: true,
+              rotateButtonsHidden: true
             ),
             WebUiSettings(
               context: context,
@@ -470,5 +476,12 @@ class _HomePageState extends State<HomePage> {
         );
       }
     );
+  }
+
+  Future<bool> isImageHorizontal(File imageFile) async {
+    final bytes = await imageFile.readAsBytes();
+    final image = img.decodeImage(Uint8List.fromList(bytes));
+
+    return image!.width > image.height;
   }
 }

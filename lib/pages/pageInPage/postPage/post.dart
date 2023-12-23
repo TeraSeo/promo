@@ -71,7 +71,13 @@ class _PostState extends State<Post> {
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : Container(
+      ) : GestureDetector(
+        onTap: () {
+          // Remove the focus when tapping outside the TextField
+          FocusScope.of(context).unfocus();
+        },
+
+        child: Container(
       alignment: Alignment.center,
       child: SingleChildScrollView(
         child: Column(
@@ -325,7 +331,8 @@ class _PostState extends State<Post> {
           ],
         ),
       ),
-    );}
+    ),
+      );}
     catch(e) {
       return Center(
           child: Column(
