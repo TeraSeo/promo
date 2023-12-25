@@ -76,7 +76,7 @@ mixin InstaPickerInterface on Widget {
         body: Padding(padding: const EdgeInsets.all(16), child: child),
       );
 
-  void pickAssets(BuildContext context, {required int maxAssets, required String usage}) =>
+  void pickAssets(BuildContext context, {required int maxAssets, required String usage, required String uID, required String email}) =>
       InstaAssetPicker.pickAssets(
         context,
         title: description.fullLabel,
@@ -84,7 +84,7 @@ mixin InstaPickerInterface on Widget {
         maxAssets: maxAssets,
         pickerTheme: getPickerTheme(context),
         onCompleted: (Stream<InstaAssetsExportDetails> cropStream) {
-          nextScreen(context, PickerCropResultScreen(cropStream: cropStream, usage: usage));
+          nextScreen(context, PickerCropResultScreen(cropStream: cropStream, usage: usage, uID: uID, email: email));
         },
       );
 }

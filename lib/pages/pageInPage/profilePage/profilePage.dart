@@ -82,7 +82,7 @@ class _ProfilePageState extends State<ProfilePage> {
     //   logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
 
     // }
-    nextScreen(context, SinglePicker());
+    nextScreen(context, SinglePicker(usage: usage, uID: uId, email: email,));
 
   }
 

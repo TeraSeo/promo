@@ -120,7 +120,13 @@ class _HomePageState extends State<HomePage> {
     
     try {
       
-      return isErrorOccurred ? Center(
+      return 
+        WillPopScope(
+        onWillPop: () async {
+          // Return false to prevent going back to the previous page
+          return Future.value(false);
+        },
+        child: isErrorOccurred ? Center(
           child: Column(
             children: [
               IconButton(onPressed: () {
@@ -308,7 +314,7 @@ class _HomePageState extends State<HomePage> {
             });
           },
         ),
-      );
+      ));
 
     } catch(e) {
       return Center(

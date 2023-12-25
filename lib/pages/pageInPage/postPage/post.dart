@@ -8,7 +8,6 @@ import 'package:logger/logger.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 
 class Post extends StatefulWidget {
-  // final List<File> files;
   final List<dynamic> images;
   const Post({super.key, required this.images});
 
@@ -306,7 +305,7 @@ class _PostState extends State<Post> {
                         PostService postService = new PostService();
                         await postService.post(widget.images, description, category, tags, withComment);
                         Future.delayed(Duration(seconds: 2)).then((value) => {
-                          nextScreen(context, HomePage(pageIndex: 0,))
+                          nextScreenReplace(context, HomePage(pageIndex: 0,))
                         });
                       }
                     } catch(e) {

@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:like_app/pages/pageInPage/ImagePicker/InstaPickerInterface.dart';
 
 class SinglePicker extends StatelessWidget with InstaPickerInterface {
-  const SinglePicker({super.key});
+  final String usage;
+  final String uID;
+  final String email;
+  const SinglePicker({super.key, required this.usage, required this.uID, required this.email});
 
   @override
   PickerDescription get description => const PickerDescription(
@@ -15,7 +18,7 @@ class SinglePicker extends StatelessWidget with InstaPickerInterface {
   @override
   Widget build(BuildContext context) => buildLayout(
         context,
-        onPressed: () => pickAssets(context, maxAssets: 1, usage: "Profile"),
+        onPressed: () => pickAssets(context, maxAssets: 1, usage: usage, uID: uID, email: email),
       );
 
 }
@@ -73,22 +76,22 @@ class SinglePicker extends StatelessWidget with InstaPickerInterface {
 // }
 
 
-const _kMultiplePickerMax = 4;
+// // const _kMultiplePickerMax = 4;
 
-class MultiplePicker extends StatelessWidget with InstaPickerInterface {
-  const MultiplePicker({super.key});
+// // class MultiplePicker extends StatelessWidget with InstaPickerInterface {
+// //   const MultiplePicker({super.key});
 
-  @override
-  PickerDescription get description => const PickerDescription(
-        icon: '🖼️',
-        label: 'Multiple Mode Picker',
-        description:
-            'Picker for selecting multiple images (max $_kMultiplePickerMax).',
-      );
+// //   @override
+// //   PickerDescription get description => const PickerDescription(
+// //         icon: '🖼️',
+// //         label: 'Multiple Mode Picker',
+// //         description:
+// //             'Picker for selecting multiple images (max $_kMultiplePickerMax).',
+// //       );
 
-  @override
-  Widget build(BuildContext context) => buildLayout(
-        context,
-        onPressed: () => pickAssets(context, maxAssets: 4, usage: "Post"),
-      );
-}
+// //   @override
+// //   Widget build(BuildContext context) => buildLayout(
+// //         context,
+// //         onPressed: () => pickAssets(context, maxAssets: 4, usage: "Post",),
+// //       );
+// }
