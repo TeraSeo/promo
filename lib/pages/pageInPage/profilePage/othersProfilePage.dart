@@ -218,7 +218,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                 top: top,
                 child: Column(
                   children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.18,),
+                    SizedBox(height: MediaQuery.of(context).size.height * 0.38,),
                     ProfileWidget(
                     imagePath: img_url, 
                     onClicked: () async {},
@@ -234,10 +234,10 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
               ),
               Positioned(
                 width: MediaQuery.of(context).size.width,
-                top: MediaQuery.of(context).size.height * 0.55,
+                top: MediaQuery.of(context).size.height * 0.6,
                 child: Column(
                   children: [
-                    SizedBox(height: sizedBoxinCard * 1.5),
+                    SizedBox(height: sizedBoxinCard * 8.5),
                     Card(
                       shape: RoundedRectangleBorder( 
                         borderRadius: BorderRadius.circular(20),
@@ -278,8 +278,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
               ),
             ],
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.5,),
+          SizedBox(height: MediaQuery.of(context).size.height * 0.4,),
           SizedBox(height: MediaQuery.of(context).size.height * 0.05 * postUser!["intro"].toString().split("\n").length,),
 
           Column(

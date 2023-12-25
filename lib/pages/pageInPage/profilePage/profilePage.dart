@@ -243,7 +243,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   top: top,
                   child: Column(
                     children: [
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.18,),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.38,),
                       ProfileWidget(
                       imagePath: img_url,   // user image
                       onClicked: () async {},
@@ -258,11 +258,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 Positioned(
-                  width: MediaQuery.of(context).size.width,
-                  top: MediaQuery.of(context).size.height * 0.55,
+                  width: MediaQuery.of(context).size.width * 0.95,
+                  top: MediaQuery.of(context).size.height * 0.6,
                   child: Column(
                     children: [
-                      SizedBox(height: sizedBoxinCard * 1.5),
+                      SizedBox(height: sizedBoxinCard * 8.5),
                       Card(
                         shape: RoundedRectangleBorder( 
                           borderRadius: BorderRadius.circular(20),
@@ -303,7 +303,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
             Row(
               children: [
                 SizedBox(width: MediaQuery.of(context).size.width * 0.5 + MediaQuery.of(context).size.height * 0.047 * 3.1 / 5,),
@@ -313,10 +313,8 @@ class _ProfilePageState extends State<ProfilePage> {
                 )
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.5,),
+            SizedBox(height: MediaQuery.of(context).size.height * 0.35,),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05 * postUser!["intro"].toString().split("\n").length,),
-
-
             Column(
               children: 
                   List.generate(posts!.length, (index) {

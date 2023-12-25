@@ -25,21 +25,9 @@ class BackgroundWidget extends StatelessWidget {
   Widget buildImage(BuildContext context) {
     final image = NetworkImage(background_url);
 
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.3,
-      decoration: BoxDecoration(
-        color: const Color(0xff7c94b6),
-        image: DecorationImage(
-          image: ResizeImage(image, width: MediaQuery.of(context).size.width.toInt(), height: (MediaQuery.of(context).size.height * 0.3).toInt()),
-          fit: BoxFit.fitWidth,
-        ),
-        // borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
-        // border: Border.all(
-        //   color: Colors.white,
-        //   width: MediaQuery.of(context).size.height * 0.005,
-        // ),
-      ),
+    return Image(
+      image: NetworkImage(background_url),
+      fit: BoxFit.contain, // use this
     );
   }
 
