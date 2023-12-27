@@ -7,7 +7,9 @@ import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 
 class LikesRanking extends StatefulWidget {
-  const LikesRanking({super.key});
+
+  final ScrollController scrollController;
+  const LikesRanking({super.key, required this.scrollController});
 
   @override
   State<LikesRanking> createState() => _LikesRankingState();
@@ -182,7 +184,9 @@ class _LikesRankingState extends State<LikesRanking> {
         child: CircularProgressIndicator(),
       ) : 
       RefreshIndicator(
-        child: Container(
+        child: SingleChildScrollView(
+          controller: widget.scrollController,
+          child: Container(
         padding: const EdgeInsets.all(10),
         child: Column(
         children: [
@@ -192,6 +196,23 @@ class _LikesRankingState extends State<LikesRanking> {
             children: [
               SizedBox(width: 10,),
               Text("Ranking", textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23)),
+              SizedBox(width: 20,),
+              IconButton(onPressed: () {
+                try {
+        if (this.mounted) {
+        setState(() {
+          isUIdLoading = true;
+          isMyLoading = true;
+          isprofLoadings = [];
+          profileURLs = [];
+          isProfileLoading = true;
+
+        });
+        getUId();
+      }} catch(e) {
+        logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
+      } 
+              }, icon: Icon(Icons.replay))
             ],
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
@@ -214,7 +235,7 @@ class _LikesRankingState extends State<LikesRanking> {
                 else {
 
               return ListView.builder(
-              
+                      physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: (snapshot.data! as dynamic).docs.length,
                       itemBuilder: (context, index) {
@@ -257,7 +278,6 @@ class _LikesRankingState extends State<LikesRanking> {
                             ),
                           )
                         );
-                        
                       }
                 );
               }
@@ -323,7 +343,8 @@ class _LikesRankingState extends State<LikesRanking> {
           )
         ],
       ),
-    ), 
+    ),
+        ), 
     onRefresh: () async {
       try {
         if (this.mounted) {

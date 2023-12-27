@@ -22,15 +22,32 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   void initState() {
     super.initState();
     _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
-    _chewieController = ChewieController(
-      videoPlayerController: _videoPlayerController,
-      autoPlay: true,
-      looping: true,
-      showControls: false,
-    );
 
-    // Initialize the AudioPlayer inside ChewieController
-    _chewieController.setVolume(isMuted ? 0.0 : 1.0);
+    _videoPlayerController.addListener(() {
+      if (_videoPlayerController.value.isInitialized) {
+        // Video is initialized, you can now use _videoPlayerController.value
+        if (this.mounted) {
+          setState(() {});
+        }
+      }
+    });
+
+    _videoPlayerController.initialize().then((_) {
+      if (this.mounted) {
+        setState(() {
+          // Initialize ChewieController after video is initialized
+          _chewieController = ChewieController(
+            videoPlayerController: _videoPlayerController,
+            autoPlay: true,
+            looping: true,
+            showControls: false,
+          );
+
+          // Initialize the AudioPlayer inside ChewieController
+          _chewieController.setVolume(isMuted ? 0.0 : 1.0);
+        });
+      }
+    });
   }
 
   void toggleMute() {
@@ -67,9 +84,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             onTap: toggleMute,
             child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.6,
-              child: Chewie(
-                controller: _chewieController,
-              ),
+              child: _videoPlayerController.value.isInitialized
+                  ? AspectRatio(
+                      aspectRatio: _videoPlayerController.value.aspectRatio,
+                      child: Chewie(
+                        controller: _chewieController,
+                      ),
+                    )
+                  : Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),),
             ),
           ),
           Positioned(

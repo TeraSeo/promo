@@ -194,7 +194,18 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (_isImg || _isBackground || isPostLoading || isRankingLoading)? Center(child: CircularProgressIndicator(color: Colors.white),) : Scaffold(
+      ) : (_isImg || _isBackground || isPostLoading || isRankingLoading)? Container(
+        color: Colors.white,
+        height: MediaQuery.of(context).size.height,
+        width: MediaQuery.of(context).size.width,
+        child: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white), 
+            backgroundColor: Colors.black, 
+          ),
+        ) ,
+      ): 
+    Scaffold(
       appBar: AppBar(
         iconTheme: IconThemeData(color: Constants().iconColor),
         backgroundColor: Colors.black,

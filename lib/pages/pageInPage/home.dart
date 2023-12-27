@@ -6,7 +6,8 @@ import 'package:like_app/widget/post_widget.dart';
 import 'package:logger/logger.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  const Home({super.key, required this.scrollController});
+  final ScrollController scrollController;
 
   @override
   State<Home> createState() => _HomeState();
@@ -183,6 +184,7 @@ class _HomeState extends State<Home> {
           }
         },
         child: SingleChildScrollView(
+          controller: widget.scrollController,
         child: 
         Column(
           children: [

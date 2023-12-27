@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:camera/camera.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
@@ -52,6 +53,14 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     selectedIndex = widget.pageIndex;
 
+    setState(() {
+      if (this.mounted) {
+        _widgetOptions[0] =  Home(scrollController: homeScrollController);
+        _widgetOptions[1] =  LikesRanking(scrollController: likeScrollController);
+        _widgetOptions[3] = ProfilePage(scrollController: profileScrollController);
+      }
+    });
+
     super.initState();
     gettingUserData();
 
@@ -86,18 +95,22 @@ class _HomePageState extends State<HomePage> {
   }
 
   final PageController _pageController = PageController();
+  final ScrollController homeScrollController = ScrollController();
+  final ScrollController profileScrollController = ScrollController();
+  final ScrollController likeScrollController = ScrollController();
 
   @override
   void dispose() {
     _pageController.dispose();
+    homeScrollController.dispose();
     super.dispose();
   }
 
   final _widgetOptions = <Widget>[
-    Home(),
-    LikesRanking(),
+    Home(scrollController: ScrollController()),
+    LikesRanking(scrollController: ScrollController()),
     Post(images: []),
-    ProfilePage()
+    ProfilePage(scrollController: ScrollController())
   ];
 
   @override
@@ -265,9 +278,50 @@ class _HomePageState extends State<HomePage> {
                 if (index == 2) {
                   _showPicMenu();
                 }
+                else if (index == 0) {
+                  
+                  if (selectedIndex == 0) {
+                    homeScrollController.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+
+                  selectedIndex = index;
+                  
+                }
+
+                else if (index == 1) {
+                  
+                  if (selectedIndex == 1) {
+                    likeScrollController.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+
+                  selectedIndex = index;
+                  
+                }
+
+                else if (index == 3) {
+                  
+                  if (selectedIndex == 3) {
+                    profileScrollController.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+
+                  selectedIndex = index;
+                  
+                }
                 else {
                   selectedIndex = index;
-                }
+              }
               }
             });
           },
@@ -307,6 +361,47 @@ class _HomePageState extends State<HomePage> {
                 if (index == 2) {
                   _showPicMenu();
                 }
+                else if (index == 0) {
+                  
+                  if (selectedIndex == 0) {
+                    homeScrollController.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+
+                  selectedIndex = index;
+                  
+                }
+
+                else if (index == 1) {
+                  
+                  if (selectedIndex == 1) {
+                    likeScrollController.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+
+                  selectedIndex = index;
+                  
+                }
+
+                else if (index == 3) {
+                  
+                  if (selectedIndex == 3) {
+                    profileScrollController.animateTo(
+                      0,
+                      duration: Duration(milliseconds: 500),
+                      curve: Curves.easeInOut,
+                    );
+                  }
+
+                  selectedIndex = index;
+                  
+                }
                 else {
                   selectedIndex = index;
               }
@@ -337,6 +432,11 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  double getFileSize(XFile file) {
+    // print(File(file.path).lengthSync() / (1024 * 1024));
+    return File(file.path).lengthSync() / (1024 * 1024);
+  }
+
   Future getImages() async {
     selectedImages = [];
     try {
@@ -352,12 +452,37 @@ class _HomePageState extends State<HomePage> {
                 );
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 for (var i = 0; i < 8; i++) {
-                  selectedImages.add(File(xfilePick[i].path));
+                  if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                    if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                      final snackBar = SnackBar(
+                        content: const Text('File size is so large!'),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                  }
+                  else {
+                    selectedImages.add(File(xfilePick[i].path));
+                  }
+                  
                 }
               }
               else {
                 for (var i = 0; i < xfilePick.length; i++) {
-                  selectedImages.add(File(xfilePick[i].path));
+                  if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                    if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                      final snackBar = SnackBar(
+                        content: const Text('File size is so large!'),
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    } else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                  }
+                  else {
+                    selectedImages.add(File(xfilePick[i].path));
+                  }
                 }
               }
             } else {
@@ -386,7 +511,6 @@ class _HomePageState extends State<HomePage> {
       if (!isVideo) {
 
         bool isHorizontal = await isImageHorizontal(media);
-        print(isHorizontal);
         var croppedFile = await ImageCropper().cropImage(
           sourcePath: media.path,
           aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),

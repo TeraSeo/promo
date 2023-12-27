@@ -19,7 +19,8 @@ import 'package:logger/logger.dart';
 
 class ProfilePage extends StatefulWidget {
 
-  const ProfilePage({super.key});
+  final ScrollController scrollController;
+  const ProfilePage({super.key, required this.scrollController});
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -232,6 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
     (_isImg || _isBackground || isPostLoading || isUIdLoading || isRankingLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
       RefreshIndicator(
         child: SingleChildScrollView(
+          controller: widget.scrollController,
         child: Column(
           children: [
             Stack(

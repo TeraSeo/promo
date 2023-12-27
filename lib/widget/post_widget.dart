@@ -49,6 +49,8 @@ class _PostWidgetState extends State<PostWidget> {
   String? profileFileName = "";
   String? profileUrl = "";
   Logging logging = new Logging();
+
+  bool isPostRemoving = false;
   
   List<String>? images;
 
@@ -486,9 +488,7 @@ class _PostWidgetState extends State<PostWidget> {
                                             );
                                         }
                                         else {
-                                          return SizedBox(
-                                            height: MediaQuery.of(context).size.height * 0.5,
-                                            child: VideoPlayerWidget(videoUrl: images![index]));
+                                          return VideoPlayerWidget(videoUrl: images![index]);
                                         }
                                       } catch(e) {
                                         print(e);
@@ -716,9 +716,11 @@ class _PostWidgetState extends State<PostWidget> {
                   title: Text('Remove this post'),
                   onTap: () async {
                     try {
-
-                      await postService.removePost(widget.postID!, widget.email!);
-                      nextScreen(context, HomePage(pageIndex: 0,));
+                      if (!isPostRemoving) {
+                        isPostRemoving = true;
+                        await postService.removePost(widget.postID!, widget.email!);
+                        nextScreen(context, HomePage(pageIndex: 0,));
+                      }
 
                     } catch(e) {
                       if (this.mounted) {
