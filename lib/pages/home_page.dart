@@ -19,6 +19,7 @@ import 'package:like_app/services/userService.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:image/image.dart' as img;
 
@@ -41,6 +42,8 @@ class _HomePageState extends State<HomePage> {
 
   bool isEmailVerified = false;
   bool isErrorOccurred = false;
+
+  bool isImagesLoading = false;
 
   static List<File> selectedImages = [];
   final picker = ImagePicker();
@@ -133,7 +136,7 @@ class _HomePageState extends State<HomePage> {
     
     try {
       
-      return 
+      return isImagesLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) :
         WillPopScope(
         onWillPop: () async {
           // Return false to prevent going back to the previous page
@@ -141,6 +144,8 @@ class _HomePageState extends State<HomePage> {
         },
         child: isErrorOccurred ? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 
@@ -440,57 +445,124 @@ class _HomePageState extends State<HomePage> {
   Future getImages() async {
     selectedImages = [];
     try {
-      final pickedFile = await picker.pickMultipleMedia(
-        imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
-        List<XFile> xfilePick = pickedFile;
-        setState(
-          () {
-            if (xfilePick.isNotEmpty) {
-              if (xfilePick.length > 8) {
-                final snackBar = SnackBar(
-                  content: const Text('Until 8 images can be posted!'),
-                );
-                ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                for (var i = 0; i < 8; i++) {
-                  if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                    if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
-                      final snackBar = SnackBar(
-                        content: const Text('File size is so large!'),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    } else {
+        final status = await Permission.photos.request();
+        if (status.isGranted) {
+          final pickedFile = await picker.pickMultipleMedia(
+          imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
+          List<XFile> xfilePick = pickedFile;
+          setState(
+            () {
+              if (xfilePick.isNotEmpty) {
+                if (xfilePick.length > 8) {
+                  final snackBar = SnackBar(
+                    content: const Text('Until 8 images can be posted!'),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                  for (var i = 0; i < 8; i++) {
+                    if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                      if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                        final snackBar = SnackBar(
+                          content: const Text('File size is so large!'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                    else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                    
+                  }
+                }
+                else {
+                  for (var i = 0; i < xfilePick.length; i++) {
+                    if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                      if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                        final snackBar = SnackBar(
+                          content: const Text('File size is so large!'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                    else {
                       selectedImages.add(File(xfilePick[i].path));
                     }
                   }
-                  else {
-                    selectedImages.add(File(xfilePick[i].path));
-                  }
-                  
                 }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Nothing is selected')));
               }
-              else {
-                for (var i = 0; i < xfilePick.length; i++) {
-                  if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                    if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
-                      final snackBar = SnackBar(
-                        content: const Text('File size is so large!'),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    } else {
-                      selectedImages.add(File(xfilePick[i].path));
+            },
+          );
+        } else {
+          var result = await Permission.photos.request().then((value) async {
+            print(value);
+          if (value.isGranted) {
+
+            final pickedFile = await picker.pickMultipleMedia(
+            imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
+            List<XFile> xfilePick = pickedFile;
+
+            setState(
+              () {
+                if (xfilePick.isNotEmpty) {
+                  if (xfilePick.length > 8) {
+                    final snackBar = SnackBar(
+                      content: const Text('Until 8 images can be posted!'),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    for (var i = 0; i < 8; i++) {
+                      if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                        if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                          final snackBar = SnackBar(
+                            content: const Text('File size is so large!'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else {
+                          selectedImages.add(File(xfilePick[i].path));
+                        }
+                      }
+                      else {
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                      
                     }
                   }
                   else {
-                    selectedImages.add(File(xfilePick[i].path));
+                    for (var i = 0; i < xfilePick.length; i++) {
+                      if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                        if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                          final snackBar = SnackBar(
+                            content: const Text('File size is so large!'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else {
+                          selectedImages.add(File(xfilePick[i].path));
+                        }
+                      }
+                      else {
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
                   }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Nothing is selected')));
                 }
-              }
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Nothing is selected')));
-            }
-          },
-        );
+              },
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Permission needed')));
+          } 
+          });
+
+          
+        }
 
     } catch (e) {
       if (this.mounted) {
@@ -546,6 +618,13 @@ class _HomePageState extends State<HomePage> {
       
     }
 
+    if (this.mounted) {
+      setState(() {
+        _widgetOptions[2] = Post(images: files);
+          selectedIndex = 2;
+      });
+    }
+
     return files;
   }
 
@@ -579,16 +658,18 @@ class _HomePageState extends State<HomePage> {
                 title: Text('Select photo'),
                 onTap: () async{
                   try {
-                    await getImages();
-                    await cropImages(selectedImages).then((value) {
-                      if (this.mounted) {
-                        setState(() {
-                          _widgetOptions[2] = Post(images: value);
-                            selectedIndex = 2;
-                        });
-                      }
-                      Navigator.pop(context);
-                    });
+                    final status = await Permission.photos.request();
+                    if (status.isGranted) {
+                      print("granted");
+                    }
+                    else {
+                      print("denied");
+                      // openAppSettings();
+                    }
+                    // await getImages();
+                    // await cropImages(selectedImages).then((value) {
+                    //   Navigator.pop(context);
+                    // });
                     
                   } catch(e) {
                     if (this.mounted) {
@@ -613,5 +694,18 @@ class _HomePageState extends State<HomePage> {
     final image = img.decodeImage(Uint8List.fromList(bytes));
 
     return image!.width > image.height;
+  }
+
+  Future<void> requestGalleryPermission() async {
+    var status = await Permission.photos.status;
+
+    if (status.isGranted) {
+    } else {
+      // Request permission
+      if (await Permission.photos.request().isGranted) {
+        
+      } else {
+      }
+    }
   }
 }
