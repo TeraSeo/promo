@@ -136,6 +136,7 @@ class _PostState extends State<Post> {
                 if (this.mounted) {
                   setState(() {
                     isErrorOccurred = false;
+                    postAble = true;
                   });
                 }
               },
@@ -419,6 +420,7 @@ class _PostState extends State<Post> {
                 if (this.mounted) {
                   setState(() {
                     isErrorOccurred = false;
+                    postAble = true;
                   });
                 }
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),

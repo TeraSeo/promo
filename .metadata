@@ -1,11 +1,11 @@
 # This file tracks properties of this Flutter project.
 # Used by Flutter tool to assess capabilities and perform upgrades etc.
 #
-# This file should be version controlled.
+# This file should be version controlled and should not be manually edited.
 
 version:
-  revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
-  channel: beta
+  revision: "fed06b31d938f7620ea7417295b8d8d19cf7cf1d"
+  channel: "beta"
 
 project_type: app
 
@@ -13,26 +13,26 @@ project_type: app
 migration:
   platforms:
     - platform: root
-      create_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
-      base_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
+      create_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
+      base_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
     - platform: android
-      create_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
-      base_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
+      create_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
+      base_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
     - platform: ios
-      create_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
-      base_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
+      create_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
+      base_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
     - platform: linux
-      create_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
-      base_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
+      create_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
+      base_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
     - platform: macos
-      create_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
-      base_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
+      create_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
+      base_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
     - platform: web
-      create_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
-      base_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
+      create_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
+      base_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
     - platform: windows
-      create_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
-      base_revision: a14a4eac6132065fcbd853a2ff376e6911cdb2ea
+      create_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
+      base_revision: fed06b31d938f7620ea7417295b8d8d19cf7cf1d
 
   # User provided section
 

@@ -438,7 +438,6 @@ class _HomePageState extends State<HomePage> {
   }
 
   double getFileSize(XFile file) {
-    // print(File(file.path).lengthSync() / (1024 * 1024));
     return File(file.path).lengthSync() / (1024 * 1024);
   }
 
@@ -460,7 +459,7 @@ class _HomePageState extends State<HomePage> {
                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   for (var i = 0; i < 8; i++) {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                      if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                      if (getFileSize(xfilePick[i]) > 40) {
                         final snackBar = SnackBar(
                           content: const Text('File size is so large!'),
                         );
@@ -478,7 +477,7 @@ class _HomePageState extends State<HomePage> {
                 else {
                   for (var i = 0; i < xfilePick.length; i++) {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                      if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                      if (getFileSize(xfilePick[i]) > 40) {
                         final snackBar = SnackBar(
                           content: const Text('File size is so large!'),
                         );
@@ -498,9 +497,12 @@ class _HomePageState extends State<HomePage> {
               }
             },
           );
-        } else {
+        } 
+        else if (status.isPermanentlyDenied) {
+          openAppSettings();
+        }
+        else {
           var result = await Permission.photos.request().then((value) async {
-            print(value);
           if (value.isGranted) {
 
             final pickedFile = await picker.pickMultipleMedia(
@@ -517,7 +519,7 @@ class _HomePageState extends State<HomePage> {
                     ScaffoldMessenger.of(context).showSnackBar(snackBar);
                     for (var i = 0; i < 8; i++) {
                       if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                        if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                        if (getFileSize(xfilePick[i]) > 40) {
                           final snackBar = SnackBar(
                             content: const Text('File size is so large!'),
                           );
@@ -535,7 +537,7 @@ class _HomePageState extends State<HomePage> {
                   else {
                     for (var i = 0; i < xfilePick.length; i++) {
                       if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                        if (getFileSize(xfilePick[i]) > 40 * 1024 * 1024) {
+                        if (getFileSize(xfilePick[i]) > 40) {
                           final snackBar = SnackBar(
                             content: const Text('File size is so large!'),
                           );
@@ -618,13 +620,6 @@ class _HomePageState extends State<HomePage> {
       
     }
 
-    if (this.mounted) {
-      setState(() {
-        _widgetOptions[2] = Post(images: files);
-          selectedIndex = 2;
-      });
-    }
-
     return files;
   }
 
@@ -658,18 +653,26 @@ class _HomePageState extends State<HomePage> {
                 title: Text('Select photo'),
                 onTap: () async{
                   try {
-                    final status = await Permission.photos.request();
-                    if (status.isGranted) {
-                      print("granted");
-                    }
-                    else {
-                      print("denied");
-                      // openAppSettings();
-                    }
-                    // await getImages();
-                    // await cropImages(selectedImages).then((value) {
-                    //   Navigator.pop(context);
-                    // });
+                    // final status = await Permission.photos.request();
+                    // if (status.isGranted) {
+                    //   print("granted");
+                    // }
+                    // else {
+                    //   print("denied");
+                    //   // openAppSettings();
+                    // }
+                    await getImages();
+                    await cropImages(selectedImages).then((value) {
+                      Navigator.pop(context);
+
+                      if (this.mounted) {
+                        setState(() {
+                          print(value);
+                          _widgetOptions[2] = Post(images: value);
+                            selectedIndex = 2;
+                        });
+                      }
+                    });
                     
                   } catch(e) {
                     if (this.mounted) {
