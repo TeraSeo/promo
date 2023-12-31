@@ -1,9 +1,4 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
@@ -11,7 +6,6 @@ import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:textfield_tags/textfield_tags.dart';
-import 'package:image/image.dart' as img;
 
 class Post extends StatefulWidget {
   final List<dynamic> images;
@@ -28,18 +22,9 @@ class _PostState extends State<Post> {
 
   bool isErrorOccurred = false;
 
-  // bool isPhotosCropping = true;
-
   @override
   void initState() {
     super.initState();
-
-    // cropImages(widget.images).then((value) {
-    //   croppedFiles = value;
-    //   if (this.mounted) {
-    //     isPhotosCropping = false;
-    //   }
-    // });
   }
 
 
@@ -65,61 +50,8 @@ class _PostState extends State<Post> {
   List<String> tags = [];
   bool withComment = true;
 
-  List<dynamic>? croppedFiles;
-
   bool postAble = true;
   var logger = Logger();
-
-  Future<bool> isImageHorizontal(File imageFile) async {
-    final bytes = await imageFile.readAsBytes();
-    final image = img.decodeImage(Uint8List.fromList(bytes));
-
-    return image!.width > image.height;
-  }
-
-  Future<List<dynamic>> cropImages(List<File> medias) async {
-    List<dynamic> files = [];
-
-    for (var media in medias) {
-      bool isVideo = HelperFunctions().isVideoFile(media);
-      if (!isVideo) {
-
-        bool isHorizontal = await isImageHorizontal(media);
-        var croppedFile = await ImageCropper().cropImage(
-          sourcePath: media.path,
-          aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
-          uiSettings: [
-            AndroidUiSettings(
-                toolbarTitle: 'Cropper',
-                toolbarColor: Colors.deepOrange,
-                toolbarWidgetColor: Colors.white,),
-            IOSUiSettings(
-              title: 'Cropper',
-              aspectRatioLockEnabled: true, 
-              resetAspectRatioEnabled: false,
-              aspectRatioPickerButtonHidden: true,
-              rotateButtonsHidden: true
-            ),
-            WebUiSettings(
-              context: context,
-            ),
-          ],
-        );
-
-        if (croppedFile != null) {
-          files.add(croppedFile);
-        }
-      }
-      else {
-        files.add(media);
-      }
-      
-    }
-
-    return files;
-  }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -149,10 +81,8 @@ class _PostState extends State<Post> {
           ],
         ),
       ) :
-    //  : isPhotosCropping? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
      GestureDetector(
         onTap: () {
-          // Remove the focus when tapping outside the TextField
           FocusScope.of(context).unfocus();
         },
 
@@ -218,8 +148,8 @@ class _PostState extends State<Post> {
                       value: category,
                       isExpanded: true,
                       items: items.map(buildMenuItem).toList(),
-                      onChanged: (value) => setState(() => {
-                        category = value!
+                      onChanged: (value) => setState(() {
+                        category = value!;
                       }),
                     ),
                   ),
@@ -370,7 +300,7 @@ class _PostState extends State<Post> {
               ),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.06,),
-            Container(
+            postAble? Container(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width * 0.7,
                 height: MediaQuery.of(context).size.height * 0.057,
@@ -383,7 +313,7 @@ class _PostState extends State<Post> {
                         });
                         tags = _controllerTag.getTags!;
                         PostService postService = new PostService();
-                        await postService.post(croppedFiles!, description, category, tags, withComment);
+                        await postService.post(widget.images, description, category, tags, withComment);
                         Future.delayed(Duration(seconds: 2)).then((value) => {
                           nextScreenReplace(context, HomePage(pageIndex: 0,))
                         });
@@ -406,7 +336,7 @@ class _PostState extends State<Post> {
                   ),
                 ),
               ),
-            )
+            ) : Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),)
           ],
         ),
       ),

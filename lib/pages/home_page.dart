@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:camera/camera.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
@@ -136,10 +135,11 @@ class _HomePageState extends State<HomePage> {
     
     try {
       
-      return isImagesLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) :
+      return AbsorbPointer(
+      absorbing: isImagesLoading,
+      child:
         WillPopScope(
         onWillPop: () async {
-          // Return false to prevent going back to the previous page
           return Future.value(false);
         },
         child: isErrorOccurred ? Center(
@@ -409,12 +409,12 @@ class _HomePageState extends State<HomePage> {
                 }
                 else {
                   selectedIndex = index;
-              }
+                }
               }
             });
           },
         ),
-      ));
+      )));
 
     } catch(e) {
       return Center(
@@ -453,10 +453,6 @@ class _HomePageState extends State<HomePage> {
             () {
               if (xfilePick.isNotEmpty) {
                 if (xfilePick.length > 8) {
-                  final snackBar = SnackBar(
-                    content: const Text('Until 8 images can be posted!'),
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
                   for (var i = 0; i < 8; i++) {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
                       if (getFileSize(xfilePick[i]) > 40) {
@@ -465,13 +461,13 @@ class _HomePageState extends State<HomePage> {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
+                        print("path" + xfilePick[i].path);
                         selectedImages.add(File(xfilePick[i].path));
                       }
                     }
                     else {
                       selectedImages.add(File(xfilePick[i].path));
                     }
-                    
                   }
                 }
                 else {
@@ -483,6 +479,7 @@ class _HomePageState extends State<HomePage> {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
+                        print("path" + xfilePick[i].path);
                         selectedImages.add(File(xfilePick[i].path));
                       }
                     }
@@ -502,13 +499,12 @@ class _HomePageState extends State<HomePage> {
           openAppSettings();
         }
         else {
-          var result = await Permission.photos.request().then((value) async {
+          await Permission.photos.request().then((value) async {
           if (value.isGranted) {
 
             final pickedFile = await picker.pickMultipleMedia(
             imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
             List<XFile> xfilePick = pickedFile;
-
             setState(
               () {
                 if (xfilePick.isNotEmpty) {
@@ -525,6 +521,7 @@ class _HomePageState extends State<HomePage> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         } else {
+                          print("path" + xfilePick[i].path);
                           selectedImages.add(File(xfilePick[i].path));
                         }
                       }
@@ -543,6 +540,7 @@ class _HomePageState extends State<HomePage> {
                           );
                           ScaffoldMessenger.of(context).showSnackBar(snackBar);
                         } else {
+                          print("path" + xfilePick[i].path);
                           selectedImages.add(File(xfilePick[i].path));
                         }
                       }
@@ -569,6 +567,7 @@ class _HomePageState extends State<HomePage> {
     } catch (e) {
       if (this.mounted) {
         setState(() {
+          isImagesLoading = false;
           isErrorOccurred = true;
           selectedIndex = 0;
         });
@@ -578,49 +577,59 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<dynamic>> cropImages(List<File> medias) async {
-    List<dynamic> files = [];
+    try {
 
-    for (var media in medias) {
-      bool isVideo = HelperFunctions().isVideoFile(media);
-      if (!isVideo) {
+      List<dynamic> files = [];
 
-        bool isHorizontal = await isImageHorizontal(media);
-        var croppedFile = await ImageCropper().cropImage(
-          sourcePath: media.path,
-          aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
-          // aspectRatioPresets: [
-          //   isHorizontal? CropAspectRatioPreset.original :
-          //   CropAspectRatioPreset.ratio16x9
-          // ],
-          uiSettings: [
-            AndroidUiSettings(
-                toolbarTitle: 'Cropper',
-                toolbarColor: Colors.deepOrange,
-                toolbarWidgetColor: Colors.white,),
-            IOSUiSettings(
-              title: 'Cropper',
-              aspectRatioLockEnabled: true, 
-              resetAspectRatioEnabled: false,
-              aspectRatioPickerButtonHidden: true,
-              rotateButtonsHidden: true
-            ),
-            WebUiSettings(
-              context: context,
-            ),
-          ],
-        );
+      for (var media in medias) {
+        bool isVideo = HelperFunctions().isVideoFile(media);
+        if (!isVideo) {
+          bool isHorizontal = await isImageHorizontal(media);
+          var croppedFile = await ImageCropper().cropImage(
+            sourcePath: media.path,
+            aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
+            uiSettings: [
+              AndroidUiSettings(
+                  toolbarTitle: 'Cropper',
+                  toolbarColor: Colors.deepOrange,
+                  toolbarWidgetColor: Colors.white,),
+              IOSUiSettings(
+                title: 'Cropper',
+                aspectRatioLockEnabled: true, 
+                resetAspectRatioEnabled: false,
+                aspectRatioPickerButtonHidden: true,
+                rotateButtonsHidden: true
+              ),
+              WebUiSettings(
+                context: context,
+              ),
+            ],
+          );
 
-        if (croppedFile != null) {
-          files.add(croppedFile);
+          if (croppedFile != null) {
+            files.add(croppedFile);
+          }
         }
+        else {
+          files.add(media);
+        }
+        
       }
-      else {
-        files.add(media);
-      }
-      
-    }
 
-    return files;
+      return files;
+
+    } catch(e) {
+
+      setState(() {
+        if (this.mounted) {
+          isImagesLoading = false;
+        }
+      });
+
+      return [];
+
+    }
+    
   }
 
   void _showPicMenu() {
@@ -650,18 +659,20 @@ class _HomePageState extends State<HomePage> {
               ),
               ListTile(
                 leading: Icon(Icons.picture_as_pdf_outlined),
-                title: Text('Select photo'),
+                title: Text('Select photo (Until 8 images or videos)'),
                 onTap: () async{
                   try {
-                    // final status = await Permission.photos.request();
-                    // if (status.isGranted) {
-                    //   print("granted");
-                    // }
-                    // else {
-                    //   print("denied");
-                    //   // openAppSettings();
-                    // }
+                    setState(() {
+                      if (this.mounted) {
+                        isImagesLoading = true;
+                      }
+                    });
                     await getImages();
+                    setState(() {
+                      if (this.mounted) {
+                        isImagesLoading = false;
+                      }
+                    });
                     await cropImages(selectedImages).then((value) {
                       Navigator.pop(context);
 
@@ -677,6 +688,7 @@ class _HomePageState extends State<HomePage> {
                   } catch(e) {
                     if (this.mounted) {
                       setState(() {
+                        isImagesLoading = false;
                         isErrorOccurred = true;
                       });
                     }
@@ -699,16 +711,4 @@ class _HomePageState extends State<HomePage> {
     return image!.width > image.height;
   }
 
-  Future<void> requestGalleryPermission() async {
-    var status = await Permission.photos.status;
-
-    if (status.isGranted) {
-    } else {
-      // Request permission
-      if (await Permission.photos.request().isGranted) {
-        
-      } else {
-      }
-    }
-  }
 }

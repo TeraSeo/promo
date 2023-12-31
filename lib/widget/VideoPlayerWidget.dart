@@ -1,4 +1,5 @@
 import 'package:chewie/chewie.dart';
+import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -14,56 +15,126 @@ class VideoPlayerWidget extends StatefulWidget {
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _videoPlayerController;
-  late ChewieController _chewieController;
+  ChewieController? _chewieController;
 
   bool isMuted = true;
+
+  bool isErrorOccurred = false;
+
+  Logger logger = new Logger();
 
   @override
   void initState() {
     super.initState();
-    _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
+    try {
+      _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
 
-    _videoPlayerController.addListener(() {
-      if (_videoPlayerController.value.isInitialized) {
-        // Video is initialized, you can now use _videoPlayerController.value
+      // _videoPlayerController.addListener(() {
+      //   if (_videoPlayerController.value.isInitialized) {
+      //     // Video is initialized, you can now use _videoPlayerController.value
+      //     if (this.mounted) {
+      //       setState(() {});
+      //     }
+      //   }
+      // });
+
+      _videoPlayerController.initialize().then((_) {
         if (this.mounted) {
-          setState(() {});
+          setState(() {
+            // Initialize ChewieController after video is initialized
+            _chewieController = ChewieController(
+              videoPlayerController: _videoPlayerController,
+              // autoPlay: true,
+              looping: true,
+              showControls: false,
+            );
+
+            // Initialize the AudioPlayer inside ChewieController
+            _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
+          });
         }
-      }
-    });
+      });
+    } catch(e) {
+      logger.log(Level.error, "Error occurred while loading video\n" + e.toString());
+      setState(() {
+        if (this.mounted) {
+          isErrorOccurred = true;
+        }
+      });
+    }
+    
 
-    _videoPlayerController.initialize().then((_) {
-      if (this.mounted) {
-        setState(() {
-          // Initialize ChewieController after video is initialized
-          _chewieController = ChewieController(
-            videoPlayerController: _videoPlayerController,
-            autoPlay: true,
-            looping: true,
-            showControls: false,
-          );
-
-          // Initialize the AudioPlayer inside ChewieController
-          _chewieController.setVolume(isMuted ? 0.0 : 1.0);
-        });
-      }
-    });
   }
 
   void toggleMute() {
     setState(() {
       isMuted = !isMuted;
-      _chewieController.setVolume(isMuted ? 0.0 : 1.0);
+      _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
     });
-  }
-
-  void setMuteStatus() {
-    isMuted = true;
   }
 
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
+    return isErrorOccurred? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            SizedBox(height: 300,),
+            IconButton(
+              color: Colors.black,
+              onPressed: () {
+                setState(() {
+                  if (this.mounted) {
+                    isErrorOccurred = false;
+                  }                    
+                });
+                try {
+                  _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
+
+                  // _videoPlayerController.addListener(() {
+                  //   if (_videoPlayerController.value.isInitialized) {
+                  //     // Video is initialized, you can now use _videoPlayerController.value
+                  //     if (this.mounted) {
+                  //       setState(() {});
+                  //     }
+                  //   }
+                  // });
+
+                  _videoPlayerController.initialize().then((_) {
+                    if (this.mounted) {
+                      setState(() {
+                        // Initialize ChewieController after video is initialized
+                        _chewieController = ChewieController(
+                          videoPlayerController: _videoPlayerController,
+                          // autoPlay: true,
+                          looping: true,
+                          showControls: false,
+                        );
+
+                        // Initialize the AudioPlayer inside ChewieController
+                        _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
+                      });
+                    }
+                  });
+                } catch(e) {
+                  logger.log(Level.error, "Error occurred while loading video\n" + e.toString());
+                  setState(() {
+                    if (this.mounted) {
+                      isErrorOccurred = true;
+                    }
+                  });
+                }
+              },
+              icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey),
+            ),
+            Text(
+              "failed to load",
+              style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey),
+            ),
+          ],
+        ),
+      ) : VisibilityDetector(
       key: Key('videoPlayerKey${widget.videoUrl}'),
       onVisibilityChanged: (info) {
         if (info.visibleFraction == 0) {
@@ -88,7 +159,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                   ? AspectRatio(
                       aspectRatio: _videoPlayerController.value.aspectRatio,
                       child: Chewie(
-                        controller: _chewieController,
+                        controller: _chewieController!,
                       ),
                     )
                   : Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),),
@@ -112,8 +183,18 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
-    _chewieController.dispose();
-    super.dispose();
+    try {
+      _videoPlayerController.dispose();
+      _chewieController!.dispose();
+      super.dispose();
+    } catch(e) {
+      logger.log(Level.error, "Error occurred while loading video\n" + e.toString());
+      setState(() {
+        if (this.mounted) {
+          isErrorOccurred = true;
+        }
+      });
+    }
+  
   }
 }
