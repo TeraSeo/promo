@@ -171,6 +171,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (this.mounted) {
         setState(() {
           _isImg = false;
+          isErrorOccurred = true;
         });
       }
       logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
@@ -191,6 +192,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (this.mounted) {
         setState(() {
           _isBackground = false;
+          isErrorOccurred = true;
         });
       }
       logger.log(Level.error, "Error occurred while getting background profiles\nerror: " + e.toString());

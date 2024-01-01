@@ -69,7 +69,7 @@ post_install do |installer|
       # 'PERMISSION_CAMERA=1',
 
       ## dart: PermissionGroup.microphone
-      # 'PERMISSION_MICROPHONE=1',
+      'PERMISSION_MICROPHONE=1',
 
       ## dart: PermissionGroup.speech
       # 'PERMISSION_SPEECH_RECOGNIZER=1',
@@ -97,6 +97,9 @@ post_install do |installer|
 
       ## dart: PermissionGroup.criticalAlerts
       # 'PERMISSION_CRITICAL_ALERTS=1'
+
+      # '$(inherited)',
+      # 'AUDIO_SESSION_MICROPHONE=0'
     ]
 
   end

@@ -4,7 +4,10 @@
 <dict>
 
 	<key>NSPhotoLibraryUsageDescription</key>
-    <string>photos</string>
+    <string>It is used for accessing gallery for posting in this app</string>
+
+	<key>NSMicrophoneUsageDescription</key>
+	<string>It is used for accessing to audios</string>
 	
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

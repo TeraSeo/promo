@@ -30,6 +30,7 @@ environment:
 # the latest version available on pub.dev. To see which dependencies have newer
 # versions available, run `flutter pub outdated`.
 dependencies:
+  audio_session: ^0.1.18
   cached_network_image: ^3.3.0
   camera: ^0.10.5+7
   chewie: ^1.7.4

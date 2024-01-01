@@ -1,3 +1,4 @@
+import 'package:audio_session/audio_session.dart';
 import 'package:chewie/chewie.dart';
 import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
@@ -23,6 +24,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   Logger logger = new Logger();
 
+  AudioSession? audioSession;
+
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +41,8 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       //     }
       //   }
       // });
+
+      // setAudioSession();
 
       _videoPlayerController.initialize().then((_) {
         if (this.mounted) {
@@ -71,6 +77,24 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       isMuted = !isMuted;
       _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
     });
+  }
+
+  void setAudioSession() async {
+    audioSession = await AudioSession.instance;
+    await audioSession!.configure(AudioSessionConfiguration(
+      avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
+      avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.allowBluetooth,
+      avAudioSessionMode: AVAudioSessionMode.spokenAudio,
+      avAudioSessionRouteSharingPolicy: AVAudioSessionRouteSharingPolicy.defaultPolicy,
+      avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
+      androidAudioAttributes: const AndroidAudioAttributes(
+        contentType: AndroidAudioContentType.speech,
+        flags: AndroidAudioFlags.none,
+        usage: AndroidAudioUsage.voiceCommunication,
+      ),
+      androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
+      androidWillPauseWhenDucked: true,
+    ));
   }
 
   @override

@@ -1,3 +1,4 @@
+import 'package:audio_session/audio_session.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
@@ -5,6 +6,7 @@ import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class LikesRanking extends StatefulWidget {
 
@@ -28,10 +30,6 @@ class _LikesRankingState extends State<LikesRanking> {
 
   bool isErrorOccurred = false;
 
-  // final future = FirebaseFirestore.instance.collection("user").
-  //                     orderBy("commentLikes", descending: true)
-  //                     .limit(50).get();
-
   bool isUIdLoading = true;
 
   var logger = Logger();
@@ -42,10 +40,41 @@ class _LikesRankingState extends State<LikesRanking> {
   int myLikes = 0;
   bool isMyLoading = true;
 
+  AudioSession? audioSession;
+
   @override
   void initState() {
     getUId();
+    setAudioSession();
     super.initState();
+  }
+
+  void setAudioSession() async {
+    try {
+      final status = await Permission.microphone.request();
+      if (status.isGranted) {
+        audioSession = await AudioSession.instance;
+        await audioSession!.configure(
+          AudioSessionConfiguration(
+            avAudioSessionCategory: AVAudioSessionCategory.playback,
+            avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.none,
+            avAudioSessionMode: AVAudioSessionMode.defaultMode,
+            avAudioSessionRouteSharingPolicy: AVAudioSessionRouteSharingPolicy.defaultPolicy,
+            avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.notifyOthersOnDeactivation,
+            androidAudioAttributes: const AndroidAudioAttributes(
+              contentType: AndroidAudioContentType.music,
+              flags: AndroidAudioFlags.none,
+              usage: AndroidAudioUsage.media
+            ),
+            androidAudioFocusGainType: AndroidAudioFocusGainType.gainTransient,
+            androidWillPauseWhenDucked: true
+          )
+        );
+      }
+    } catch(e) {
+      print(e);
+    }
+    
   }
 
   void getUId() async{
@@ -197,8 +226,9 @@ class _LikesRankingState extends State<LikesRanking> {
               SizedBox(width: 10,),
               Text("Ranking", textAlign: TextAlign.center,style: TextStyle(fontWeight: FontWeight.bold, fontSize: 23)),
               SizedBox(width: 20,),
-              IconButton(onPressed: () {
+              IconButton(onPressed: () async {
                 try {
+        await audioSession!.setActive(false);
         if (this.mounted) {
         setState(() {
           isUIdLoading = true;
