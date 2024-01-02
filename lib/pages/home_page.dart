@@ -39,8 +39,8 @@ class _HomePageState extends State<HomePage> {
   String userName = "";
   String email = "";
 
-  bool isEmailVerified = false;
   bool isErrorOccurred = false;
+  bool isAudioSessionLoading = true;
 
   bool isImagesLoading = false;
 
