@@ -14,7 +14,7 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _videoPlayerController;
+  VideoPlayerController? _videoPlayerController;
   ChewieController? _chewieController;
 
   bool isMuted = true;
@@ -26,6 +26,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void initState() {
     super.initState();
+    initializeVideo();
+  }
+
+  void toggleMute() {
+    setState(() {
+      isMuted = !isMuted;
+      _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
+    });
+  }
+
+  Future<void> initializeVideo() async {
     try {
       _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
 
@@ -38,18 +49,16 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       //   }
       // });
 
-      _videoPlayerController.initialize().then((_) {
+      _videoPlayerController!.initialize().then((_) {
         if (this.mounted) {
           setState(() {
-            // Initialize ChewieController after video is initialized
             _chewieController = ChewieController(
-              videoPlayerController: _videoPlayerController,
+              videoPlayerController: _videoPlayerController!,
               // autoPlay: true,
               looping: true,
               showControls: false,
             );
 
-            // Initialize the AudioPlayer inside ChewieController
             _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
           });
         }
@@ -62,15 +71,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         }
       });
     }
-    
-
-  }
-
-  void toggleMute() {
-    setState(() {
-      isMuted = !isMuted;
-      _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
-    });
   }
 
   @override
@@ -91,28 +91,15 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 });
                 try {
                   _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
-
-                  // _videoPlayerController.addListener(() {
-                  //   if (_videoPlayerController.value.isInitialized) {
-                  //     // Video is initialized, you can now use _videoPlayerController.value
-                  //     if (this.mounted) {
-                  //       setState(() {});
-                  //     }
-                  //   }
-                  // });
-
-                  _videoPlayerController.initialize().then((_) {
+                  _videoPlayerController!.initialize().then((_) {
                     if (this.mounted) {
                       setState(() {
-                        // Initialize ChewieController after video is initialized
                         _chewieController = ChewieController(
-                          videoPlayerController: _videoPlayerController,
-                          // autoPlay: true,
+                          videoPlayerController: _videoPlayerController!,
                           looping: true,
                           showControls: false,
                         );
 
-                        // Initialize the AudioPlayer inside ChewieController
                         _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
                       });
                     }
@@ -140,12 +127,12 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         if (info.visibleFraction == 0) {
           // Widget is not visible, pause or dispose video here
           if (this.mounted) {
-            _videoPlayerController.pause();
+            _videoPlayerController!.pause();
           }
         } else {
           // Widget is visible, resume or initialize video here
           if (this.mounted) {
-            _videoPlayerController.play();
+            _videoPlayerController!.play();
           }
         }
       },
@@ -155,9 +142,9 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
             onTap: toggleMute,
             child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.6,
-              child: _videoPlayerController.value.isInitialized
+              child: _videoPlayerController!.value.isInitialized
                   ? AspectRatio(
-                      aspectRatio: _videoPlayerController.value.aspectRatio,
+                      aspectRatio: _videoPlayerController!.value.aspectRatio,
                       child: Chewie(
                         controller: _chewieController!,
                       ),
@@ -184,11 +171,15 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   @override
   void dispose() {
     try {
-      _videoPlayerController.dispose();
-      _chewieController!.dispose();
-      super.dispose();
+      if (_videoPlayerController != null && _chewieController != null) {
+        _videoPlayerController!.dispose();
+        _chewieController!.dispose();
+      }
+      if (this.mounted) {
+        super.dispose();
+      }
     } catch(e) {
-      logger.log(Level.error, "Error occurred while loading video\n" + e.toString());
+      logger.log(Level.error, "Error occurred while disposing\n" + e.toString());
       
     }
   

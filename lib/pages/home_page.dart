@@ -105,6 +105,8 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _pageController.dispose();
     homeScrollController.dispose();
+    profileScrollController.dispose();
+    likeScrollController.dispose();
     super.dispose();
   }
 
@@ -134,7 +136,6 @@ class _HomePageState extends State<HomePage> {
     }
     
     try {
-      
       return AbsorbPointer(
       absorbing: isImagesLoading,
       child:
@@ -661,6 +662,7 @@ class _HomePageState extends State<HomePage> {
                 leading: Icon(Icons.picture_as_pdf_outlined),
                 title: Text('Select photo (Until 8 images or videos)'),
                 onTap: () async{
+                  // Navigator.pop(context);
                   try {
                     setState(() {
                       if (this.mounted) {
@@ -674,13 +676,12 @@ class _HomePageState extends State<HomePage> {
                       }
                     });
                     await cropImages(selectedImages).then((value) {
-                      Navigator.pop(context);
 
                       if (this.mounted) {
                         setState(() {
                           print(value);
                           _widgetOptions[2] = Post(images: value);
-                            selectedIndex = 2;
+                          selectedIndex = 2;
                         });
                       }
                     });

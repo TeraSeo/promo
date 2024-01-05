@@ -23,8 +23,14 @@ class PostDBService {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
     // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
-    int size = await postCollection.get()
-        .then((value) => value.size);  // collection 크기 받기
+    int? size;
+    await postCollection.orderBy("postNumber", descending: true).limit(1).get()
+        .then((value)  {
+          value.docs.forEach((element) {
+          Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+          size = post["postNumber"] + 1;
+      });
+    });  // collection 크기 받기
     String postId = Uuid().v4();
 
     Storage storage = new Storage();
@@ -48,7 +54,7 @@ class PostDBService {
       "likes" : [],
       "posted" : tsdate,
       "withComment" : withComment,
-      'postNumber' : size,
+      'postNumber' : size!,
       'uId' : uId,
       'bookMarks' : [],
       'wholeLikes' : 0

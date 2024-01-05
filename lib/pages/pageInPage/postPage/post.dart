@@ -85,7 +85,6 @@ class _PostState extends State<Post> {
         onTap: () {
           FocusScope.of(context).unfocus();
         },
-
         child: Container(
       alignment: Alignment.center,
       child: SingleChildScrollView(
@@ -398,5 +397,12 @@ class _PostState extends State<Post> {
       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
     )
   );
+
+  @override
+  void dispose() {
+    _controllerTag.dispose();
+    _controllerDescription.dispose();
+    super.dispose();
+  }
 
 }
