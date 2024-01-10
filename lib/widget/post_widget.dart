@@ -172,6 +172,12 @@ class _PostWidgetState extends State<PostWidget> {
     
   }
 
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
   PostService postService = new PostService();
 
   @override

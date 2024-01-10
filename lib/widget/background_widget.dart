@@ -12,32 +12,17 @@ class BackgroundWidget extends StatelessWidget {
       child: Stack(
         children: [
           buildImage(context),
-          // Positioned(
-          //   bottom: 0,
-          //   right: sizedBox / 7,
-          //   child: buildEditIcon(color, context),
-          // ),
         ],
       ),
     );
   }
 
   Widget buildImage(BuildContext context) {
-    final image = NetworkImage(background_url);
 
     return Image(
       image: NetworkImage(background_url),
-      fit: BoxFit.contain, // use this
+      fit: BoxFit.contain,
     );
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-
-  //   final background = NetworkImage(background_url);
-
-  //   return Image(image: ResizeImage(
-  //     background, width: MediaQuery.of(context).size.width.toInt(), 
-  //     height: (MediaQuery.of(context).size.height * 0.3).toInt()));
-  // }
 }

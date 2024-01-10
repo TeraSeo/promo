@@ -50,7 +50,6 @@ class _LoginPageState extends State<OtpScreen> {
     
   }
 
-
   final formKey = GlobalKey<FormState>();
 
   List<String> codes = ["","","",""];

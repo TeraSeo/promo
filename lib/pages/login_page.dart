@@ -5,7 +5,6 @@ import 'package:like_app/pages/otp.dart';
 import 'package:like_app/pages/register_page.dart';
 import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:rounded_loading_button/rounded_loading_button.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -22,12 +21,6 @@ class _LoginPageState extends State<LoginPage> {
   String password = "";
   bool _isLoading = false;
   AuthServie authServie = AuthServie(); 
-  final RoundedLoadingButtonController googleController = 
-    RoundedLoadingButtonController();
-  final RoundedLoadingButtonController facebookController = 
-    RoundedLoadingButtonController();
-
-  TextEditingController _emailController = TextEditingController();
 
     bool isErrorOccurred = false;
 
@@ -220,100 +213,6 @@ class _LoginPageState extends State<LoginPage> {
                             SizedBox(
                               height: sizedBox * 1.2,
                             ),
-                            // Row(children: <Widget>[
-                            //   Expanded(
-                            //     child: new Container(
-                            //         margin: const EdgeInsets.only(left: 10.0, right: 20.0),
-                            //         child: Divider(
-                            //           color: Colors.black,
-                            //           height: 36,
-                            //         )),
-                            //   ),
-                            //   Text("OR"),
-                            //   Expanded(
-                            //     child: new Container(
-                            //         margin: const EdgeInsets.only(left: 20.0, right: 10.0),
-                            //         child: Divider(
-                            //           color: Colors.black,
-                            //           height: 36,
-                            //         )),
-                            //   ),
-                            // ]),
-                            // SizedBox(
-                            //   height: sizedBox * 1.2,
-                            // ),
-                            // RoundedLoadingButton(
-                            //   controller: googleController,
-                            //   onPressed: () {
-                            //     // _googleSignIn();
-                            //   }, 
-                            //   successColor: Colors.red,
-                            //   width: signInBtnWidth,
-                            //   height: signInBtnHeight,
-                            //   elevation: 0,
-                            //   // borderRadius: 25,
-                            //   color: Colors.red,
-                            //   child: Wrap(
-                            //     children: [
-                            //       Icon(
-                            //         FontAwesomeIcons.google,
-                            //         size: signInIcon,
-                            //         color: Colors.white,
-                            //       ),
-                            //       SizedBox(
-                            //         width: sizedBoxWidth,
-                            //       ),
-                            //       Text("Sign in with Google",
-                            //         style: TextStyle(
-                            //           color: Colors.white,
-                            //           fontSize: fontSize,
-                            //           fontWeight: FontWeight.w500
-                            //         ),
-                            //       )
-                            //     ],
-                            //   )),
-                            // SizedBox(
-                            //   height: sizedBox * 0.7,
-                            // ),
-                            // RoundedLoadingButton(
-                            //   controller: facebookController,
-                            //   onPressed: () {}, 
-                            //   successColor: Colors.blue,
-                            //   width: signInBtnWidth,
-                            //   height: signInBtnHeight,
-                            //   elevation: 0,
-                            //   // borderRadius: 25,
-                            //   color: Colors.blue,
-                            //   child: Wrap(
-                            //     children: [
-                            //       Icon(
-                            //         FontAwesomeIcons.facebook,
-                            //         size: signInIcon,
-                            //         color: Colors.white,
-                            //       ),
-                            //       SizedBox(
-                            //         width: sizedBoxWidth,
-                            //       ),
-                            //       Text("Sign in with Facebook",
-                            //         style: TextStyle(
-                            //           color: Colors.white,
-                            //           fontSize: fontSize,
-                            //           fontWeight: FontWeight.w500
-                            //         ),
-                            //       )
-                            //     ],
-                            //   )),
-
-                            // Container(
-                            //   height: signInBtnHeight,
-                            //   width: signInBtnWidth,
-                            //   decoration: BoxDecoration(
-                            //     image: DecorationImage(
-                            //         image:
-                            //             AssetImage('assets/googleSignIn.png'),
-                            //         fit: BoxFit.cover),
-                            //   ),
-                            // ),
                             SizedBox(
                               height: sizedBox * 6.5,
                             ),
@@ -361,25 +260,4 @@ class _LoginPageState extends State<LoginPage> {
     
   }
 
-  // signInWithGoogle() async {
-  //   try {
-  //     final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-  //     final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-
-  //     if (googleAuth?.accessToken != null && googleAuth?.idToken != null) {
-  //       final credential = GoogleAuthProvider.credential(
-  //         accessToken: googleAuth?.accessToken,
-  //        idToken: googleAuth?.idToken
-  //       );
-
-  //      UserCredential userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
-
-  //     }
-
-
-  //   } on FirebaseAuthException catch (e) {
-  //     showSnackbar(context, Colors.black, e.message);
-  //   }
-    
-  // }
 }

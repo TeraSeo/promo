@@ -353,7 +353,6 @@ class _CommentCardState extends State<CommentCard> {
     } catch(e) {
       return Container();
     }
-
     
   }
 

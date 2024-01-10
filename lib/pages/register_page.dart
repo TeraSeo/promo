@@ -8,7 +8,6 @@ import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 
-
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 

@@ -22,7 +22,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:image/image.dart' as img;
 
-
 class HomePage extends StatefulWidget {
 
   final int pageIndex;
