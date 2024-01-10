@@ -34,7 +34,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   AuthServie authServie = AuthServie();
+  final picker = ImagePicker();
+  var logger = Logger();
 
   String userName = "";
   String email = "";
@@ -44,15 +47,25 @@ class _HomePageState extends State<HomePage> {
 
   bool isImagesLoading = false;
 
-  static List<File> selectedImages = [];
-  final picker = ImagePicker();
+  List<File> selectedImages = [];
 
   int selectedIndex = 0;
 
-  var logger = Logger();
-
   @override
   void initState() {
+
+    // selectedIndex = widget.pageIndex;
+
+    // setState(() {
+    //   if (this.mounted) {
+    //     _widgetOptions[0] =  Home(scrollController: homeScrollController);
+    //     _widgetOptions[1] =  LikesRanking(scrollController: likeScrollController);
+    //     _widgetOptions[3] = ProfilePage(scrollController: profileScrollController);
+    //   }
+    // });
+
+    super.initState();
+
     selectedIndex = widget.pageIndex;
 
     setState(() {
@@ -63,13 +76,12 @@ class _HomePageState extends State<HomePage> {
       }
     });
 
-    super.initState();
     gettingUserData();
 
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       DatabaseService userService = new DatabaseService();
       userService.updateMessagingToken(newToken);
-    });
+    });     // firebase notification token
 
   }
 
@@ -101,6 +113,13 @@ class _HomePageState extends State<HomePage> {
   final ScrollController profileScrollController = ScrollController();
   final ScrollController likeScrollController = ScrollController();
 
+  final _widgetOptions = <Widget>[
+    Home(scrollController: ScrollController()),
+    LikesRanking(scrollController: ScrollController()),
+    Post(images: []),
+    ProfilePage(scrollController: ScrollController())
+  ];
+
   @override
   void dispose() {
     _pageController.dispose();
@@ -109,13 +128,6 @@ class _HomePageState extends State<HomePage> {
     likeScrollController.dispose();
     super.dispose();
   }
-
-  final _widgetOptions = <Widget>[
-    Home(scrollController: ScrollController()),
-    LikesRanking(scrollController: ScrollController()),
-    Post(images: []),
-    ProfilePage(scrollController: ScrollController())
-  ];
 
   @override
   Widget build(BuildContext context) {

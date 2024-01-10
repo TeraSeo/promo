@@ -30,14 +30,18 @@ class _EditInfoState extends State<EditInfo> {
   bool isInfoChanging = false;
   bool isErrorOccurred = false;
 
-  PostService postService = new PostService();
-  DatabaseService databaseService = new DatabaseService();
+  late PostService postService;
+  late DatabaseService databaseService;
 
   var logger = Logger();
 
   @override
   void initState() {
     super.initState();
+
+    postService = new PostService();
+    databaseService = new DatabaseService();
+
     try {
       _controllerName.text = widget.postUser!["name"].toString();
       _controllerEmail.text = widget.postUser!["email"].toString();
@@ -53,6 +57,14 @@ class _EditInfoState extends State<EditInfo> {
       }
       logger.log(Level.error, "Error occurred while getting edit informaiton");
     }
+  }
+
+  @override
+  void dispose() {
+    _controllerName.dispose();
+    _controllerEmail.dispose();
+    _controllerIntroduction.dispose();
+    super.dispose();
   }
 
   @override

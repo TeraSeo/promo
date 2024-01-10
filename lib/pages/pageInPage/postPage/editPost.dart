@@ -89,6 +89,13 @@ class _EditPostState extends State<EditPost> {
   bool postAble = true;
 
   @override
+  void dispose() {
+    _controllerTag.dispose();
+    _controllerDescription.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     try {
     return isErrorOccurred? Center(

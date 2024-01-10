@@ -20,13 +20,14 @@ class _PostState extends State<Post> {
   DatabaseService? databaseService;
   String? uId;
 
+  var logger = Logger();
+
   bool isErrorOccurred = false;
 
   @override
   void initState() {
     super.initState();
   }
-
 
   final formKey = GlobalKey<FormState>();
 
@@ -48,10 +49,16 @@ class _PostState extends State<Post> {
   String description = "";
   String category = "Etc.";
   List<String> tags = [];
-  bool withComment = true;
 
+  bool withComment = true;
   bool postAble = true;
-  var logger = Logger();
+
+  @override
+  void dispose() {
+    _controllerTag.dispose();
+    _controllerDescription.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -397,12 +404,5 @@ class _PostState extends State<Post> {
       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10),
     )
   );
-
-  @override
-  void dispose() {
-    _controllerTag.dispose();
-    _controllerDescription.dispose();
-    super.dispose();
-  }
 
 }
