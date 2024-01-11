@@ -119,15 +119,14 @@ class _CropResultViewState extends State<CropResultView> {
                   horizontal: 8.0,
                   vertical: 16.0,
                 ),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
+                child: ClipOval(
+                
                   child: Image.file(widget.croppedFiles[index]),
                 ),
               );
             },
           ),
+
         ],
       ),
     );

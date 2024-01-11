@@ -1,0 +1,8 @@
+version: "Apple Swift version 5.9 (swiftlang-5.9.0.128.108 clang-1500.0.40.1)"
+options: "7dad2c130f59397cc2d867ab6fd12a06607cba54bc45cf4776a54455d0cf524d"
+build_start_time: [1704992598, 703269000]
+build_end_time: [1704992603, 397937000]
+inputs:
+  "/Users/seotaejun/Desktop/like_app/ios/Runner/AppDelegate.swift": [1671079858, 0]
+  ? "/Users/seotaejun/Desktop/like_app/ios/build/Runner.build/Release-iphoneos/Runner.build/DerivedSources/GeneratedAssetSymbols.swift"
+  : [1704992598, 663071894]

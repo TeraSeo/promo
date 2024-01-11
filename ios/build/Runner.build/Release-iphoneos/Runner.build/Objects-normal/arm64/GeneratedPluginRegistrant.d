@@ -1,0 +1,20 @@
+dependencies: \
+  /Users/seotaejun/Desktop/like_app/ios/Runner/GeneratedPluginRegistrant.m \
+  /Users/seotaejun/Desktop/like_app/ios/Runner/GeneratedPluginRegistrant.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Modules/module.modulemap \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/Flutter.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterAppDelegate.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterMacros.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterPlugin.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterBinaryMessenger.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterChannels.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterCodecs.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterPlatformViews.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterTexture.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterCallbackCache.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterDartProject.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterEngine.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterEngineGroup.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterHeadlessDartRunner.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterPluginAppLifeCycleDelegate.h \
+  /Users/seotaejun/Desktop/like_app/ios/build/Release-iphoneos/Flutter.framework/Headers/FlutterViewController.h

@@ -36,7 +36,7 @@ class ProfileWidget extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
         border: Border.all(
           color: Colors.white,
-          width: MediaQuery.of(context).size.height * 0.005,
+          width: MediaQuery.of(context).size.height * 0.002,
         ),
       ),
     );
