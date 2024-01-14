@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/postDB_service.dart';

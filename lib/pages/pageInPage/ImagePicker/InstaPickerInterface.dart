@@ -38,7 +38,7 @@ mixin InstaPickerInterface on Widget {
           Center(
             child: Text(
               text ??
-                  'The ${description.label} will push result in a new screen',
+                  'Change profile',
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 18),
             ),
@@ -47,7 +47,7 @@ mixin InstaPickerInterface on Widget {
             onPressed: onPressed,
             child: FittedBox(
               child: Text(
-                'Open the ${description.label}',
+                'Click to change profile',
                 style: const TextStyle(fontSize: 20),
               ),
             ),

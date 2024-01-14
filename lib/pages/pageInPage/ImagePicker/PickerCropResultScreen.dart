@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:insta_assets_picker/insta_assets_picker.dart';
 import 'package:like_app/pages/home_page.dart';
@@ -20,7 +19,7 @@ class PickerCropResultScreen extends StatelessWidget {
     final height = MediaQuery.of(context).size.height - kToolbarHeight;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Insta picker result')),
+      appBar: AppBar(title: const Text('Result')),
       body: StreamBuilder<InstaAssetsExportDetails>(
         stream: cropStream,
         builder: (context, snapshot) {

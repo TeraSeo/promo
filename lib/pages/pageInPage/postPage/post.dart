@@ -119,7 +119,7 @@ class _PostState extends State<Post> {
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 20,
+                      maxLength: 230,
                       maxLines: 7,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerDescription,

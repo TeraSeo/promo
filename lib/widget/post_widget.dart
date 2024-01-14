@@ -105,11 +105,11 @@ class _PostWidgetState extends State<PostWidget> {
       else if (current.difference(posted).inDays < 7 && current.difference(posted).inDays >= 1) {
         timeDiff = current.difference(posted).inDays.toString() + "d ago";
       }
-      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 7) {
+      else if (current.difference(posted).inDays < 31 && current.difference(posted).inDays >= 7) {
         timeDiff = (current.difference(posted).inDays ~/ 7).toInt().toString() + "w ago";
       }
       else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 31) {
-        timeDiff = (current.difference(posted).inDays ~/ 31).toInt().toString() + "w ago";
+        timeDiff = (current.difference(posted).inDays ~/ 31).toInt().toString() + "Mth ago";
       }
       else if (current.difference(posted).inDays >= 365) {
         timeDiff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
@@ -475,7 +475,7 @@ class _PostWidgetState extends State<PostWidget> {
                           }
                         }, 
                         child: Stack(
-                          alignment: Alignment.center ,
+                          alignment: Alignment.center,
                           children: [
                             Container(
                               height: MediaQuery.of(context).size.height * 0.6,
@@ -494,7 +494,7 @@ class _PostWidgetState extends State<PostWidget> {
                                             );
                                         }
                                         else {
-                                          return VideoPlayerWidget(videoUrl: images![index]);
+                                          return Center(child: VideoPlayerWidget(videoUrl: images![index]),);
                                         }
                                       } catch(e) {
                                         print(e);

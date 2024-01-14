@@ -1,14 +1,20 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:logger/logger.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+import 'package:image/image.dart' as img;
 
 class EditPost extends StatefulWidget {
   final String postId;
@@ -32,10 +38,17 @@ class _EditPostState extends State<EditPost> {
   List<dynamic> images = [];
   final picker = ImagePicker();
 
+  Logger logger = new Logger();
+
+  bool isImagesLoading = false;
+
   @override
   void initState() {
+  
     super.initState();
     getPost();
+
+    print(isPostAble);
   }
 
   getPost() async {
@@ -86,7 +99,7 @@ class _EditPostState extends State<EditPost> {
   List<String> tags = [];
   bool withComment = true;
 
-  bool postAble = true;
+  bool isPostAble = true;
 
   @override
   void dispose() {
@@ -112,7 +125,9 @@ class _EditPostState extends State<EditPost> {
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : isPostLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
+      ) : isPostLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : !isPostAble? Center(child: CircularProgressIndicator(color: Colors.white,),) : AbsorbPointer(
+         absorbing: isImagesLoading || !isPostAble,
+        child: Scaffold(
       appBar: AppBar(
         title: Text("Edit Post"),
         backgroundColor: Colors.black,
@@ -170,7 +185,7 @@ class _EditPostState extends State<EditPost> {
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 20,
+                      maxLength: 230,
                       maxLines: 7,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerDescription,
@@ -374,23 +389,33 @@ class _EditPostState extends State<EditPost> {
                 child: ElevatedButton(
                   onPressed: () async{
                     try {
-                      if (formKey.currentState!.validate() && postAble) {
+                      if (formKey.currentState!.validate()) {
                         setState(() {
-                          postAble = false;
+                          if (this.mounted) {
+                            isPostAble = false;
+                          }
                         });
                         tags = _controllerTag.getTags!;
-                        
-                        if (images.isEmpty) {
-                          print(selectedImages);
-                          PostService postService = new PostService();
+
+                        PostService postService = new PostService();
+                        if (!selectedImages.isEmpty) {
                           await postService.updatePost(selectedImages, description, category, tags, withComment, widget.postId, widget.email);
                           nextScreen(context, HomePage(pageIndex: 0,));
                         }
                         else {
-                          PostService postService = new PostService();
-                          await postService.updatePostWithOutImages(description, category, tags, withComment, widget.postId);
-                          nextScreen(context, HomePage(pageIndex: 0,));
+
+                          if (images.isEmpty) {
+                            await postService.updatePost([], description, category, tags, withComment, widget.postId, widget.email);
+                            nextScreen(context, HomePage(pageIndex: 0,));
+                          }
+
+                          else {
+                            await postService.updatePostWithOutImages(description, category, tags, withComment, widget.postId);
+                            nextScreen(context, HomePage(pageIndex: 0,));
+                          }
+                          
                         }
+
                       }
                     } catch(e) {
                       if (this.mounted) {
@@ -413,7 +438,7 @@ class _EditPostState extends State<EditPost> {
           ],
         ),
       ),
-      )
+      ))
     );} catch(e) { 
       return Center(
           child: Column(
@@ -494,8 +519,30 @@ class _EditPostState extends State<EditPost> {
                 leading: Icon(Icons.picture_as_pdf_outlined),
                 title: Text('Select photo'),
                 onTap: () async{
-                  await getImages();
-                  Navigator.pop(context);
+                  try {
+                    setState(() {
+                      if (this.mounted) {
+                        isImagesLoading = true;
+                      }
+                    });
+                    await getImages();
+                    await cropImages(selectedImages);
+                    setState(() {
+                      if (this.mounted) {
+                        isImagesLoading = false;
+                      }
+                    });
+
+                  } catch(e) {
+                    if (this.mounted) {
+                      setState(() {
+                        isImagesLoading = false;
+                        isErrorOccurred = true;
+                      });
+                    }
+                    logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
+                  }
+                  // Navigator.pop(context);
                 },
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
@@ -509,28 +556,201 @@ class _EditPostState extends State<EditPost> {
   Future getImages() async {
     selectedImages = [];
     try {
-      final pickedFile = await picker.pickMultiImage(
-        imageQuality: 50, maxHeight: 1000, maxWidth: 1000);
-        List<XFile> xfilePick = pickedFile;
-        setState(
-          () {
-            if (xfilePick.isNotEmpty) {
-              for (var i = 0; i < xfilePick.length; i++) {
-                selectedImages.add(File(xfilePick[i].path));
+        final status = await Permission.photos.request();
+        if (status.isGranted) {
+          final pickedFile = await picker.pickMultipleMedia(
+          imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
+          List<XFile> xfilePick = pickedFile;
+          setState(
+            () {
+              if (xfilePick.isNotEmpty) {
+                if (xfilePick.length > 8) {
+                  for (var i = 0; i < 8; i++) {
+                    if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                      if (getFileSize(xfilePick[i]) > 40) {
+                        final snackBar = SnackBar(
+                          content: const Text('File size is so large!'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        print("path" + xfilePick[i].path);
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                    else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                  }
+                }
+                else {
+                  for (var i = 0; i < xfilePick.length; i++) {
+                    if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                      if (getFileSize(xfilePick[i]) > 40) {
+                        final snackBar = SnackBar(
+                          content: const Text('File size is so large!'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        print("path" + xfilePick[i].path);
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                    else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                  }
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Nothing is selected')));
               }
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Nothing is selected')));
-            }
-            images = [];
-          },
-        );
+            },
+          );
+        } 
+        else if (status.isPermanentlyDenied) {
+          openAppSettings();
+        }
+        else {
+          await Permission.photos.request().then((value) async {
+          if (value.isGranted) {
+
+            final pickedFile = await picker.pickMultipleMedia(
+            imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
+            List<XFile> xfilePick = pickedFile;
+            setState(
+              () {
+                if (xfilePick.isNotEmpty) {
+                  if (xfilePick.length > 8) {
+                    final snackBar = SnackBar(
+                      content: const Text('Until 8 images can be posted!'),
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                    for (var i = 0; i < 8; i++) {
+                      if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                        if (getFileSize(xfilePick[i]) > 40) {
+                          final snackBar = SnackBar(
+                            content: const Text('File size is so large!'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else {
+                          print("path" + xfilePick[i].path);
+                          selectedImages.add(File(xfilePick[i].path));
+                        }
+                      }
+                      else {
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                      
+                    }
+                  }
+                  else {
+                    for (var i = 0; i < xfilePick.length; i++) {
+                      if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                        if (getFileSize(xfilePick[i]) > 40) {
+                          final snackBar = SnackBar(
+                            content: const Text('File size is so large!'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                        } else {
+                          print("path" + xfilePick[i].path);
+                          selectedImages.add(File(xfilePick[i].path));
+                        }
+                      }
+                      else {
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Nothing is selected')));
+                }
+              },
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Permission needed')));
+          } 
+          });
+
+          
+        }
 
     } catch (e) {
       if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+      logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
+    }
+  }
+
+  double getFileSize(XFile file) {
+    return File(file.path).lengthSync() / (1024 * 1024);
+  }
+
+  Future<List<dynamic>> cropImages(List<File> medias) async {
+    try {
+
+      List<dynamic> files = [];
+
+      for (var media in medias) {
+        bool isVideo = HelperFunctions().isVideoFile(media);
+        if (!isVideo) {
+          bool isHorizontal = await isImageHorizontal(media);
+          var croppedFile = await ImageCropper().cropImage(
+            sourcePath: media.path,
+            aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
+            uiSettings: [
+              AndroidUiSettings(
+                  toolbarTitle: 'Cropper',
+                  toolbarColor: Colors.deepOrange,
+                  toolbarWidgetColor: Colors.white,),
+              IOSUiSettings(
+                title: 'Cropper',
+                aspectRatioLockEnabled: true, 
+                resetAspectRatioEnabled: false,
+                aspectRatioPickerButtonHidden: true,
+                rotateButtonsHidden: true
+              ),
+              WebUiSettings(
+                context: context,
+              ),
+            ],
+          );
+
+          if (croppedFile != null) {
+            files.add(croppedFile);
+          }
+        }
+        else {
+          files.add(media);
+        }
+        
+      }
+
+      return files;
+
+    } catch(e) {
+
       setState(() {
-        isErrorOccurred = true;
+        if (this.mounted) {
+          isErrorOccurred = true;
+          isImagesLoading = false;
+        }
       });
-    }}
+
+      return [];
+
+    }
+    
+  }
+
+  Future<bool> isImageHorizontal(File imageFile) async {
+    final bytes = await imageFile.readAsBytes();
+    final image = img.decodeImage(Uint8List.fromList(bytes));
+
+    return image!.width > image.height;
   }
 }

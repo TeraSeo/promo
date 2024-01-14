@@ -69,8 +69,6 @@ dependencies:
   uuid: ^3.0.7
   video_player: ^2.8.1
   visibility_detector: ^0.4.0+2
-  wechat_assets_picker: ^8.8.0
-  wechat_camera_picker: ^4.1.2
 
 dev_dependencies:
   flutter_test:
@@ -79,8 +77,6 @@ dev_dependencies:
 dependency_overrides:
   photo_manager: ^3.0.0-dev.2
   insta_assets_picker: ^2.3.0-dev.2
-  wechat_camera_picker: ^4.2.0-dev.3
-  wechat_assets_picker: ^9.0.0-dev.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

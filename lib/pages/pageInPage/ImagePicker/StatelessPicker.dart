@@ -9,8 +9,8 @@ class SinglePicker extends StatelessWidget with InstaPickerInterface {
 
   @override
   PickerDescription get description => const PickerDescription(
-        icon: '☝️',
-        label: 'Single Mode Picker',
+        icon: '👋',
+        label: 'Change profile',
         description: 'Picker to select a single image. '
             'Selecting a new image will replace the old one.',
       );
