@@ -8,7 +8,7 @@ import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/login_page.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
-
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -82,7 +82,7 @@ class _LoginPageState extends State<OtpScreen> {
                   verify();
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) :  Scaffold(
@@ -119,7 +119,7 @@ class _LoginPageState extends State<OtpScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "OTP verification", 
+                          AppLocalizations.of(context)!.oTPVerification, 
                           style: TextStyle(
                           color: Colors.white,
                           fontSize: verticalPadding / 4 * 5,
@@ -168,7 +168,7 @@ class _LoginPageState extends State<OtpScreen> {
                             ),
                             SizedBox(height: MediaQuery.of(context).size.height * 0.012,),
                             Text(
-                              "OTP code is only valid for 3 minutes",
+                              AppLocalizations.of(context)!.threeMinutes,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: MediaQuery.of(context).size.height * 0.015,
@@ -200,14 +200,14 @@ class _LoginPageState extends State<OtpScreen> {
                               height: signInBtnHeight,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  primary: Theme.of(context).primaryColor,
+                                  backgroundColor: Theme.of(context).primaryColor,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(borderCircular)
                                   )
                                 ),
                                 child: Text(
-                                  "Verify",
+                                  AppLocalizations.of(context)!.verify,
                                   style: TextStyle(color: Colors.white, fontSize: borderCircular / 2),
                                 ),
                                 onPressed: () {
@@ -217,7 +217,7 @@ class _LoginPageState extends State<OtpScreen> {
                             ),
                             SizedBox(height: MediaQuery.of(context).size.height * 0.043,),
                             Text(
-                              "Didn't you receive any code?",
+                              AppLocalizations.of(context)!.codeLate,
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 fontSize: MediaQuery.of(context).size.height * 0.0147,
@@ -228,7 +228,7 @@ class _LoginPageState extends State<OtpScreen> {
                             SizedBox(height: MediaQuery.of(context).size.height * 0.017,),
                             Text.rich(
                               TextSpan(
-                                text: "Resend new code",
+                                text: AppLocalizations.of(context)!.resend,
                                 style: TextStyle(
                                   fontSize: MediaQuery.of(context).size.height * 0.017,
                                   fontWeight: FontWeight.bold,
@@ -262,7 +262,7 @@ class _LoginPageState extends State<OtpScreen> {
                             SizedBox(height: MediaQuery.of(context).size.height * 0.023,),
                             Text.rich(
                               TextSpan(
-                                text: "Back to Login Page",
+                                text: AppLocalizations.of(context)!.backLogin,
                                 style: TextStyle(
                                   fontSize: MediaQuery.of(context).size.height * 0.017,
                                   fontWeight: FontWeight.bold,
@@ -308,7 +308,7 @@ class _LoginPageState extends State<OtpScreen> {
                   verify();
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );
@@ -371,12 +371,12 @@ class _LoginPageState extends State<OtpScreen> {
     try {
        String otpCode = codes[0] + codes[1] + codes[2] + codes[3];
       if (myauth.verifyOTP(otp: otpCode) == true) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("OTP is verified")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!.otpVerified)));
         verified();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("Invalid OTP")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(AppLocalizations.of(context)!.invalidOtp)));
       }
     } catch(e) {
       if (this.mounted) {
@@ -392,15 +392,15 @@ class _LoginPageState extends State<OtpScreen> {
     try {
       await getData();
       myauth.setConfig(
-            appEmail: "seotj0413@gmail.com",
+            appEmail: "t6858101@gmail.com",
             appName: "Email OTP",
             userEmail: email,
             otpLength: 4,
-            otpType: OTPType.digitsOnly
+            otpType: OTPType.mixed
           );
       if (await myauth.sendOTP() == true) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("OTP has been sent"),));
+          SnackBar(content: Text(AppLocalizations.of(context)!.otpSent),));
 
           if (this.mounted) {
             setState(() {
@@ -410,8 +410,8 @@ class _LoginPageState extends State<OtpScreen> {
       
       } else {
         ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(
-            content: Text("Oops, OTP send failed")));
+          .showSnackBar(SnackBar(
+            content: Text(AppLocalizations.of(context)!.otpFailed)));
 
           if (this.mounted) {
             setState(() {

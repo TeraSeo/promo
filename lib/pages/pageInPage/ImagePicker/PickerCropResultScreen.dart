@@ -179,7 +179,7 @@ class _CropResultViewState extends State<CropResultView> {
                   } catch (e) {}
                 },
                 style: OutlinedButton.styleFrom(
-                  primary: Colors.black, // Border color
+                  backgroundColor: Colors.black, // Border color
                   padding: EdgeInsets.all(16.0), // Button padding
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(20.0), // Button border radius

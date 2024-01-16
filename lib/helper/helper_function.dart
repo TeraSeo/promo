@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HelperFunctions {
@@ -101,4 +103,17 @@ class HelperFunctions {
     }
     return false;
   }
+
+  Future sendEmailVerification() async {
+
+    Logger logger = new Logger();
+
+    final _auth = FirebaseAuth.instance;
+    try {
+      await _auth.currentUser?.sendEmailVerification();
+    } catch(e) {
+      logger.log(Level.error, e.toString());
+    }
+  }
+
 }

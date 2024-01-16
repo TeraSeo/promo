@@ -2,11 +2,13 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/pages/emailVerification.dart';
 import 'package:like_app/pages/login_page.dart';
 import 'package:like_app/pages/otp.dart';
 import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -110,7 +112,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             TextFormField(
                               maxLength: 20,
                               decoration: textInputDecoration.copyWith(
-                                labelText: "Account name",
+                                labelText: AppLocalizations.of(context)!.accoutnName,
                                 prefixIcon : Icon(
                                   Icons.account_box,
                                   color: Theme.of(context).primaryColor,
@@ -120,7 +122,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 if (val!.isNotEmpty) {
                                   return null;
                                 } else {
-                                  return "name can not be empty";
+                                  return AppLocalizations.of(context)!.nameEmpty;
                                 }
                               },
                               onChanged: (val){
@@ -132,7 +134,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             SizedBox(height: sizedBox),
                             TextFormField(
                               decoration: textInputDecoration.copyWith(
-                                labelText: "Email",
+                                labelText: AppLocalizations.of(context)!.email,
                                 prefixIcon : Icon(
                                   Icons.email,
                                   color: Theme.of(context).primaryColor,
@@ -146,14 +148,14 @@ class _RegisterPageState extends State<RegisterPage> {
                               validator: (val) {
                                 return RegExp(
                                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=>^_'{|}~]+@[a-zA-Z]+")
-                                    .hasMatch(val!) ? null : "Please enter a valid email";
+                                    .hasMatch(val!) ? null : AppLocalizations.of(context)!.enterEmail;
                               },
                             ),
                             SizedBox(height: sizedBox),
                             TextFormField(
                               obscureText: true,
                               decoration: textInputDecoration.copyWith(
-                                labelText: "Password",
+                                labelText: AppLocalizations.of(context)!.password,
                                 prefixIcon : Icon(
                                   Icons.lock,
                                   color: Theme.of(context).primaryColor,
@@ -161,7 +163,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               validator: (val) {
                                 if (val!.length < 6) {
-                                  return "Password must be at least 6 characters";
+                                  return AppLocalizations.of(context)!.enterPassword;
                                 } else {
                                   return null;
                                 }
@@ -178,7 +180,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             TextFormField(
                               obscureText: true,
                               decoration: textInputDecoration.copyWith(
-                                labelText: "Check Password",
+                                labelText: AppLocalizations.of(context)!.passWordCheck,
                                 prefixIcon : Icon(
                                   Icons.lock,
                                   color: Theme.of(context).primaryColor,
@@ -186,7 +188,7 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               validator: (val) {
                                 if (password != passwordCheck) {
-                                  return "passwords should be same";
+                                  return AppLocalizations.of(context)!.pwNotSame;
                                 } else {
                                   return null;
                                 }
@@ -205,14 +207,14 @@ class _RegisterPageState extends State<RegisterPage> {
                               height: signInBtnHeight,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  primary: Theme.of(context).primaryColor,
+                                  backgroundColor: Theme.of(context).primaryColor,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(borderCircular)
                                   )
                                 ),
                                 child: Text(
-                                  "Register",
+                                  AppLocalizations.of(context)!.register,
                                   style: TextStyle(color: Colors.white, fontSize: borderCircular / 2),
                                 ),
                                 onPressed: () {
@@ -226,7 +228,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                 style: TextStyle(color: Colors.black, fontSize: borderCircular / 8  * 3),
                                 children: <TextSpan>[
                                   TextSpan(
-                                    text: "Back to Login page",
+                                    text: AppLocalizations.of(context)!.goBackToLoginPage,
                                     style: const TextStyle(
                                       color: Colors.black,
                                       decoration: TextDecoration.underline  
@@ -265,7 +267,7 @@ class _RegisterPageState extends State<RegisterPage> {
             if (value == true) {
               // saving the shared preference state
               await HelperFunctions.saveUserEmailSF(email);
-              nextScreenReplace(context, const OtpScreen());
+              nextScreenReplace(context, EmailVerification(email: email,));
 
             } else {
               setState(() {
@@ -298,7 +300,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
     AlertDialog alert = AlertDialog(
       title: Text("Existing!"),
-      content: Text("The name is already existing"),
+      content: Text(AppLocalizations.of(context)!.nameExisting),
       actions: [
         okButton,
       ],

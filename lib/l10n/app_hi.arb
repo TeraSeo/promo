@@ -22,6 +22,11 @@
     "codeLate": "क्या आपको कोई कोड नहीं मिला?",
     "resend": "नया कोड पुनः भेजें",
     "backLogin": "लॉगिन पेज पर वापस जाएँ",
+    "otpVerified": "ओटीपी सत्यापित है",
+    "invalidOtp": "अमान्य ओटीपी",
+    "otpSent": "ओटीपी भेज दिया गया है",
+    "otpFailed": "उफ़, ओटीपी भेजना विफल रहा",
+    "verificationFailed": "प्रमाणीकरण विफल होना",
 
 
     "loadFailed": "लोड करने में विफल",
@@ -30,8 +35,12 @@
     "login": "लॉग इन करें",
     "accountInExist": "कोई खाता नहीं है? ",
     "goToRegisterPage": "यहां रजिस्टर करें",
+    "existing": "मौजूदा!",
+    "loginFailed": "ईमेल या पासवर्ड मेल नहीं खाता",
 
 
+    "email": "ईमेल",
+    "password": "पासवर्ड",
     "accoutnName": "खाता नाम",
     "nameEmpty": "नाम खाली नहीं हो सकता",
     "passWordCheck": "पासवर्ड जांचें",

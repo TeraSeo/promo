@@ -22,6 +22,11 @@
     "codeLate": "Haben Sie keinen Code erhalten?",
     "resend": "Neuen Code erneut senden",
     "backLogin": "Zurück zur Anmeldeseite",
+    "otpVerified": "OTP ist verifiziert",
+    "invalidOtp": "Ungültiges OTP",
+    "otpSent": "OTP wurde gesendet",
+    "otpFailed": "Hoppla, der OTP-Versand ist fehlgeschlagen",
+    "verificationFailed": "Authentifizierung fehlgeschlagen",
 
 
     "loadFailed": "Laden fehlgeschlagen",
@@ -30,8 +35,12 @@
     "login": "Melden Sie sich an",
     "accountInExist": "Sie haben noch kein Konto? ",
     "goToRegisterPage": "Hier registrieren",
+    "existing": "Bestehende!",
+    "loginFailed": "E-Mail oder Passwort stimmen nicht überein",
 
 
+    "email": "Email",
+    "password": "Passwort",
     "accoutnName": "Kontoname",
     "nameEmpty": "Der Name darf nicht leer sein",
     "passWordCheck": "Passwort prüfen",

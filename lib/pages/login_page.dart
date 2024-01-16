@@ -1,10 +1,12 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/pages/emailVerification.dart';
 import 'package:like_app/pages/otp.dart';
 import 'package:like_app/pages/register_page.dart';
 import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
 class LoginPage extends StatefulWidget {
@@ -45,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
                   );
                 }
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) : Scaffold(
@@ -123,7 +125,7 @@ class _LoginPageState extends State<LoginPage> {
                           children: <Widget>[
                             TextFormField(
                               decoration: textInputDecoration.copyWith(
-                                labelText: "Email",
+                                labelText: AppLocalizations.of(context)!.email,
                                 prefixIcon : Icon(
                                   Icons.email,
                                   color: Theme.of(context).primaryColor,
@@ -137,14 +139,14 @@ class _LoginPageState extends State<LoginPage> {
                               validator: (val) {
                                 return RegExp(
                                   r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=>^_'{|}~]+@[a-zA-Z]+")
-                                    .hasMatch(val!) ? null : "Please enter a valid email";
+                                    .hasMatch(val!) ? null : AppLocalizations.of(context)!.enterEmail;
                               },
                             ),
                             SizedBox(height: sizedBox),
                             TextFormField(
                               obscureText: true,
                               decoration: textInputDecoration.copyWith(
-                                labelText: "Password",
+                                labelText: AppLocalizations.of(context)!.password,
                                 prefixIcon : Icon(
                                   Icons.lock,
                                   color: Theme.of(context).primaryColor,
@@ -152,7 +154,7 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                               validator: (val) {
                                 if (val!.length < 6) {
-                                  return "Password must be at least 6 characters";
+                                  return AppLocalizations.of(context)!.enterPassword;
                                 } else {
                                   return null;
                                 }
@@ -171,14 +173,14 @@ class _LoginPageState extends State<LoginPage> {
                               height: signInBtnHeight,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  primary: Theme.of(context).primaryColor,
+                                  backgroundColor: Theme.of(context).primaryColor,
                                   elevation: 0,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(borderCircular)
                                   )
                                 ),
                                 child: Text(
-                                  "Login",
+                                  AppLocalizations.of(context)!.login,
                                   style: TextStyle(color: Colors.white, fontSize: borderCircular / 2),
                                 ),
                                 onPressed: () {
@@ -189,11 +191,11 @@ class _LoginPageState extends State<LoginPage> {
                             SizedBox(height: borderCircular / 2 * 1.5),
                             Text.rich(
                               TextSpan(
-                                text: "Don't have an account? ",
+                                text: AppLocalizations.of(context)!.accountInExist,
                                 style: TextStyle(color: Colors.black, fontSize: borderCircular / 8 * 3),
                                 children: <TextSpan>[
                                   TextSpan(
-                                    text: "Register here",
+                                    text: AppLocalizations.of(context)!.goToRegisterPage,
                                     style: const TextStyle(
                                       color: Colors.black,
                                       decoration: TextDecoration.underline  
@@ -235,11 +237,11 @@ class _LoginPageState extends State<LoginPage> {
         .then((value) async {
           if (value == true) {
             await HelperFunctions.saveUserEmailSF(email);
-            nextScreen(context, const OtpScreen());
+            nextScreen(context, EmailVerification(email: email));
 
           } else {
             setState(() {
-              showSnackbar(context, Colors.red, value);
+              showSnackbar(context, Colors.red, AppLocalizations.of(context)!.loginFailed);
               _isLoading = false; 
             });
           }

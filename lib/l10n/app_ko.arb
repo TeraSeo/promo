@@ -22,6 +22,11 @@
     "codeLate": "아직 코드를 못받으셨나요?",
     "resend": "코드 다시보내기",
     "backLogin": "로그인 페이지로 가기",
+    "otpVerified": "OTP가 인증되었습니다",
+    "invalidOtp": "유효하지않은 OTP",
+    "otpSent": "OTP가 보내졌습니다",
+    "otpFailed": "OTP를 보내는데 실패했습니다",
+    "verificationFailed": "인증 실패",
 
 
     "loadFailed": "불러오는데 실패했습니다",
@@ -30,12 +35,16 @@
     "login": "로그인",
     "accountInExist": "계정이 없으신가요? ",
     "goToRegisterPage": "회원가입",
+    "existing": "계정이름이 존재합니다!",
+    "loginFailed": "이메일 혹은 비밀번호가 일치하지 않습니다",
 
 
+    "email": "이메일",
     "accoutnName": "계정 이름",
     "nameEmpty": "계정 이름을 입력해주세요",
-    "passWordCheck": "패스워드 확인",
-    "pwNotSame": "패스워드가 같아야 합니다",
+    "passWordCheck": "비밀번호 확인",
+    "password": "비밀번호",
+    "pwNotSame": "비밀번호가 같아야 합니다",
     "register": "회원가입",
     "goBackToLoginPage": "로그인 페이지로 가기",
     "nameExisting": "이름이 이미 존재합니다"

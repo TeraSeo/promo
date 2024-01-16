@@ -22,6 +22,11 @@
     "codeLate": "コードを受け取っていませんか?",
     "resend": "新しいコードを再送信する",
     "backLogin": "ログインページに戻る",
+    "otpVerified": "OTP が検証されました",
+    "invalidOtp": "無効な OTP",
+    "otpSent": "OTPが送信されました",
+    "otpFailed": "OTP 送信に失敗しました",
+    "verificationFailed": "認証失敗",
 
 
     "loadFailed": "読み込みに失敗しました",
@@ -30,8 +35,12 @@
     "login": "ログイン",
     "accountInExist": "アカウントをお持ちでない場合は、 ",
     "goToRegisterPage": "ここに登録",
+    "existing": "既存!",
+    "loginFailed": "電子メールまたはパスワードが一致しません",
 
-
+    
+    "email": "Eメール",
+    "password": "パスワード",
     "accoutnName": "アカウント名",
     "nameEmpty": "名前を空にすることはできません",
     "passWordCheck": "パスワードを確認する",

@@ -22,6 +22,11 @@
     "codeLate": "Didn't you receive any code?",
     "resend": "Resend new code",
     "backLogin": "Back to Login Page",
+    "otpVerified": "OTP is verified",
+    "invalidOtp": "Invalid OTP",
+    "otpSent": "OTP has been sent",
+    "otpFailed": "Oops, OTP send failed",
+    "verificationFailed": "Verification Failed",
 
 
     "loadFailed": "failed to load",
@@ -30,8 +35,12 @@
     "login": "Login",
     "accountInExist": "Don't have an account? ",
     "goToRegisterPage": "Register here",
+    "existing": "Existing!",
+    "loginFailed": "Email or Password is incorrect",
 
 
+    "email": "Email",
+    "password": "Password",
     "accoutnName": "Account name",
     "nameEmpty": "name can not be empty",
     "passWordCheck": "Check Password",

@@ -22,6 +22,11 @@
     "codeLate": "Vous n'avez reçu aucun code ?",
     "resend": "Renvoyer le nouveau code",
     "backLogin": "Retour à la page de connexion",
+    "otpVerified": "OTP est vérifié",
+    "invalidOtp": "OTP invalide",
+    "otpSent": "OTP a été envoyé",
+    "otpFailed": "Oups, l'envoi OTP a échoué",
+    "verificationFailed": "Authentification échouée",
 
 
     "loadFailed": "échec du chargement",
@@ -30,8 +35,12 @@
     "login": "Se connecter",
     "accountInExist": "Vous n'avez pas de compte ? ",
     "goToRegisterPage": "Inscrivez-vous ici",
+    "existing": "Existente!",
+    "loginFailed": "L'e-mail ou le mot de passe ne correspondent pas",
 
 
+    "email": "e-mail",
+    "password": "mot de passe",
     "accoutnName": "Nom du compte",
     "nameEmpty": "le nom ne peut pas être vide",
     "passWordCheck": "Vérifier le mot de passe",

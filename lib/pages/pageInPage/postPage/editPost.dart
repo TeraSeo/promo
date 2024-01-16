@@ -156,7 +156,7 @@ class _EditPostState extends State<EditPost> {
                     width: 300,
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.black, // Background color
+                          backgroundColor: Colors.black, // Background color
                         ),
                         onPressed: () {
                           _showPicMenu();
