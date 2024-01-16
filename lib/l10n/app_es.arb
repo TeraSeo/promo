@@ -5,9 +5,38 @@
     "report": "Informe",
     "editThisPost": "Editar esta publicación",
     "removeThisPost": "Eliminar esta publicación",
+
+
     "latest": "El último",
     "oldest": "Más antiguo",
     "popular": "Popular",
-    "notPopular": "No popular"
-    "searchAnything": "Buscar"
+    "notPopular": "No popular",
+
+
+    "searchAnything": "Buscar",
+
+
+    "oTPVerification": "verificación OTP",
+    "threeMinutes": "El código OTP solo es válido por 3 minutos",
+    "verify": "Verificar",
+    "codeLate": "¿No recibiste ningún código?",
+    "resend": "Reenviar nuevo código",
+    "backLogin": "Volver a la página de inicio de sesión",
+
+
+    "loadFailed": "falló al cargar",
+    "enterEmail": "Por favor introduzca una dirección de correo electrónico válida",
+    "enterPassword": "La contraseña debe tener al menos 6 caracteres",
+    "login": "Acceso",
+    "accountInExist": "¿No tienes una cuenta? ",
+    "goToRegisterPage": "Registrar aquí",
+
+
+    "accoutnName": "Nombre de la cuenta",
+    "nameEmpty": "el nombre no puede estar vacío",
+    "passWordCheck": "Comprobar contraseña",
+    "pwNotSame": "las contraseñas deben ser las mismas",
+    "register": "Registro",
+    "goBackToLoginPage": "Volver a la página de inicio de sesión",
+    "nameExisting": "El nombre ya existe"
 }

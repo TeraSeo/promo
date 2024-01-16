@@ -117,15 +117,10 @@ class _RegisterPageState extends State<RegisterPage> {
                                 )
                               ),
                               validator: (val) {
-                                if (val!.isNotEmpty && val.length < 16) {
+                                if (val!.isNotEmpty) {
                                   return null;
                                 } else {
-                                  if (val!.isEmpty) {
-                                    return "name can not be empty";
-                                  }
-                                  else {
-                                    return "name can not be more than 17 letters";
-                                  }
+                                  return "name can not be empty";
                                 }
                               },
                               onChanged: (val){

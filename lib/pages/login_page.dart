@@ -30,12 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     double borderCircular = MediaQuery.of(context).size.height * 0.035;
     double padding = MediaQuery.of(context).size.height * 0.027;
     double sizedBox = MediaQuery.of(context).size.height * 0.03;
-    double signInBtnWidth = MediaQuery.of(context).size.width * 0.9;
     double signInBtnHeight = MediaQuery.of(context).size.height * 0.04;
-    double signInIcon = MediaQuery.of(context).size.height * 0.023;
-    double sizedBoxWidth = MediaQuery.of(context).size.height * 0.016;
-    double fontSize = MediaQuery.of(context).size.height * 0.018;
-
 
     return isErrorOccurred? 
       Center(
@@ -183,7 +178,7 @@ class _LoginPageState extends State<LoginPage> {
                                   )
                                 ),
                                 child: Text(
-                                  "Sign In",
+                                  "Login",
                                   style: TextStyle(color: Colors.white, fontSize: borderCircular / 2),
                                 ),
                                 onPressed: () {

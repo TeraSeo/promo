@@ -5,9 +5,38 @@
     "report": "報告",
     "editThisPost": "この投稿を編集する",
     "removeThisPost": "この投稿を削除する",
+
+
     "latest": "最新",
     "oldest": "最古の",
     "popular": "人気のある",
     "notPopular": "人気がない",
-    "searchAnything": "検索"
+
+
+    "searchAnything": "検索",
+
+
+    "oTPVerification": "OTP 検証",
+    "threeMinutes": "OTP コードは 3 分間のみ有効です",
+    "verify": "確認する",
+    "codeLate": "コードを受け取っていませんか?",
+    "resend": "新しいコードを再送信する",
+    "backLogin": "ログインページに戻る",
+
+
+    "loadFailed": "読み込みに失敗しました",
+    "enterEmail": "正しいメールアドレスを入力してください",
+    "enterPassword": "パスワードは少なくとも6文字でなければなりません",
+    "login": "ログイン",
+    "accountInExist": "アカウントをお持ちでない場合は、 ",
+    "goToRegisterPage": "ここに登録",
+
+
+    "accoutnName": "アカウント名",
+    "nameEmpty": "名前を空にすることはできません",
+    "passWordCheck": "パスワードを確認する",
+    "pwNotSame": "パスワードは同じである必要があります",
+    "register": "登録する",
+    "goBackToLoginPage": "ログインページに戻る",
+    "nameExisting": "その名前はすでに存在します"
 }

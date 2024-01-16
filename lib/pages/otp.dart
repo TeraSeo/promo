@@ -119,7 +119,7 @@ class _LoginPageState extends State<OtpScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          "OTP verify", 
+                          "OTP verification", 
                           style: TextStyle(
                           color: Colors.white,
                           fontSize: verticalPadding / 4 * 5,
@@ -320,7 +320,7 @@ class _LoginPageState extends State<OtpScreen> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.11,
       child: AspectRatio(
-        aspectRatio: MediaQuery.of(context).size.height * 0.00085,
+        aspectRatio: MediaQuery.of(context).size.height * 0.0008,
         child: TextField(
           autofocus: true,
           onChanged: (value) {

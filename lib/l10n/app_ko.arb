@@ -5,9 +5,38 @@
     "report": "신고",
     "editThisPost": "게시물 수정",
     "removeThisPost": "게시물 삭제",
+
+
     "latest": "최신순",
     "oldest": "오래된순",
     "popular": "인기순",
     "notPopular": "비인기순",
-    "searchAnything": "검색"
+
+
+    "searchAnything": "검색",
+
+
+    "oTPVerification": "OTP 인증",
+    "threeMinutes": "OTP코드는 3분동안만 유효합니다",
+    "verify": "인증",
+    "codeLate": "아직 코드를 못받으셨나요?",
+    "resend": "코드 다시보내기",
+    "backLogin": "로그인 페이지로 가기",
+
+
+    "loadFailed": "불러오는데 실패했습니다",
+    "enterEmail": "유효한 이메일 주소를 입력해주세요",
+    "enterPassword": "패스워드는 적어도 6자 이상이어야 합니다.",
+    "login": "로그인",
+    "accountInExist": "계정이 없으신가요? ",
+    "goToRegisterPage": "회원가입",
+
+
+    "accoutnName": "계정 이름",
+    "nameEmpty": "계정 이름을 입력해주세요",
+    "passWordCheck": "패스워드 확인",
+    "pwNotSame": "패스워드가 같아야 합니다",
+    "register": "회원가입",
+    "goBackToLoginPage": "로그인 페이지로 가기",
+    "nameExisting": "이름이 이미 존재합니다"
 }

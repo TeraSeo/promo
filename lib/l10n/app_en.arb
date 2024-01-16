@@ -5,9 +5,38 @@
     "report": "Report",
     "editThisPost": "Edit this post",
     "removeThisPost": "Remove this post",
+
+
     "latest": "Latest",
     "oldest": "Oldest",
     "popular": "Popular",
     "notPopular": "Not popular",
-    "searchAnything": "Search anything"
+
+
+    "searchAnything": "Search anything",
+
+
+    "oTPVerification": "OTP verification",
+    "threeMinutes": "OTP code is only valid for 3 minutes",
+    "verify": "Verify",
+    "codeLate": "Didn't you receive any code?",
+    "resend": "Resend new code",
+    "backLogin": "Back to Login Page",
+
+
+    "loadFailed": "failed to load",
+    "enterEmail": "Please enter a valid email",
+    "enterPassword": "Password must be at least 6 characters",
+    "login": "Login",
+    "accountInExist": "Don't have an account? ",
+    "goToRegisterPage": "Register here",
+
+
+    "accoutnName": "Account name",
+    "nameEmpty": "name can not be empty",
+    "passWordCheck": "Check Password",
+    "pwNotSame": "passwords should be same",
+    "register": "Register",
+    "goBackToLoginPage": "Back to Login page",
+    "nameExisting": "The name is already existing"
 }

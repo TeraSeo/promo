@@ -5,9 +5,38 @@
     "report": "प्रतिवेदन",
     "editThisPost": "इस पोस्ट को संपादित करें",
     "removeThisPost": "इस पोस्ट को हटाएं",
+
+
     "latest": "नवीनतम",
     "oldest": "सबसे पुराने",
     "popular": "लोकप्रिय",
     "notPopular": "लोकप्रिय नहीं",
-    "searchAnything": "खोज"
+
+
+    "searchAnything": "खोज",
+
+
+    "oTPVerification": "ओटीपी सत्यापन",
+    "threeMinutes": "ओटीपी कोड केवल 3 मिनट के लिए वैध है",
+    "verify": "सत्यापित करें",
+    "codeLate": "क्या आपको कोई कोड नहीं मिला?",
+    "resend": "नया कोड पुनः भेजें",
+    "backLogin": "लॉगिन पेज पर वापस जाएँ",
+
+
+    "loadFailed": "लोड करने में विफल",
+    "enterEmail": "कृपया एक मान्य ईमेल दर्ज करें",
+    "enterPassword": "पासवर्ड कम से कम 6 अंकों का होना चाहिए",
+    "login": "लॉग इन करें",
+    "accountInExist": "कोई खाता नहीं है? ",
+    "goToRegisterPage": "यहां रजिस्टर करें",
+
+
+    "accoutnName": "खाता नाम",
+    "nameEmpty": "नाम खाली नहीं हो सकता",
+    "passWordCheck": "पासवर्ड जांचें",
+    "pwNotSame": "पासवर्ड एक जैसे होने चाहिए",
+    "register": "पंजीकरण करवाना",
+    "goBackToLoginPage": "लॉगिन पेज पर वापस जाएँ",
+    "nameExisting": "नाम पहले से ही विद्यमान है"
 }
