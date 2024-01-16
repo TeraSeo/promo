@@ -1,0 +1,13 @@
+{
+    "likeThisPost": "좋아요",
+    "bookmarkThisPost": "북마크",
+    "aboutThisAccount": "계정 보기",
+    "report": "신고",
+    "editThisPost": "게시물 수정",
+    "removeThisPost": "게시물 삭제",
+    "latest": "최신순",
+    "oldest": "오래된순",
+    "popular": "인기순",
+    "notPopular": "비인기순",
+    "searchAnything": "검색"
+}

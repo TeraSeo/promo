@@ -1,12 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:like_app/firebase_options.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/login_page.dart';
 import 'package:like_app/shared/constants.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 void main() async {
 
@@ -60,8 +62,24 @@ class _MyAppState extends State<MyApp> {
         primaryColor: Constants().primaryColor,
         scaffoldBackgroundColor: Colors.white
       ),
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      locale: Locale('ko'),
+      supportedLocales: [
+        Locale('en'),
+        Locale('de'),
+        Locale('es'),
+        Locale('fr'),
+        Locale('hi'),
+        Locale('ja'),
+        Locale('ko'),
+      ],
       debugShowCheckedModeBanner: false,
       home: _isSignedIn ? const HomePage(pageIndex: 0,) : const LoginPage(),
     );
   }
-}
+} 

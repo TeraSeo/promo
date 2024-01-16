@@ -381,11 +381,16 @@ class _HomePageState extends State<HomePage> {
                 else if (index == 0) {
                   
                   if (selectedIndex == 0) {
-                    homeScrollController.animateTo(
-                      0,
-                      duration: Duration(milliseconds: 500),
-                      curve: Curves.easeInOut,
-                    );
+                    try {
+                      homeScrollController.animateTo(
+                        0,
+                        duration: Duration(milliseconds: 500),
+                        curve: Curves.easeInOut,
+                      );
+                    } catch(e) {
+                      logger.log(Level.error, e.toString());
+                    }
+                    
                   }
 
                   selectedIndex = index;

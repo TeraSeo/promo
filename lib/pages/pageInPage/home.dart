@@ -27,15 +27,14 @@ class _HomeState extends State<Home> {
 
   String? uId; 
 
-  final sortItems = [
-    'Latest',
-    'Oldest',
-    'Popular',
-    'Not popular',
+  late List<String> sortItems = [
+    "Latest",
+    "Oldest",
+    "Popular",
+    "Not popular"
   ];
-
-
-  String sort = "Latest";
+  String? sort = "Latest";
+  bool isSortItemsLoading = true;
 
   PostService postService = new PostService();
 
@@ -51,9 +50,32 @@ class _HomeState extends State<Home> {
     getUId();
     getPosts();
     setAudioSession();
+    setSortContents();
   }
 
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   setSortContents();
+  // }
+
   AudioSession? audioSession;
+
+  void setSortContents() {
+    setState(() {
+      if (this.mounted) {
+        // sortItems = [
+        //   AppLocalizations.of(context)!.latest,
+        //   AppLocalizations.of(context)!.oldest,
+        //   AppLocalizations.of(context)!.popular,
+        //   AppLocalizations.of(context)!.notPopular,
+        // ];
+        // sort = AppLocalizations.of(context)!.latest;
+        isSortItemsLoading = false;
+      }
+    });
+  
+  }
 
   void setAudioSession() async {
     try {
@@ -86,7 +108,7 @@ class _HomeState extends State<Home> {
   void getPosts() async {
     try {
       PostService postService = new PostService();
-      await postService.getPosts(sort).then((value) => {
+      await postService.getPosts(sort!).then((value) => {
         posts = value,
         if (this.mounted) {
             setState(() {
@@ -152,13 +174,13 @@ class _HomeState extends State<Home> {
             ],
           )
       ) : 
-      (isUIdLoading || isLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+      (isUIdLoading || isLoading || isSortItemsLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
         NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
                   try {
                     if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && scrollNotification.metrics.atEdge && !isMoreLoading && isLoadingMorePostsPossible) {
                       isMoreLoading = true;
-                      postService.loadMore(posts![posts!.length - 1]['postNumber'], sort, posts![posts!.length - 1]['likes'].length, posts![posts!.length - 1]['postId']).then((value) => {
+                      postService.loadMore(posts![posts!.length - 1]['postNumber'], sort!, posts![posts!.length - 1]['likes'].length, posts![posts!.length - 1]['postId']).then((value) => {
                         if (value.length == 0) {
                           if (this.mounted) {
                             setState(() {

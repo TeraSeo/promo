@@ -16,6 +16,7 @@ import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PostWidget extends StatefulWidget {
   final String? email;
@@ -712,14 +713,14 @@ class _PostWidgetState extends State<PostWidget> {
               children: [
                 ListTile(
                   leading: Icon(Icons.edit),
-                  title: Text('Edit this post'),
+                  title: Text(AppLocalizations.of(context)!.editThisPost),
                   onTap: () {
                     nextScreen(context, EditPost(postId: widget.postID!, email: widget.email!,));
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.remove_circle),
-                  title: Text('Remove this post'),
+                  title: Text(AppLocalizations.of(context)!.removeThisPost),
                   onTap: () async {
                     try {
                       if (!isPostRemoving) {
@@ -761,7 +762,7 @@ class _PostWidgetState extends State<PostWidget> {
               children: [
                 ListTile(
                   leading: Icon(Icons.favorite),
-                  title: Text('Like this post'),
+                  title: Text(AppLocalizations.of(context)!.likeThisPost),  // 'Like this post'
                   onTap: () async{
                     try {
                       DatabaseService databaseService = DatabaseService(uid: widget.uId);
@@ -791,8 +792,8 @@ class _PostWidgetState extends State<PostWidget> {
                   },
                 ),
                 ListTile(
-                  leading: Icon(Icons.favorite),
-                  title: Text('Bookmark this post'),
+                  leading: Icon(Icons.bookmark),
+                  title: Text(AppLocalizations.of(context)!.bookmarkThisPost),
                   onTap: () async{
                     try {
                       DatabaseService databaseService = DatabaseService(uid: widget.uId);
@@ -806,7 +807,6 @@ class _PostWidgetState extends State<PostWidget> {
                         });
 
                         if (isBookMark!) {
-
                           await databaseService.addUserBookMark(widget.postID!);
                           await postService.addBookMark(widget.postID!, widget.uId!);
 
@@ -823,7 +823,7 @@ class _PostWidgetState extends State<PostWidget> {
                 ),
                 ListTile(
                   leading: Icon(Icons.person),
-                  title: Text('About this account'),
+                  title: Text(AppLocalizations.of(context)!.aboutThisAccount),
                   onTap: () {
                     if (widget.isProfileClickable) {
                       nextScreen(context, OthersProfilePages(uId: widget.uId!, postOwnerUId: widget.postOwnerUId!,));
@@ -832,7 +832,7 @@ class _PostWidgetState extends State<PostWidget> {
                 ),
                 ListTile(
                   leading: Icon(Icons.report, color: Colors.red,),
-                  title: Text('Report this account'),
+                  title: Text(AppLocalizations.of(context)!.report),
                   onTap: () {
                     Navigator.pop(context);
                   },

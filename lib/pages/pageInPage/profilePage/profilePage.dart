@@ -6,6 +6,7 @@ import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/ImagePicker/StatelessPicker.dart';
 import 'package:like_app/pages/pageInPage/profilePage/editInfo.dart';
+import 'package:like_app/pages/pageInPage/settingPage.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
@@ -65,26 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
   var logger = Logger();
 
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
-    // try {
-    //   final image = await ImagePicker().pickImage(source: source);
-    //   if (image == null) return;
-
-    //   final imageTemporary = await storage.compressImage(File(image.path));
-
-    //   setState(() {
-    //     this.image = imageTemporary;
-    //   });
-
-    //   nextScreen(context, EditProfile(image: this.image,email: email, uId: uId, usage: usage));
-    // } catch(e) {
-    //   setState(() {
-    //     isErrorOccurred = true;
-    //   });
-    //   logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
-
-    // }
     nextScreen(context, SinglePicker(usage: usage, uID: uId, email: email,));
-
   }
 
   @override
@@ -538,6 +520,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text('Setting'),
                 onTap: () {
                   Navigator.pop(context);
+                  nextScreen(context, SettingPage(uId: postUser!["uid"], language: postUser!["language"]));
                 },
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02,)

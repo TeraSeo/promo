@@ -40,7 +40,8 @@ class DatabaseService {
       "bookmarks" : [],
       "comments" : [],
       "commentLikes" : 0,
-      "wholeLikes" : 0
+      "wholeLikes" : 0,
+      "language" : "en"
     });
   }
 
@@ -250,11 +251,26 @@ class DatabaseService {
       final user = FirebaseFirestore.instance.collection("user").doc(uId);
 
       await user.update({
-        // "name" : name,
         "intro" : intro
       });
 
       HelperFunctions.saveUserNameSF(name);
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future setUserLanguage(String uId, String language) async {
+
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.update({
+        "language" : language
+      });
 
     } catch(e) {
       print(e);

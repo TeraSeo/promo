@@ -1,0 +1,13 @@
+{
+    "likeThisPost": "この投稿にいいね",
+    "bookmarkThisPost": "この投稿をブックマークする",
+    "aboutThisAccount": "このアカウントについて",
+    "report": "報告",
+    "editThisPost": "この投稿を編集する",
+    "removeThisPost": "この投稿を削除する",
+    "latest": "最新",
+    "oldest": "最古の",
+    "popular": "人気のある",
+    "notPopular": "人気がない",
+    "searchAnything": "検索"
+}
