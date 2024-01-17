@@ -47,5 +47,57 @@
     "pwNotSame": "las contraseñas deben ser las mismas",
     "register": "Registro",
     "goBackToLoginPage": "Volver a la página de inicio de sesión",
-    "nameExisting": "El nombre ya existe"
+    "nameExisting": "El nombre ya existe",
+
+
+    "changeProfile": "Cambiar foto de perfil",
+    "changeBackground": "Cambiar imagen de fondo",
+    "editInfo": "Editar informacion",
+    "setting": "Setting",
+    "fromGallery": "De la galería",
+    "cancel": "Cancel",
+    "back": "Back",
+    "name": "Nombre",
+    "intro": "introducción",
+    "infoBtn": "editar informacion",
+
+
+    "common": "Common",
+    "lang": "Idioma",
+    "en": "Inglés",
+    "fr": "Francés",
+    "de": "Alemán",
+    "hi": "Hindi",
+    "ja": "Japonés",
+    "ko": "Coreano",
+    "es": "Español",
+
+
+    "noPhoto": "Sin fotografía",
+    "selectPhoto": "Seleccionar foto (máx. 8)",
+
+
+    "description": "Descripción",
+    "category": "Categoría",
+    "news": "Noticias",
+    "entertainment": "Entretenimiento",
+    "sports": "Deportes",
+    "food": "Alimento",
+    "economy": "Economía",
+    "stock": "Existencias",
+    "shopping": "Compras",
+    "science": "Ciencia",
+    "etc": "Etc.",
+    "tag": "Tag",
+    "enterTag": "Enter tag...",
+    "commentSetting": "Configuración de comentarios",
+    "comment": "Comentario",
+    "post": "Post",
+
+
+    "images": "Imágenes",
+    "changeImg": "Cambiar imágenes",
+    "descriptionEmpty": "la descripción no puede estar vacía",
+    "tagExist": "ya has entrado en eso",
+    "maxTag": "demasiadas etiquetas"
 }

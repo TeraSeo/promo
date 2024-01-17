@@ -48,7 +48,6 @@ class _PostWidgetState extends State<PostWidget> {
   bool isProfileLoading = true;
   int? likes;
   String? profileFileName = "";
-  String? profileUrl = "";
   Logging logging = new Logging();
 
   bool isPostRemoving = false;
@@ -59,6 +58,8 @@ class _PostWidgetState extends State<PostWidget> {
   bool? isBookMark;
 
   bool isErrorOccurred = false;
+
+  var image;
 
   final pageController = PageController(
     initialPage: 0,
@@ -110,7 +111,7 @@ class _PostWidgetState extends State<PostWidget> {
         timeDiff = (current.difference(posted).inDays ~/ 7).toInt().toString() + "w ago";
       }
       else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 31) {
-        timeDiff = (current.difference(posted).inDays ~/ 31).toInt().toString() + "Mth ago";
+        timeDiff = (current.difference(posted).inDays ~/ 31).toInt().toString() + " month ago";
       }
       else if (current.difference(posted).inDays >= 365) {
         timeDiff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
@@ -137,7 +138,7 @@ class _PostWidgetState extends State<PostWidget> {
     Storage storage = new Storage();
     try {
       await storage.loadProfileFile(widget.email.toString(), snapshot.docs[0]["profilePic"].toString()).then((value) => {
-        profileUrl = value,
+        image = NetworkImage(value),
         if (this.mounted) {
           setState(() {
             isProfileLoading = false;
@@ -147,6 +148,7 @@ class _PostWidgetState extends State<PostWidget> {
     } catch(e) {
       if (this.mounted) {
         setState(() {
+          image = AssetImage('assets/blank.avif');
           isProfileLoading = false;
         });
       }
@@ -188,6 +190,7 @@ class _PostWidgetState extends State<PostWidget> {
     double bookMarkLeft;
     double descriptionSize;
     double iconWidth;
+    double postHeight;
 
     DatabaseService databaseService = DatabaseService(uid: widget.uId);
 
@@ -197,6 +200,7 @@ class _PostWidgetState extends State<PostWidget> {
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
       logoSize = MediaQuery.of(context).size.width * 0.035;
       iconWidth = MediaQuery.of(context).size.width * 0.07;
+      postHeight = MediaQuery.of(context).size.height * 1.1;
     }
     else {
       isTablet = false;
@@ -204,6 +208,7 @@ class _PostWidgetState extends State<PostWidget> {
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
       logoSize = MediaQuery.of(context).size.width * 0.053;
       iconWidth = MediaQuery.of(context).size.width * 0.093;
+      postHeight = MediaQuery.of(context).size.height * 0.8;
     }
 
     try {
@@ -233,7 +238,7 @@ class _PostWidgetState extends State<PostWidget> {
                             decoration: BoxDecoration(
                               color: const Color(0xff7c94b6),
                               image: DecorationImage(
-                                image: NetworkImage(profileUrl!),
+                                image: image,
                                 fit: BoxFit.cover,
                               ),
                               borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
@@ -277,7 +282,7 @@ class _PostWidgetState extends State<PostWidget> {
                             decoration: BoxDecoration(
                               color: const Color(0xff7c94b6),
                               image: DecorationImage(
-                                image: NetworkImage(profileUrl!),
+                                image: image,
                                 fit: BoxFit.cover,
                               ),
                               borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
@@ -479,7 +484,7 @@ class _PostWidgetState extends State<PostWidget> {
                           alignment: Alignment.center,
                           children: [
                             Container(
-                              height: MediaQuery.of(context).size.height * 0.6,
+                              height: postHeight,
                               child: PageView.builder(
                                 controller: pageController,
                                 itemBuilder: (_, index) {

@@ -47,5 +47,57 @@
     "pwNotSame": "पासवर्ड एक जैसे होने चाहिए",
     "register": "पंजीकरण करवाना",
     "goBackToLoginPage": "लॉगिन पेज पर वापस जाएँ",
-    "nameExisting": "नाम पहले से ही विद्यमान है"
+    "nameExisting": "नाम पहले से ही विद्यमान है",
+
+
+    "changeProfile": "प्रोफ़ाइल तस्वीर बदलें",
+    "changeBackground": "पृष्ठभूमि चित्र बदलें",
+    "editInfo": "जानकारी संपादित करें",
+    "setting": "Setting",
+    "fromGallery": "गैलरी से",
+    "cancel": "Cancel",
+    "back": "Back",
+    "name": "नाम",
+    "intro": "परिचय",
+    "infoBtn": "जानकारी संपादित करें",
+
+
+    "common": "Common",
+    "lang": "भाषा",
+    "en": "अंग्रेज़ी",
+    "fr": "फ़्रेंच",
+    "de": "जर्मन",
+    "hi": "हिंदी",
+    "ja": "जापानी",
+    "ko": "कोरियाई",
+    "es": "स्पैनिश",
+
+
+    "noPhoto": "कोई फोटो नहीं",
+    "selectPhoto": "फ़ोटो चुनें (अधिकतम 8)",
+
+
+    "description": "विवरण",
+    "category": "श्रेणी",
+    "news": "समाचार",
+    "entertainment": "मनोरंजन",
+    "sports": "Sports",
+    "food": "खाना",
+    "economy": "अर्थव्यवस्था",
+    "stock": "Stock",
+    "shopping": "Shopping",
+    "science": "विज्ञान",
+    "etc": "Etc.",
+    "tag": "Tag",
+    "enterTag": "Enter tag...",
+    "commentSetting": "टिप्पणी सेटिंग",
+    "comment": "टिप्पणी",
+    "post": "Post",
+
+
+    "images": "इमेजिस",
+    "changeImg": "छवियाँ बदलें",
+    "descriptionEmpty": "विवरण खाली नहीं हो सकता",
+    "tagExist": "आप उसे पहले ही दर्ज कर चुके हैं",
+    "maxTag": "बहुत ज़्यादा टैग्स"
 }

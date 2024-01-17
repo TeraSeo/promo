@@ -37,6 +37,7 @@ class _LikesRankingState extends State<LikesRanking> {
   String myEmail = "";
   int myLikes = 0;
   bool isMyLoading = true;
+  var image;
 
   @override
   void initState() {
@@ -81,6 +82,7 @@ class _LikesRankingState extends State<LikesRanking> {
         }
       });
     } catch(e) {
+      profileURL = 'assets/blank.avif';
       if (this.mounted) {
         setState(() {
           isProfileLoading = false;
@@ -195,19 +197,19 @@ class _LikesRankingState extends State<LikesRanking> {
               SizedBox(width: 20,),
               IconButton(onPressed: () async {
                 try {
-        if (this.mounted) {
-        setState(() {
-          isUIdLoading = true;
-          isMyLoading = true;
-          isprofLoadings = [];
-          profileURLs = [];
-          isProfileLoading = true;
+                  if (this.mounted) {
+                  setState(() {
+                    isUIdLoading = true;
+                    isMyLoading = true;
+                    isprofLoadings = [];
+                    profileURLs = [];
+                    isProfileLoading = true;
 
-        });
-        getUId();
-      }} catch(e) {
-        logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
-      } 
+                  });
+                  getUId();
+                }} catch(e) {
+                  logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
+                } 
               }, icon: Icon(Icons.replay))
             ],
           ),
@@ -250,9 +252,13 @@ class _LikesRankingState extends State<LikesRanking> {
                               leading: Container(
                                 width: MediaQuery.of(context).size.height * 0.05,
                                 height: MediaQuery.of(context).size.height * 0.05,
-                                decoration: BoxDecoration(
+                                decoration: 
+                                  BoxDecoration(
                                   color: const Color(0xff7c94b6),
-                                  image: DecorationImage(
+                                  image: profileURLs[index] == "" ?  DecorationImage(
+                                    image: AssetImage("assets/blank.avif"),
+                                    fit: BoxFit.cover,
+                                  ) : DecorationImage(
                                     image: NetworkImage(profileURLs[index]),
                                     fit: BoxFit.cover,
                                   ),
@@ -315,7 +321,11 @@ class _LikesRankingState extends State<LikesRanking> {
                   height: MediaQuery.of(context).size.height * 0.05,
                   decoration: BoxDecoration(
                     color: const Color(0xff7c94b6),
-                    image: DecorationImage(
+                    image: profileURL.contains("assets/") ? DecorationImage(
+                      image: AssetImage(profileURL),
+                      fit: BoxFit.cover,
+                    ) : 
+                    DecorationImage(
                       image: NetworkImage(profileURL),
                       fit: BoxFit.cover,
                     ),

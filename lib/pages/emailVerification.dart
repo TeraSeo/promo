@@ -172,7 +172,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                       Column(children: [
                       SizedBox(height: MediaQuery.of(context).size.height * 0.043,),
                       isHomePageAble? SizedBox(
-                          width: double.infinity,
+                          width: MediaQuery.of(context).size.width * 0.7,
                           height: verifyBtnHeight,
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(

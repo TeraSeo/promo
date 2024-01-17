@@ -47,5 +47,57 @@
     "pwNotSame": "パスワードは同じである必要があります",
     "register": "登録する",
     "goBackToLoginPage": "ログインページに戻る",
-    "nameExisting": "その名前はすでに存在します"
+    "nameExisting": "その名前はすでに存在します",
+
+
+    "changeProfile": "プロフィール画像を変更",
+    "changeBackground": "背景画像を変更する",
+    "editInfo": "情報を編集する",
+    "setting": "Setting",
+    "fromGallery": "ギャラリーから",
+    "cancel": "キャンセル",
+    "back": "戻る",
+    "name": "名前",
+    "intro": "導入",
+    "infoBtn": "情報を編集する",
+
+
+    "common": "一般",
+    "lang": "言語",
+    "en": "英語",
+    "fr": "フランス語",
+    "de": "ドイツ語",
+    "hi": "ヒンディー語",
+    "ja": "日本語",
+    "ko": "韓国語",
+    "es": "スペイン語",
+
+
+    "noPhoto": "写真がない",
+    "selectPhoto": "写真を選択（最大8枚）",
+
+
+    "description": "説明",
+    "category": "カテゴリー",
+    "news": "ニュース",
+    "entertainment": "エンターテインメント",
+    "sports": "スポーツ",
+    "food": "食べ物",
+    "economy": "経済",
+    "stock": "株式",
+    "shopping": "ショッピング",
+    "science": "科学",
+    "etc": "その他",
+    "tag": "タグ",
+    "enterTag": "タグの書き込み...",
+    "commentSetting": "コメント設定",
+    "comment": "コメント",
+    "post": "投稿する",
+
+
+    "images": "画像",
+    "changeImg": "画像を変更する",
+    "descriptionEmpty": "説明を空にすることはできません",
+    "tagExist": "あなたはすでにそれを入力しています",
+    "maxTag": "タグが多すぎ"
 }

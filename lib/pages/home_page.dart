@@ -21,6 +21,8 @@ import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:image/image.dart' as img;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class HomePage extends StatefulWidget {
 
@@ -665,7 +667,7 @@ class _HomePageState extends State<HomePage> {
             children: [
               ListTile(
                 leading: Icon(Icons.picture_in_picture_alt),
-                title: Text('No photo'),
+                title: Text(AppLocalizations.of(context)!.noPhoto),
                 onTap: () {
                   setState(() {
                     _widgetOptions[2] = Post(images: []);
@@ -676,7 +678,7 @@ class _HomePageState extends State<HomePage> {
               ),
               ListTile(
                 leading: Icon(Icons.picture_as_pdf_outlined),
-                title: Text('Select photo (Until 8 images or videos)'),
+                title: Text(AppLocalizations.of(context)!.selectPhoto),
                 onTap: () async{
                   // Navigator.pop(context);
                   try {

@@ -22,7 +22,18 @@ class ProfileWidget extends StatelessWidget {
   }
 
   Widget buildImage(BuildContext context) {
-    final image = NetworkImage(imagePath);
+    var image;
+
+    if (imagePath.contains("assets/")) {
+      image = AssetImage(imagePath);
+    } else {
+      if (imagePath == "" || imagePath == null) {
+        image = AssetImage(imagePath);
+      } 
+      else {
+        image = NetworkImage(imagePath);
+      }
+    }
 
     return Container(
       width: MediaQuery.of(context).size.height * 0.047 * 3.1,
@@ -36,7 +47,7 @@ class ProfileWidget extends StatelessWidget {
         borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
         border: Border.all(
           color: Colors.white,
-          width: MediaQuery.of(context).size.height * 0.002,
+          width: MediaQuery.of(context).size.height * 0.00,
         ),
       ),
     );

@@ -3,8 +3,8 @@
     "bookmarkThisPost": "북마크",
     "aboutThisAccount": "계정 보기",
     "report": "신고",
-    "editThisPost": "게시물 수정",
-    "removeThisPost": "게시물 삭제",
+    "editThisPost": "계시물 수정",
+    "removeThisPost": "계시물 삭제",
 
 
     "latest": "최신순",
@@ -47,5 +47,57 @@
     "pwNotSame": "비밀번호가 같아야 합니다",
     "register": "회원가입",
     "goBackToLoginPage": "로그인 페이지로 가기",
-    "nameExisting": "이름이 이미 존재합니다"
+    "nameExisting": "이름이 이미 존재합니다",
+
+
+    "changeProfile": "프로필 사진 바꾸기",
+    "changeBackground": "배경 사진 바꾸기",
+    "editInfo": "정보 수정",
+    "setting": "세팅",
+    "fromGallery": "갤러리에서",
+    "cancel": "취소",
+    "back": "뒤로가기",
+    "name": "이름",
+    "intro": "소개",
+    "infoBtn": "정보 수정",
+
+
+    "common": "공통",
+    "lang": "언어",
+    "en": "영어",
+    "fr": "프랑스어",
+    "de": "독일어",
+    "hi": "힌디어",
+    "ja": "일본어",
+    "ko": "한국어",
+    "es": "스페인어",
+
+
+    "noPhoto": "사진 없이",
+    "selectPhoto": "사진 선택 (최대. 8)",
+
+
+    "description": "설명",
+    "category": "카테고리",
+    "news": "뉴스",
+    "entertainment": "연예",
+    "sports": "스포츠",
+    "food": "음식",
+    "economy": "경제",
+    "stock": "주식",
+    "shopping": "쇼핑",
+    "science": "과학",
+    "etc": "기타",
+    "tag": "태그",
+    "enterTag": "태그 쓰기...",
+    "commentSetting": "댓글 세팅",
+    "comment": "댓글",
+    "post": "계시",
+
+
+    "images": "사진",
+    "changeImg": "사진 변경",
+    "descriptionEmpty": "설명이 비어있습니다",
+    "tagExist": "이미 입력했습니다",
+    "maxTag": "개수 초과"
 }

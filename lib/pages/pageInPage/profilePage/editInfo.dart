@@ -6,6 +6,7 @@ import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditInfo extends StatefulWidget {
   final DocumentSnapshot<Map<String, dynamic>>? postUser;
@@ -96,9 +97,9 @@ class _EditInfoState extends State<EditInfo> {
             ],
           )
       ) : Scaffold(
-      appBar: AppBar(backgroundColor: Theme.of(context).primaryColor,
+      appBar: AppBar(backgroundColor: Theme.of(context).primaryColor, 
       toolbarHeight: MediaQuery.of(context).size.height * 0.08,
-      title: Text("Edit information")),
+      title: Text(AppLocalizations.of(context)!.editInfo, style: TextStyle(color: Colors.white),)),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(30.0),
         child: Form(
@@ -109,7 +110,7 @@ class _EditInfoState extends State<EditInfo> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.012,
             ),
-            getLabel(title: "Email"),
+            getLabel(title: AppLocalizations.of(context)!.email),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.005,
             ),
@@ -121,7 +122,7 @@ class _EditInfoState extends State<EditInfo> {
               decoration: InputDecoration(hintText: "Email", labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.mail), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.035,),
-            getLabel(title: "Name"),
+            getLabel(title: AppLocalizations.of(context)!.name),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.007,
             ),
@@ -143,7 +144,7 @@ class _EditInfoState extends State<EditInfo> {
               decoration: InputDecoration(hintText: "Name", labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.account_box), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.035,),
-            getLabel(title: "Introduction"),
+            getLabel(title: AppLocalizations.of(context)!.intro),
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.007,
             ),
@@ -211,7 +212,7 @@ class _EditInfoState extends State<EditInfo> {
                     }
                     
                   }, 
-                  child: Text("Edit Profile"),
+                  child: Text(AppLocalizations.of(context)!.editInfo, style: TextStyle(color: Colors.white),),
                   style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
                   elevation: 3,
                   shape: RoundedRectangleBorder(

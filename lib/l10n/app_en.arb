@@ -47,5 +47,57 @@
     "pwNotSame": "passwords should be same",
     "register": "Register",
     "goBackToLoginPage": "Back to Login page",
-    "nameExisting": "The name is already existing"
+    "nameExisting": "The name is already existing",
+
+
+    "changeProfile": "Change profile picture",
+    "changeBackground": "Change background picture",
+    "editInfo": "Edit information",
+    "setting": "Setting",
+    "fromGallery": "From gallery",
+    "cancel": "Cancel",
+    "back": "Back",
+    "name": "Name",
+    "intro": "Introduction",
+    "infoBtn": "Edit Info",
+
+
+    "common": "Common",
+    "lang": "Language",
+    "en": "English",
+    "fr": "French",
+    "de": "German",
+    "hi": "Hindi",
+    "ja": "Japanese",
+    "ko": "Korean",
+    "es": "Spanish",
+
+
+    "noPhoto": "No photo",
+    "selectPhoto": "Select photo (max. 8)",
+
+
+    "description": "Description",
+    "category": "Category",
+    "news": "News",
+    "entertainment": "Entertainment",
+    "sports": "Sports",
+    "food": "Food",
+    "economy": "Economy",
+    "stock": "Stock",
+    "shopping": "Shopping",
+    "science": "Science",
+    "etc": "Etc.",
+    "tag": "Tag",
+    "enterTag": "Enter tag...",
+    "commentSetting": "Comment setting",
+    "comment": "Comment",
+    "post": "Post",
+
+
+    "images": "Images",
+    "changeImg": "Change images",
+    "descriptionEmpty": "description can not be empty",
+    "tagExist": "you have already entered that",
+    "maxTag": "too many tags"
 }

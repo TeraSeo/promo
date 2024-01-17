@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -15,6 +14,8 @@ import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:image/image.dart' as img;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class EditPost extends StatefulWidget {
   final String postId;
@@ -46,9 +47,11 @@ class _EditPostState extends State<EditPost> {
   void initState() {
   
     super.initState();
-    getPost();
 
-    print(isPostAble);
+    getPost();
+    _controllerTag = TextfieldTagsController();
+    _controllerDescription = new TextEditingController();
+
   }
 
   getPost() async {
@@ -79,14 +82,14 @@ class _EditPostState extends State<EditPost> {
 
   final formKey = GlobalKey<FormState>();
 
-  TextfieldTagsController _controllerTag = TextfieldTagsController();
-  TextEditingController _controllerDescription = new TextEditingController();
+  late TextfieldTagsController _controllerTag;
+  late TextEditingController _controllerDescription;
 
   final items = [
     'News',
     'Entertainment',
     'Sports',
-    'Food'
+    'Food',
     'Economy',
     'Stock',
     'Shopping',
@@ -103,33 +106,50 @@ class _EditPostState extends State<EditPost> {
 
   @override
   void dispose() {
+    super.dispose();
+
     _controllerTag.dispose();
     _controllerDescription.dispose();
-    super.dispose();
+    
   }
 
   @override
   Widget build(BuildContext context) {
     try {
-    return isErrorOccurred? Center(
-          child: Column(
-            children: [
-              IconButton(onPressed: () {
-                if (this.mounted) {
-                  setState(() {
-                    isErrorOccurred = false;
-                    Navigator.of(context).pop();
-                  });
-                }
-              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
-            ],
-          )
-      ) : isPostLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : !isPostAble? Center(child: CircularProgressIndicator(color: Colors.white,),) : AbsorbPointer(
+    return isErrorOccurred? 
+       Center(
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      IconButton(
+        onPressed: () {
+          if (this.mounted) {
+            setState(() {
+              isErrorOccurred = false;
+              Navigator.of(context).pop();
+            });
+          }
+        },
+        icon: Icon(
+          Icons.refresh,
+          size: MediaQuery.of(context).size.width * 0.08,
+          color: Colors.blueGrey,
+        ),
+      ),
+      Text(
+        AppLocalizations.of(context)!.loadFailed,
+        style: TextStyle(
+          fontSize: MediaQuery.of(context).size.width * 0.05,
+          color: Colors.blueGrey,
+        ),
+      ),
+    ],
+  ),
+) : isPostLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : !isPostAble? Center(child: CircularProgressIndicator(color: Colors.white,),) : AbsorbPointer(
          absorbing: isImagesLoading || !isPostAble,
         child: Scaffold(
       appBar: AppBar(
-        title: Text("Edit Post"),
+        title: Text(AppLocalizations.of(context)!.editThisPost, style: TextStyle(color: Colors.white),),
         backgroundColor: Colors.black,
       ),
       body: Container(
@@ -148,7 +168,7 @@ class _EditPostState extends State<EditPost> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
-                  getLabel(title: 'Images'),
+                  getLabel(title: AppLocalizations.of(context)!.images),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
@@ -167,7 +187,7 @@ class _EditPostState extends State<EditPost> {
                                 SizedBox(
                                   width: MediaQuery.of(context).size.width * 0.03,
                                 ),
-                                Text("Change images")
+                                Text(AppLocalizations.of(context)!.changeImg)
                             ]
                         )
                     )
@@ -178,7 +198,7 @@ class _EditPostState extends State<EditPost> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  getLabel(title: "Description"),
+                  getLabel(title: AppLocalizations.of(context)!.description),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
@@ -193,19 +213,19 @@ class _EditPostState extends State<EditPost> {
                         if (val!.isNotEmpty) {
                           return null;
                         } else {
-                          return "description can not be empty";
+                          return AppLocalizations.of(context)!.descriptionEmpty;
                         }
                       },
                       onChanged: (val) {
                         description = val;
                       },
-                      decoration: InputDecoration(hintText: "Description", labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.description), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.description, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.description), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
                     ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  getLabel(title: 'Category'),
+                  getLabel(title: AppLocalizations.of(context)!.category),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
@@ -228,7 +248,7 @@ class _EditPostState extends State<EditPost> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.04,
                   ),
-                  getLabel(title: 'Tag'),
+                  getLabel(title: AppLocalizations.of(context)!.tag),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
@@ -243,10 +263,10 @@ class _EditPostState extends State<EditPost> {
                       try {
 
                         if (_controllerTag.getTags!.contains(tag)) {
-                          return 'you already entered that';
+                          return AppLocalizations.of(context)!.tagExist;
                         }
                         else if (_controllerTag.getTags!.length > 7) {
-                          return 'too many tags';
+                          return AppLocalizations.of(context)!.maxTag;
                         }
                         return null;
 
@@ -284,7 +304,7 @@ class _EditPostState extends State<EditPost> {
                               helperStyle: TextStyle(
                                 color: Constants().primaryColor,
                               ),
-                              hintText: _controllerTag.hasTags ? '' : "Enter tag...",
+                              hintText: _controllerTag.hasTags ? '' : AppLocalizations.of(context)!.enterTag,
                               errorText: error,
                               prefixIconConstraints:
                                   BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.74),
@@ -347,7 +367,7 @@ class _EditPostState extends State<EditPost> {
                   ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                  getLabel(title: 'Settings'),
+                  getLabel(title: AppLocalizations.of(context)!.commentSetting),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.85,
@@ -361,7 +381,7 @@ class _EditPostState extends State<EditPost> {
                               children: [
                                 Row(
                                   children: [
-                                    getLabel(title: 'Comment'),
+                                    getLabel(title: AppLocalizations.of(context)!.comment),
                                     Switch(
                                       value: withComment,
                                       onChanged: (value) {
@@ -425,7 +445,7 @@ class _EditPostState extends State<EditPost> {
                       }
                     }
                   }, 
-                  child: Text("Edit Post", style: TextStyle(color: Colors.white),),
+                  child: Text(AppLocalizations.of(context)!.editThisPost, style: TextStyle(color: Colors.white),),
                   style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -440,16 +460,36 @@ class _EditPostState extends State<EditPost> {
       ),
       ))
     );} catch(e) { 
+      print(e);
       return Center(
-          child: Column(
-            children: [
-              IconButton(onPressed: () {
-                Navigator.of(context).pop();
-              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
-            ],
-          )
-      );
+  child: Column(
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      IconButton(
+        onPressed: () {
+          if (this.mounted) {
+            setState(() {
+              isErrorOccurred = false;
+              Navigator.of(context).pop();
+            });
+          }
+        },
+        icon: Icon(
+          Icons.refresh,
+          size: MediaQuery.of(context).size.width * 0.08,
+          color: Colors.blueGrey,
+        ),
+      ),
+      Text(
+        AppLocalizations.of(context)!.loadFailed,
+        style: TextStyle(
+          fontSize: MediaQuery.of(context).size.width * 0.05,
+          color: Colors.blueGrey,
+        ),
+      ),
+    ],
+  ),
+);
     }
   }
 
@@ -507,7 +547,7 @@ class _EditPostState extends State<EditPost> {
             children: [
               ListTile(
                 leading: Icon(Icons.picture_in_picture_alt),
-                title: Text('No photo'),
+                title: Text(AppLocalizations.of(context)!.noPhoto),
                 onTap: () {
                   setState(() {
                     images = [];
@@ -517,7 +557,7 @@ class _EditPostState extends State<EditPost> {
               ),
               ListTile(
                 leading: Icon(Icons.picture_as_pdf_outlined),
-                title: Text('Select photo'),
+                title: Text(AppLocalizations.of(context)!.selectPhoto),
                 onTap: () async{
                   try {
                     setState(() {

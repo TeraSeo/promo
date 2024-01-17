@@ -1,4 +1,5 @@
 import 'package:chewie/chewie.dart';
+import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
@@ -75,6 +76,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   @override
   Widget build(BuildContext context) {
+
+    double videoHeight;
+
+    if(Device.get().isTablet) {
+      videoHeight = MediaQuery.of(context).size.height * 1.1;
+    }
+    else {
+      videoHeight = MediaQuery.of(context).size.height * 0.8;
+    }
+
+
     return isErrorOccurred? Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -141,7 +153,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
           GestureDetector(
             onTap: toggleMute,
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6,
+              height: videoHeight,
               child: _videoPlayerController!.value.isInitialized
                   ? AspectRatio(
                       aspectRatio: _videoPlayerController!.value.aspectRatio,

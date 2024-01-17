@@ -6,6 +6,8 @@ import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:textfield_tags/textfield_tags.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+
 
 class Post extends StatefulWidget {
   final List<dynamic> images;
@@ -82,7 +84,7 @@ class _PostState extends State<Post> {
               icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey),
             ),
             Text(
-              "failed to load",
+              AppLocalizations.of(context)!.loadFailed,
               style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey),
             ),
           ],
@@ -105,14 +107,14 @@ class _PostState extends State<Post> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  getLabel(title: 'Images'),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
+                  // getLabel(title: 'Images'),
+                  // SizedBox(
+                  //   height: MediaQuery.of(context).size.height * 0.01,
+                  // ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  getLabel(title: "Description"),
+                  getLabel(title: AppLocalizations.of(context)!.description),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
@@ -127,19 +129,19 @@ class _PostState extends State<Post> {
                         if (val!.isNotEmpty) {
                           return null;
                         } else {
-                          return "description can not be empty";
+                          return AppLocalizations.of(context)!.descriptionEmpty;
                         }
                       },
                       onChanged: (val) {
                         description = val;
                       },
-                      decoration: InputDecoration(hintText: "Description", labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.description), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.description, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.description), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
                     ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                  getLabel(title: 'Category'),
+                  getLabel(title: AppLocalizations.of(context)!.category),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
@@ -162,7 +164,7 @@ class _PostState extends State<Post> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.04,
                   ),
-                  getLabel(title: 'Tag'),
+                  getLabel(title: AppLocalizations.of(context)!.tag),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
                   ),
@@ -175,10 +177,10 @@ class _PostState extends State<Post> {
                     letterCase: LetterCase.normal,
                     validator: (String tag) {
                       if (_controllerTag.getTags!.contains(tag)) {
-                        return 'you already entered that';
+                        return AppLocalizations.of(context)!.tagExist;
                       }
                       else if (_controllerTag.getTags!.length > 7) {
-                        return 'too many tags';
+                        return AppLocalizations.of(context)!.maxTag;
                       }
                       return null;
                     },
@@ -207,7 +209,7 @@ class _PostState extends State<Post> {
                               helperStyle: TextStyle(
                                 color: Constants().primaryColor,
                               ),
-                              hintText: _controllerTag.hasTags ? '' : "Enter tag...",
+                              hintText: _controllerTag.hasTags ? '' : AppLocalizations.of(context)!.enterTag,
                               errorText: error,
                               prefixIconConstraints:
                                   BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.74),
@@ -270,7 +272,7 @@ class _PostState extends State<Post> {
                   ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.03),
-                  getLabel(title: 'Settings'),
+                  getLabel(title: AppLocalizations.of(context)!.commentSetting),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.01),
                   Container(
                     width: MediaQuery.of(context).size.width * 0.85,
@@ -284,7 +286,7 @@ class _PostState extends State<Post> {
                               children: [
                                 Row(
                                   children: [
-                                    getLabel(title: 'Comment'),
+                                    getLabel(title: AppLocalizations.of(context)!.comment),
                                     Switch(
                                       value: withComment,
                                       onChanged: (value) {
@@ -333,7 +335,7 @@ class _PostState extends State<Post> {
                       logger.log(Level.error, "Error occurred while posting\nerror: " + e.toString());
                     }
                   }, 
-                  child: Text("Post", style: TextStyle(color: Colors.white),),
+                  child: Text(AppLocalizations.of(context)!.post, style: TextStyle(color: Colors.white),),
                   style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).primaryColor,
                   elevation: 3,
                   shape: RoundedRectangleBorder(
@@ -360,7 +362,7 @@ class _PostState extends State<Post> {
                   });
                 }
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:settings_ui/settings_ui.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingPage extends StatefulWidget {
 
@@ -64,11 +65,11 @@ class _SettingPageState extends State<SettingPage> {
       body: SettingsList(
         sections: [
           SettingsSection(
-            title: Text('Common'),
+            title: Text(AppLocalizations.of(context)!.common),
             tiles: <SettingsTile>[
               SettingsTile.navigation(
                 leading: Icon(Icons.language),
-                title: Text('Language'),
+                title: Text(AppLocalizations.of(context)!.lang),
                 value: Text(languageTxt!),
                 onPressed: (context) {
                   _showLanguageOptions(context);

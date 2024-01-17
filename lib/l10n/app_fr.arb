@@ -47,5 +47,57 @@
     "pwNotSame": "les mots de passe doivent être les mêmes",
     "register": "Registre",
     "goBackToLoginPage": "Retour à la page de connexion",
-    "nameExisting": "Le nom existe déjà"
+    "nameExisting": "Le nom existe déjà",
+
+
+    "changeProfile": "Modifier la photo de profil",
+    "changeBackground": "Changer l'image d'arrière-plan",
+    "editInfo": "Modifier les informations",
+    "setting": "Setting",
+    "fromGallery": "De la galerie",
+    "cancel": "Cancel",
+    "back": "Back",
+    "name": "Nom",
+    "intro": "Introduction",
+    "infoBtn": "Modifier les informations",
+
+
+    "common": "Common",
+    "lang": "Langue",
+    "en": "Anglais",
+    "fr": "Français",
+    "de": "Allemand",
+    "hi": "Hindi",
+    "ja": "Japonais",
+    "ko": "Coréen",
+    "es": "Espagnol",
+
+
+    "noPhoto": "Pas de photo",
+    "selectPhoto": "Sélectionnez une photo (max. 8)",
+
+
+    "description": "Description",
+    "category": "Catégorie",
+    "news": "Nouvelles",
+    "entertainment": "Divertissement",
+    "sports": "Des sports",
+    "food": "Nourriture",
+    "economy": "Économie",
+    "stock": "Stock",
+    "shopping": "Shopping",
+    "science": "Science",
+    "etc": "Etc.",
+    "tag": "Tag",
+    "enterTag": "Enter tag...",
+    "commentSetting": "Paramètre de commentaire",
+    "comment": "Commentaire",
+    "post": "Post",
+
+
+    "images": "Images",
+    "changeImg": "Changer les images",
+    "descriptionEmpty": "la description ne peut pas être vide",
+    "tagExist": "tu l'as déjà entré",
+    "maxTag": "trop d'étiquettes"
 }

@@ -17,6 +17,7 @@ import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfilePage extends StatefulWidget {
 
@@ -153,7 +154,8 @@ class _ProfilePageState extends State<ProfilePage> {
       if (this.mounted) {
         setState(() {
           _isImg = false;
-          isErrorOccurred = true;
+          img_url = 'assets/blank.avif';
+          // isErrorOccurred = true;
         });
       }
       logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
@@ -174,7 +176,8 @@ class _ProfilePageState extends State<ProfilePage> {
       if (this.mounted) {
         setState(() {
           _isBackground = false;
-          isErrorOccurred = true;
+          background_url = 'assets/backgroundDef.jpeg';
+          // isErrorOccurred = true;
         });
       }
       logger.log(Level.error, "Error occurred while getting background profiles\nerror: " + e.toString());
@@ -185,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
 
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
-    double top = MediaQuery.of(context).size.height * 0.026;
+    double top = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.height * 0.047 * 3.1 / 2); 
     try {
     return
     isErrorOccurred? Center(
@@ -210,7 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 });
 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) :
@@ -229,7 +232,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   top: top,
                   child: Column(
                     children: [
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.38,),
                       ProfileWidget(
                       imagePath: img_url,   // user image
                       onClicked: () async {},
@@ -245,10 +247,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 Positioned(
                   width: MediaQuery.of(context).size.width * 0.95,
-                  top: MediaQuery.of(context).size.height * 0.6,
+                  top: top + sizedBoxinCard * 5 + MediaQuery.of(context).size.height * 0.3,
                   child: Column(
                     children: [
-                      SizedBox(height: sizedBoxinCard * 8.5),
                       Card(
                         shape: RoundedRectangleBorder( 
                           borderRadius: BorderRadius.circular(20),
@@ -299,7 +300,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 )
               ],
             ),
-            SizedBox(height: MediaQuery.of(context).size.height * 0.35,),
+            SizedBox(height: top * 0.9),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05 * postUser!["intro"].toString().split("\n").length,),
             Column(
               children: 
@@ -338,7 +339,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     }
                   }
                 }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-                Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
               ],
             )
         );
@@ -408,7 +409,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   }
                 }
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );
@@ -493,7 +494,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               ListTile(
                 leading: Icon(Icons.person),
-                title: Text('Change profile picture'),
+                title: Text(AppLocalizations.of(context)!.changeProfile),
                 onTap: () {
                   Navigator.pop(context);
                   _showPicMenu(postUser, "profile");
@@ -501,7 +502,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 leading: Icon(Icons.person),
-                title: Text('Change background picture'),
+                title: Text(AppLocalizations.of(context)!.changeBackground),
                 onTap: () {
                   Navigator.pop(context);
                   _showPicMenu(postUser, "background");
@@ -509,7 +510,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 leading: Icon(Icons.edit),
-                title: Text('Edit profile information'),
+                title: Text(AppLocalizations.of(context)!.editInfo),
                 onTap: () {
                   Navigator.pop(context);
                   nextScreen(context, EditInfo(postUser: postUser,));
@@ -517,7 +518,7 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               ListTile(
                 leading: Icon(Icons.settings),
-                title: Text('Setting'),
+                title: Text(AppLocalizations.of(context)!.setting),
                 onTap: () {
                   Navigator.pop(context);
                   nextScreen(context, SettingPage(uId: postUser!["uid"], language: postUser!["language"]));
@@ -547,7 +548,7 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               ListTile(
                 leading: Icon(Icons.folder),
-                title: Text('From gallery'),
+                title: Text(AppLocalizations.of(context)!.fromGallery),
                 onTap: () {
                   pickImage(ImageSource.gallery, post_user!["email"].toString(), post_user!["uid"].toString(), usage);
                 },
@@ -561,14 +562,14 @@ class _ProfilePageState extends State<ProfilePage> {
               // ),
               ListTile(
                 leading: Icon(Icons.cancel),
-                title: Text('Cancel'),
+                title: Text(AppLocalizations.of(context)!.cancel),
                 onTap: () {
                   Navigator.pop(context);
                 },
               ),
               ListTile(
                 leading: Icon(Icons.backspace),
-                title: Text('Back'),
+                title: Text(AppLocalizations.of(context)!.back),
                 onTap: () {
                   Navigator.pop(context);
                   _showShareMenu();

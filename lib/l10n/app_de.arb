@@ -47,5 +47,57 @@
     "pwNotSame": "Passwörter sollten gleich sein",
     "register": "Registrieren",
     "goBackToLoginPage": "Zurück zur Anmeldeseite",
-    "nameExisting": "Der Name existiert bereits"
+    "nameExisting": "Der Name existiert bereits",
+
+
+    "changeProfile": "Profilbild ändern",
+    "changeBackground": "Hintergrundbild ändern",
+    "editInfo": "Informationen bearbeiten",
+    "setting": "Setting",
+    "fromGallery": "Aus der Galerie",
+    "cancel": "Cancel",
+    "back": "Back",
+    "name": "Name",
+    "intro": "Einführung",
+    "infoBtn": "Informationen bearbeiten",
+
+
+    "common": "Common",
+    "lang": "Sprache",
+    "en": "Englisch",
+    "fr": "Französisch",
+    "de": "Deutsche",
+    "hi": "Hindi",
+    "ja": "Japanisch",
+    "ko": "Koreanische",
+    "es": "Spanisch", 
+
+
+    "noPhoto": "Ohne Foto",
+    "selectPhoto": "Foto auswählen (max. 8)",
+
+
+    "description": "Beschreibung",
+    "category": "Kategorie",
+    "news": "Nachricht",
+    "entertainment": "Unterhaltung",
+    "sports": "Sport",
+    "food": "Essen",
+    "economy": "Wirtschaft",
+    "stock": "Aktie",
+    "shopping": "Einkaufen",
+    "science": "Wissenschaft",
+    "etc": "Etc.",
+    "tag": "Tag",
+    "enterTag": "Enter tag...",
+    "commentSetting": "Kommentareinstellung",
+    "comment": "Kommentar",
+    "post": "Post",
+
+
+    "images": "Bilder",
+    "changeImg": "Bilder ändern",
+    "descriptionEmpty": "Beschreibung darf nicht leer sein",
+    "tagExist": "das hast du ja schon eingetragen",
+    "maxTag": "Zu viele Tags"
 }

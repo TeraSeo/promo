@@ -140,6 +140,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
       if (this.mounted) {
         setState(() {
           _isImg = false;
+          img_url = 'assets/blank.avif';
         });
       }
       logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
@@ -160,6 +161,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
       if (this.mounted) {
         setState(() {
           _isBackground = false;
+          background_url = 'assets/backgroundDef.jpeg';
         });
       }
       logger.log(Level.error, "Error occurred while getting background profiles\nerror: " + e.toString());
@@ -171,7 +173,8 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   Widget build(BuildContext context) {
 
     double sizedBoxinCard = MediaQuery.of(context).size.height * 0.026;
-    double top = MediaQuery.of(context).size.height * 0.026;
+    double top = MediaQuery.of(context).size.width - (MediaQuery.of(context).size.height * 0.047 * 3.1 / 2); 
+
     try {
     return isErrorOccurred? Center(
           child: Column(
@@ -188,6 +191,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                 });
                 Future.delayed(Duration.zero,() async {
                   await getUser();
+                  getRanking();
                 });
 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
@@ -209,10 +213,10 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
       appBar: AppBar(
         iconTheme: IconThemeData(color: Constants().iconColor),
         backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),
-          onPressed: () => Navigator.of(context).pop(),
-        )
+        // leading: IconButton(
+        //   icon: Icon(Icons.arrow_back, color: Colors.white, size: MediaQuery.of(context).size.width * 0.06,),
+        //   onPressed: () => Navigator.of(context).pop(),
+        // )
       ),
       body: 
       RefreshIndicator(
@@ -229,7 +233,6 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                 top: top,
                 child: Column(
                   children: [
-                    SizedBox(height: MediaQuery.of(context).size.height * 0.38,),
                     ProfileWidget(
                     imagePath: img_url, 
                     onClicked: () async {},
@@ -245,10 +248,9 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
               ),
               Positioned(
                 width: MediaQuery.of(context).size.width,
-                top: MediaQuery.of(context).size.height * 0.6,
+                top: MediaQuery.of(context).size.height * 0.3 + top + sizedBoxinCard * 5,
                 child: Column(
                   children: [
-                    SizedBox(height: sizedBoxinCard * 8.5),
                     Card(
                       shape: RoundedRectangleBorder( 
                         borderRadius: BorderRadius.circular(20),
@@ -289,7 +291,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
               ),
             ],
           ),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.4,),
+          SizedBox(height: top * 0.9,),
           SizedBox(height: MediaQuery.of(context).size.height * 0.05 * postUser!["intro"].toString().split("\n").length,),
 
           Column(
@@ -341,6 +343,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
       try {
         getUser();
+        getRanking();
       } catch(e) {
         setState(() {
           isErrorOccurred = true;
@@ -366,6 +369,8 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                 });
                 Future.delayed(Duration.zero,() async {
                   await getUser();
+                  getRanking();
+                  
                 });
 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),

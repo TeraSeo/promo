@@ -19,8 +19,20 @@ class BackgroundWidget extends StatelessWidget {
 
   Widget buildImage(BuildContext context) {
 
+    var image;
+    if (background_url.contains("assets/")) {
+      image = AssetImage(background_url);
+    } else {
+      if (background_url == null || background_url == "") {
+        image = AssetImage(background_url);
+      }
+      else {
+        image = NetworkImage(background_url);
+      }
+    }
+
     return Image(
-      image: NetworkImage(background_url),
+      image: image,
       fit: BoxFit.contain,
     );
   }
