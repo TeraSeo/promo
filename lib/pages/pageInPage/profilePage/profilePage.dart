@@ -424,10 +424,10 @@ class _ProfilePageState extends State<ProfilePage> {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: MediaQuery.of(context).size.height * 0.026),
           ),
           SizedBox(height: (MediaQuery.of(context).size.height * 0.026) / 6),
-          Text(
+          postUser!["isEmailVisible"] ? Text(
             user["email"].toString(),
             style: TextStyle(color: Colors.grey),
-          )
+          ) : Text("")
         ],
       );
 
@@ -521,7 +521,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text(AppLocalizations.of(context)!.setting),
                 onTap: () {
                   Navigator.pop(context);
-                  nextScreen(context, SettingPage(uId: postUser!["uid"], language: postUser!["language"]));
+                  nextScreen(context, SettingPage(uId: postUser!["uid"]));
                 },
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02,)

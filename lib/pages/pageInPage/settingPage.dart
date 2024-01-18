@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:settings_ui/settings_ui.dart';
@@ -6,8 +7,7 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 class SettingPage extends StatefulWidget {
 
   final String uId;
-  final String language;
-  const SettingPage({super.key, required this.uId, required this.language});
+  const SettingPage({super.key, required this.uId});
 
   @override
   State<SettingPage> createState() => _SettingPageState();
@@ -19,11 +19,42 @@ class _SettingPageState extends State<SettingPage> {
 
   String? languageTxt;
   bool isLanguageTxtLoading = true;
+  bool isEmailVisibilityLoading = false;
+  bool? isEmailVisible;
+
+  bool isUserLoading = true;
+  bool isErrorOccurred = false;
 
   @override
   void initState() {
     super.initState();
-    setLanguageText(widget.language);
+    getUser();
+  }
+
+  void getUser() async {
+
+    try {
+      final CollectionReference userCollection = 
+          FirebaseFirestore.instance.collection("user");
+
+      final user = userCollection.doc(widget.uId);
+      await user.get().then((value) {
+        isEmailVisible = value["isEmailVisible"];
+        setLanguageText(value["language"]);
+        setState(() {
+          if (this.mounted) {
+            isUserLoading = false;
+          }
+        });
+      });
+    } catch(e) {
+      setState(() {
+        if (this.mounted) {
+          isErrorOccurred = true;
+        }
+      });
+    }
+  
   }
 
   void setLanguageText(String language) {
@@ -57,7 +88,28 @@ class _SettingPageState extends State<SettingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return isLanguageTxtLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
+    return isErrorOccurred? Center(
+          child: Column(
+            children: [
+              IconButton(onPressed: () {
+                  setState(() {
+                  if (this.mounted) {
+                    isErrorOccurred = false;
+                    isLanguageTxtLoading = true;
+                    isEmailVisibilityLoading = false;
+                    isUserLoading = true;
+
+                  }
+                });
+                Future.delayed(Duration.zero,() async {
+                  getUser();
+                });
+
+              }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+            ],
+          )
+      ) : (isLanguageTxtLoading || isEmailVisibilityLoading || isUserLoading) ? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
       appBar: AppBar(
         title: Text("Setting", style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
@@ -81,6 +133,15 @@ class _SettingPageState extends State<SettingPage> {
                 leading: Icon(Icons.format_paint),
                 title: Text('Enable custom theme'),
               ),
+              SettingsTile.switchTile(
+                onToggle: (value) {
+                  isEmailVisible = !isEmailVisible!;
+                  _changeEmailVisibility(value);
+                },
+                initialValue: isEmailVisible,
+                leading: Icon(Icons.email),
+                title: Text('Show email in profile page'),
+              ),
             ],
           ),
         ],
@@ -98,43 +159,43 @@ class _SettingPageState extends State<SettingPage> {
               ListTile(
                 title: Text('English'),
                 onTap: () {
-                  _changeLanguage(context, 'en');
+                  _changeLanguage('en');
                 },
               ),
               ListTile(
                 title: Text('French'),
                 onTap: () {
-                  _changeLanguage(context, 'fr');
+                  _changeLanguage('fr');
                 },
               ),
               ListTile(
                 title: Text('German'),
                 onTap: () {
-                  _changeLanguage(context, 'de');
+                  _changeLanguage('de');
                 },
               ),
               ListTile(
                 title: Text('Hindi'),
                 onTap: () {
-                  _changeLanguage(context, 'hi');
+                  _changeLanguage('hi');
                 },
               ),
               ListTile(
                 title: Text('Japanese'),
                 onTap: () {
-                  _changeLanguage(context, 'ja');
+                  _changeLanguage('ja');
                 },
               ),
               ListTile(
                 title: Text('Korean'),
                 onTap: () {
-                  _changeLanguage(context, 'ko');
+                  _changeLanguage('ko');
                 },
               ),
               ListTile(
                 title: Text('Spanish'),
                 onTap: () {
-                  _changeLanguage(context, 'es');
+                  _changeLanguage('es');
                 },
               ),
             ],
@@ -144,7 +205,7 @@ class _SettingPageState extends State<SettingPage> {
     );
   }
 
-  void _changeLanguage(BuildContext context, String languageCode) {
+  void _changeLanguage(String languageCode) {
     isLanguageTxtLoading = true;
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await databaseService.setUserLanguage(widget.uId, languageCode).then((value) {
@@ -155,6 +216,19 @@ class _SettingPageState extends State<SettingPage> {
         });
       });
       setLanguageText(languageCode);
+    });
+  }
+
+  void _changeEmailVisibility(bool isEmailVisible) {
+    isEmailVisibilityLoading = true;
+    Future.delayed(Duration(seconds: 0)).then((value) async {
+      await databaseService.setUserEmailVisibility(widget.uId, isEmailVisible).then((value) {
+        setState(() {
+          if (this.mounted) {
+            isEmailVisibilityLoading = false;
+          }
+        });
+      });
     });
   }
 }

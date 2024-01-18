@@ -118,10 +118,10 @@ class _CropResultViewState extends State<CropResultView> {
                   horizontal: 8.0,
                   vertical: 16.0,
                 ),
-                child: ClipOval(
+                child: widget.usage == "profile" ? ClipOval(
                 
                   child: Image.file(widget.croppedFiles[index]),
-                ),
+                ) : Image.file(widget.croppedFiles[index], fit: BoxFit.contain,)
               );
             },
           ),

@@ -96,7 +96,7 @@ class _LikesRankingState extends State<LikesRanking> {
 
     final myUser = FirebaseFirestore.instance.collection("user").doc(uId);
 
-    final user = FirebaseFirestore.instance.collection("user");
+    final user = FirebaseFirestore.instance.collection("user").orderBy("wholeLikes", descending: true);
 
     int i = 1;
 

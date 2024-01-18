@@ -41,7 +41,8 @@ class DatabaseService {
       "comments" : [],
       "commentLikes" : 0,
       "wholeLikes" : 0,
-      "language" : "en"
+      "language" : "en",
+      "isEmailVisible" : false
     });
   }
 
@@ -270,6 +271,22 @@ class DatabaseService {
 
       await user.update({
         "language" : language
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future setUserEmailVisibility(String uId, bool isEmailVisible) async {
+
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await user.update({
+        "isEmailVisible" : isEmailVisible
       });
 
     } catch(e) {
