@@ -99,5 +99,11 @@
     "changeImg": "Changer les images",
     "descriptionEmpty": "la description ne peut pas être vide",
     "tagExist": "tu l'as déjà entré",
-    "maxTag": "trop d'étiquettes"
+    "maxTag": "trop d'étiquettes",
+
+
+    "post": "Posts",
+    "acc": "Compte",
+    "tag": "Tags",
+    "search": "Rechercher n'importe quoi"
 }

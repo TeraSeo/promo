@@ -99,5 +99,11 @@
     "changeImg": "Bilder ändern",
     "descriptionEmpty": "Beschreibung darf nicht leer sein",
     "tagExist": "das hast du ja schon eingetragen",
-    "maxTag": "Zu viele Tags"
+    "maxTag": "Zu viele Tags",
+
+
+    "post": "Posts",
+    "acc": "Konto",
+    "tag": "Tags",
+    "search": "Suchen Sie alles"
 }

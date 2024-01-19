@@ -9,6 +9,7 @@ import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/login_page.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'dart:ui';
 
 void main() async {
 
@@ -38,11 +39,37 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isSignedIn = false;
+  String? language;
 
   @override
   void initState() {
     super.initState();
     getUserLoggedInStatus();
+    print(window.locale.languageCode);
+    if (window.locale.languageCode == "en") {
+      language = "en";
+    } 
+    else if (window.locale.languageCode == "de") {
+      language = "de";
+    }
+    else if (window.locale.languageCode == "es") {
+      language = "es";
+    }
+    else if (window.locale.languageCode == "fr") {
+      language = "fr";
+    }
+    else if (window.locale.languageCode == "hi") {
+      language = "hi";
+    }
+    else if (window.locale.languageCode == "ja") {
+      language = "ja";
+    }
+    else if (window.locale.languageCode == "ko") {
+      language = "ko";
+    }
+    else {
+      language = "en";
+    }
   }
 
   getUserLoggedInStatus() async {
@@ -68,7 +95,7 @@ class _MyAppState extends State<MyApp> {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      locale: Locale('ko'),
+      locale: Locale(language!),
       supportedLocales: [
         Locale('en'),
         Locale('de'),

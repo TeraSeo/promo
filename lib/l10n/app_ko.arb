@@ -99,5 +99,11 @@
     "changeImg": "사진 변경",
     "descriptionEmpty": "설명이 비어있습니다",
     "tagExist": "이미 입력했습니다",
-    "maxTag": "개수 초과"
+    "maxTag": "개수 초과",
+
+
+    "post": "게시물",
+    "acc": "계정",
+    "tag": "태그",
+    "search": "검색"
 }

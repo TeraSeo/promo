@@ -99,5 +99,12 @@
     "changeImg": "Cambiar imágenes",
     "descriptionEmpty": "la descripción no puede estar vacía",
     "tagExist": "ya has entrado en eso",
-    "maxTag": "demasiadas etiquetas"
+    "maxTag": "demasiadas etiquetas",
+
+
+    "post": "Posts",
+    "acc": "Cuenta",
+    "tag": "Tags",
+    "search": "Buscar cualquier cosa"
+
 }

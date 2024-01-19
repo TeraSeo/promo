@@ -6,6 +6,7 @@ import 'package:like_app/widget/searchTag.dart';
 import 'package:like_app/widget/searchUser.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Search extends StatefulWidget {
 
@@ -117,7 +118,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   getUId();
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) : isUIdLoading ? 
@@ -140,7 +141,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(8.0),
                   borderSide: BorderSide.none
                 ),
-                hintText: "Search anything",
+                hintText: AppLocalizations.of(context)!.search,
                 hintStyle: TextStyle(color: Colors.white),
                 prefixIcon: Icon(Icons.search),
                 prefixIconColor: Colors.white
@@ -161,9 +162,9 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                 indicatorColor: Colors.white,
                 unselectedLabelColor: Colors.white,
                 tabs: [
-                  Tab(text: "posts",),
-                  Tab(text: "account",),
-                  Tab(text: "tags",)
+                  Tab(text: AppLocalizations.of(context)!.post),
+                  Tab(text: AppLocalizations.of(context)!.acc),
+                  Tab(text: AppLocalizations.of(context)!.tag)
                 ],
               )
           ),
@@ -190,7 +191,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   getUId();
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );
