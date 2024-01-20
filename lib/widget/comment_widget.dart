@@ -7,6 +7,7 @@ import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommentWidget extends StatefulWidget {
 
@@ -192,6 +193,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
       return isErrorOccurred? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 
@@ -206,14 +208,14 @@ class _CommentWidgetState extends State<CommentWidget> {
                 getCommentLength();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) : (isLoading || isWholeCommentLengthLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
-        title: Text("Comments", style: TextStyle(fontSize: barFontSize),),
+        title: Text("Comments", style: TextStyle(fontSize: barFontSize, color: Colors.white),),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
           onPressed: () => Navigator.of(context).pop()
@@ -249,6 +251,7 @@ class _CommentWidgetState extends State<CommentWidget> {
 
               return Center(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(onPressed: () {
                         
@@ -263,7 +266,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                         getCommentLength();
                         
                       }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-                      Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                      Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
                     ],
                   )
               );
@@ -295,7 +298,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                       },
                       textAlignVertical: TextAlignVertical.bottom,
                       decoration: InputDecoration(
-                        hintText: "Add a comment...",
+                        hintText: AppLocalizations.of(context)!.comment,
                         focusedBorder: OutlineInputBorder(
                           borderSide:
                               BorderSide(width: 0.1, color: Colors.grey),
@@ -339,6 +342,7 @@ class _CommentWidgetState extends State<CommentWidget> {
       
       return Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 
@@ -353,7 +357,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                 getCommentLength();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );

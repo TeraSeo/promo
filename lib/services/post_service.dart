@@ -159,7 +159,7 @@ class PostService {
       Map posts = new HashMap<int, Map<String, dynamic>>();
       int i = 0;
 
-      if (sort == "Latest") {
+      if (sort == "Latest" || sort == "Neueste" || sort == "El último" || sort == "Dernière" || sort == "नवीनतम" || sort == "最新" || sort == "최신순") {
         await postCollection.
           orderBy("postNumber", descending: true).limit(7).get().then((value) => {
           value.docs.forEach((element) {
@@ -169,7 +169,7 @@ class PostService {
           })
         });
       } 
-      else if (sort == "Oldest") {
+      else if (sort == "Oldest" || sort == "Alter Schuss" || sort == "Más antiguo" || sort == "Le plus ancien" || sort == "सबसे पुराने" || sort == "最古の" || sort == "오래된순") {
         await postCollection.
           orderBy("postNumber", descending: false).limit(7).get().then((value) => {
           value.docs.forEach((element) {
@@ -179,7 +179,7 @@ class PostService {
           })
         });
       }
-      else if (sort == "Popular") {
+      else if (sort == "Popular" || sort == "Beliebt" || sort == "Populaire" || sort == "लोकप्रिय" || sort == "人気のある" || sort == "인기순") {
         await postCollection.
           orderBy("wholeLikes", descending: true).
             orderBy("postNumber", descending: true)
@@ -191,7 +191,7 @@ class PostService {
           })
         });
       }
-      else if (sort == "Not popular") {
+      else if (sort == "Not popular" || sort == "Nicht populär" || sort == "No popular" || sort == "Pas populaire" || sort == "लोकप्रिय नहीं" || sort == "人気がない" || sort == "비인기순") {
         await postCollection.
           orderBy("wholeLikes", descending: false).
             orderBy("postNumber", descending: true)
@@ -218,12 +218,12 @@ class PostService {
     Map posts = new HashMap<int, Map<String, dynamic>>();
     int i = 0;
 
-    if (sort == "Latest") {
+    if (sort == "Latest" || sort == "Neueste" || sort == "El último" || sort == "Dernière" || sort == "नवीनतम" || sort == "最新" || sort == "최신순") {
 
       await postCollection.
         where("postNumber", isLessThan: postNumber).
         orderBy("postNumber", descending: true).
-        limit(7).get().then((value) => {
+        limit(10).get().then((value) => {
           value.docs.forEach((element) {
             Map<String, dynamic> post = element.data() as Map<String, dynamic>;
             posts[i] = post;
@@ -232,11 +232,11 @@ class PostService {
       });
 
     } 
-    else if (sort == "Oldest") {
+    else if (sort == "Oldest" || sort == "Alter Schuss" || sort == "Más antiguo" || sort == "Le plus ancien" || sort == "सबसे पुराने" || sort == "最古の" || sort == "오래된순") {
       await postCollection.
             where("postNumber", isGreaterThan: postNumber).
             orderBy("postNumber", descending: false).
-            limit(7).get().then((value) => {
+            limit(10).get().then((value) => {
         value.docs.forEach((element) {
           Map<String, dynamic> post = element.data() as Map<String, dynamic>;
           posts[i] = post;
@@ -244,50 +244,34 @@ class PostService {
         })
       });
     }
-    else if (sort == "Popular") {
+    else if (sort == "Popular" || sort == "Beliebt" || sort == "Populaire" || sort == "लोकप्रिय" || sort == "人気のある" || sort == "인기순") {
+      final lastPop = await postCollection.doc(postId).get();
       await postCollection.
             where("wholeLikes", isLessThanOrEqualTo: likesSum).
             orderBy("wholeLikes", descending: true).
             orderBy("postNumber", descending: true).
-            limit(7).get().then((value) => {
+            startAfterDocument(lastPop).
+            limit(10).get().then((value) => {
         value.docs.forEach((element) {
           Map<String, dynamic> post = element.data() as Map<String, dynamic>;
-          if (post["postId"] != postId) {
-            if (post["wholeLikes"] == likesSum) {
-              if (postNumber > post["postNumber"]) {
-                posts[i] = post;
-                i += 1;
-              }
-            }
-             else {
-              posts[i] = post;
-              i += 1;
-            }
-          }
+          posts[i] = post;
+          i += 1;
         })
       });
 
     } 
-    else if (sort == "Not popular") {
+    else if (sort == "Not popular" || sort == "Nicht populär" || sort == "No popular" || sort == "Pas populaire" || sort == "लोकप्रिय नहीं" || sort == "人気がない" || sort == "비인기순") {
+      final lastPop = await postCollection.doc(postId).get();
       await postCollection.
             where("wholeLikes", isGreaterThanOrEqualTo: likesSum).
             orderBy("wholeLikes", descending: false).
             orderBy("postNumber", descending: true).
-            limit(7).get().then((value) => {
+            startAfterDocument(lastPop).
+            limit(10).get().then((value) => {
         value.docs.forEach((element) {
           Map<String, dynamic> post = element.data() as Map<String, dynamic>;
-          if (post["postId"] != postId) {
-            if (post["wholeLikes"] == likesSum) {
-              if (postNumber > post["postNumber"]) {
-                posts[i] = post;
-                i += 1;
-              }
-            }
-             else {
-              posts[i] = post;
-              i += 1;
-            }
-          }
+          posts[i] = post;
+          i += 1;
         })
       });
     }

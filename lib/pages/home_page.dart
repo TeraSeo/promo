@@ -170,7 +170,7 @@ class _HomePageState extends State<HomePage> {
                 gettingUserData();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) :
@@ -244,6 +244,7 @@ class _HomePageState extends State<HomePage> {
         body: 
         isErrorOccurred? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 setState(() {
@@ -253,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                 gettingUserData();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) :
@@ -448,7 +449,7 @@ class _HomePageState extends State<HomePage> {
                 gettingUserData();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );
@@ -680,7 +681,6 @@ class _HomePageState extends State<HomePage> {
                 leading: Icon(Icons.picture_as_pdf_outlined),
                 title: Text(AppLocalizations.of(context)!.selectPhoto),
                 onTap: () async{
-                  // Navigator.pop(context);
                   try {
                     setState(() {
                       if (this.mounted) {

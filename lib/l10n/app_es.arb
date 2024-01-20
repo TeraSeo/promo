@@ -105,6 +105,21 @@
     "post": "Posts",
     "acc": "Cuenta",
     "tag": "Tags",
-    "search": "Buscar cualquier cosa"
+    "search": "Buscar cualquier cosa",
 
+
+    "comment": "Añadir un comentario...",
+    "editCom": "Editar comentario",
+    "rmCom": "Eliminar comentario",
+
+
+    "like": "like",
+    "likes": "likes",
+    "s": "s ago",
+    "m": "m ago",
+    "h": "h ago",
+    "d": "d ago",
+    "w": "w ago",
+    "month": "month ago",
+    "y": "y ago"
 }

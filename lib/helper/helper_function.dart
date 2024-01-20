@@ -10,6 +10,7 @@ class HelperFunctions {
   static String userNameKey = "USERNAMEKEY";
   static String userEmailKey = "USEREMAILKEY";
   static String userUidKey = "USERUIDKEY";
+  static String languageKey = "LANGUAGE";
 
   static Future<bool> saveUserLoggedInStatus(bool isUserLoggedIn) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
@@ -29,6 +30,11 @@ class HelperFunctions {
   static Future<bool> saveUserUIdSF(String uid) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return await sf.setString(userUidKey, uid);
+  }
+
+  static Future<bool> saveUserLanguageSF(String language) async {
+    SharedPreferences sf = await SharedPreferences.getInstance();
+    return await sf.setString(languageKey, language);
   }
 
   static Future<String?> getUserNameFromSF() async {
@@ -81,6 +87,19 @@ class HelperFunctions {
       return value.toLowerCase() == 'true';
     } else {
       throw Exception('Invalid value type for key $usersLoggedInKey');
+    }
+  }
+
+  static Future<String?> getUserLanguageFromSF() async {
+    SharedPreferences sf = await SharedPreferences.getInstance();
+    dynamic value = sf.get(languageKey);
+    if (value == null) {
+      return null;
+    } 
+    else if (value is String) {
+      return value;
+    } else {
+      throw Exception('Invalid value type for key $userEmailKey');
     }
   }
 

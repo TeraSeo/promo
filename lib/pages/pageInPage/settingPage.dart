@@ -1,6 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/main.dart';
 import 'package:like_app/services/userService.dart';
+import 'package:like_app/widgets/widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -40,12 +43,14 @@ class _SettingPageState extends State<SettingPage> {
       final user = userCollection.doc(widget.uId);
       await user.get().then((value) {
         isEmailVisible = value["isEmailVisible"];
-        setLanguageText(value["language"]);
         setState(() {
           if (this.mounted) {
             isUserLoading = false;
           }
         });
+      });
+      HelperFunctions.getUserLanguageFromSF().then((value) {
+        setLanguageText(value!);
       });
     } catch(e) {
       setState(() {
@@ -58,32 +63,47 @@ class _SettingPageState extends State<SettingPage> {
   }
 
   void setLanguageText(String language) {
-    setState(() {
-      if (this.mounted) {
-        if (language == "en") {
-          languageTxt = "English";
-        } 
-        else if (language == "fr") {
-          languageTxt = "French";
-        }
-        else if (language == "de") {
-          languageTxt = "German";
-        }
-        else if (language == "hi") {
-          languageTxt = "Hindi";
-        }
-        else if (language == "ja") {
-          languageTxt = "Japanese";
-        }
-        else if (language == "ko") {
-          languageTxt = "Korean";
-        }
-        else if (language == "es") {
-          languageTxt = "Spanish";
-        }
+    try {
+      if (language == null || language == "") {
+        setState(() {
+          if (this.mounted) {
+            if (language == "en") {
+              languageTxt = "English";
+            } 
+            else if (language == "fr") {
+              languageTxt = "French";
+            }
+            else if (language == "de") {
+              languageTxt = "German";
+            }
+            else if (language == "hi") {
+              languageTxt = "Hindi";
+            }
+            else if (language == "ja") {
+              languageTxt = "Japanese";
+            }
+            else if (language == "ko") {
+              languageTxt = "Korean";
+            }
+            else if (language == "es") {
+              languageTxt = "Spanish";
+            }
+          }
+          isLanguageTxtLoading = false;
+        });
       }
-      isLanguageTxtLoading = false;
-    });
+      else {
+        languageTxt = "English";
+        isLanguageTxtLoading = false; 
+      }
+    } 
+    catch(e) {
+      setState(() {
+        if (this.mounted) {
+          isErrorOccurred = true;
+        }
+      });
+    }
   }
 
   @override
@@ -208,14 +228,10 @@ class _SettingPageState extends State<SettingPage> {
   void _changeLanguage(String languageCode) {
     isLanguageTxtLoading = true;
     Future.delayed(Duration(seconds: 0)).then((value) async {
-      await databaseService.setUserLanguage(widget.uId, languageCode).then((value) {
-        setState(() {
-          if (this.mounted) {
-            isLanguageTxtLoading = false;
-          }
-        });
+      await HelperFunctions.saveUserLanguageSF(languageCode).then((value) {
+        nextScreenReplace(context, MyApp(language: languageCode));
       });
-      setLanguageText(languageCode);
+      // setLanguageText(languageCode);
     });
   }
 

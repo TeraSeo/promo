@@ -27,11 +27,12 @@ void main() async {
 
   FireStoreNotification().initNotificaiton();
 
-  runApp(const MyApp());
+  runApp(const MyApp(language: ""));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final String language;
+  const MyApp({super.key, required this.language});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -40,12 +41,56 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool _isSignedIn = false;
   String? language;
+  bool isLanguageLoading = true;
 
   @override
   void initState() {
     super.initState();
     getUserLoggedInStatus();
-    print(window.locale.languageCode);
+    if (widget.language == "") {
+      getUserLanguageSF();
+    }
+    else {
+      language = widget.language;
+      setState(() {
+        if (this.mounted) {
+          isLanguageLoading = false;
+        }
+      });
+    }
+  }
+
+  getUserLoggedInStatus() async {
+    await HelperFunctions.getUserLoggedInStatus().then((value) {
+      if (value!=null) {
+        setState(() {
+          _isSignedIn = value;
+        });
+      }
+    });
+  }
+
+  getUserLanguageSF() async {
+    try {
+      await HelperFunctions.getUserLanguageFromSF().then((value) {
+        if (value!=null) {
+          setState(() {
+            print(value);
+            language = value;
+            isLanguageLoading = false;
+          });
+        }
+        else {
+          getLocalLanguageCode();
+          HelperFunctions.saveUserLanguageSF(language!);
+        }
+      });
+    } catch(e) {
+      print(e);
+    }
+  }
+
+  getLocalLanguageCode() {
     if (window.locale.languageCode == "en") {
       language = "en";
     } 
@@ -70,21 +115,18 @@ class _MyAppState extends State<MyApp> {
     else {
       language = "en";
     }
-  }
-
-  getUserLoggedInStatus() async {
-    await HelperFunctions.getUserLoggedInStatus().then((value) {
-      if (value!=null) {
-        setState(() {
-          _isSignedIn = value;
-        });
+    setState(() {
+      if (this.mounted) {
+        isLanguageLoading = false;
       }
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return isLanguageLoading?
+      Center(child: CircularProgressIndicator(color: Colors.white,),) :
+      MaterialApp(
       theme: ThemeData(
         primaryColor: Constants().primaryColor,
         scaffoldBackgroundColor: Colors.white
@@ -106,7 +148,7 @@ class _MyAppState extends State<MyApp> {
         Locale('ko'),
       ],
       debugShowCheckedModeBanner: false,
-      home: _isSignedIn ? const HomePage(pageIndex: 0,) : const LoginPage(),
+      home: _isSignedIn ? const HomePage(pageIndex: 0) : const LoginPage(),
     );
   }
 } 

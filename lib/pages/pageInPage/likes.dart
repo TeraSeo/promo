@@ -5,6 +5,7 @@ import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LikesRanking extends StatefulWidget {
 
@@ -36,6 +37,7 @@ class _LikesRankingState extends State<LikesRanking> {
   String myUName = "";
   String myEmail = "";
   int myLikes = 0;
+  bool? isMyEmailVisible;
   bool isMyLoading = true;
   var image;
 
@@ -105,6 +107,7 @@ class _LikesRankingState extends State<LikesRanking> {
       myUName = value["name"],
       myLikes = value["wholeLikes"],
       myEmail = value["email"],
+      isMyEmailVisible = value["isEmailVisible"],
 
       getMyProfile(value["email"], value["profilePic"]),
 
@@ -162,6 +165,7 @@ class _LikesRankingState extends State<LikesRanking> {
     return 
       isErrorOccurred? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 setState(() {
@@ -174,7 +178,7 @@ class _LikesRankingState extends State<LikesRanking> {
                 });
                 getUId();
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) :
@@ -274,9 +278,16 @@ class _LikesRankingState extends State<LikesRanking> {
                                 style: TextStyle(fontWeight: FontWeight.w600),
                               ),
                               subtitle: 
+                              snapshot.data!.docs[index]["isEmailVisible"] == true ?
                               Text(
-                                snapshot.data!.docs[index]["email"] + "  / " + snapshot.data!.docs[index]["wholeLikes"].toString() + " likes"
-                              ),
+                                snapshot.data!.docs[index]["wholeLikes"] > 1 ? 
+                                snapshot.data!.docs[index]["email"] + "  / " + snapshot.data!.docs[index]["wholeLikes"].toString() + " " + AppLocalizations.of(context)!.likes
+                                : snapshot.data!.docs[index]["email"] + "  / " + snapshot.data!.docs[index]["wholeLikes"].toString() + " " + AppLocalizations.of(context)!.like
+                              ) : Text(
+                                snapshot.data!.docs[index]["wholeLikes"] > 1 ?
+                                snapshot.data!.docs[index]["wholeLikes"].toString() + " " + AppLocalizations.of(context)!.likes :
+                                snapshot.data!.docs[index]["wholeLikes"].toString() + " " + AppLocalizations.of(context)!.like
+                              )
                             ),
                           )
                         );
@@ -289,6 +300,7 @@ class _LikesRankingState extends State<LikesRanking> {
                 logger.log(Level.error, "Error occurred while getting ranks\nerror: " + e.toString());
                 return Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(onPressed: () {
                           if (this.mounted) {
@@ -302,7 +314,7 @@ class _LikesRankingState extends State<LikesRanking> {
                           });}
                           getUId();
                         }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-                        Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                        Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
                       ],
                     )
                 );
@@ -341,9 +353,17 @@ class _LikesRankingState extends State<LikesRanking> {
                   style: TextStyle(fontWeight: FontWeight.w600),
                 ),
                 subtitle: 
+                isMyEmailVisible! ? 
                 Text(
-                  myEmail + "  / " + myLikes.toString() + " likes"
-                ),
+                  myLikes > 1 ? 
+                  myEmail + "  / " + myLikes.toString() + " " + AppLocalizations.of(context)!.likes :
+                  myEmail + "  / " + myLikes.toString() + " " + AppLocalizations.of(context)!.like
+                ) : Text(
+                  myLikes > 1 ?
+                  myLikes.toString() + " " + AppLocalizations.of(context)!.likes : 
+                  myLikes.toString() + " " + AppLocalizations.of(context)!.like
+
+                )
               ),
             )
           )
@@ -371,6 +391,7 @@ class _LikesRankingState extends State<LikesRanking> {
   catch(e) {
     return Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 if (this.mounted) {
@@ -384,7 +405,7 @@ class _LikesRankingState extends State<LikesRanking> {
                 });}
                 getUId();
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );

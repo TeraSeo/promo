@@ -9,6 +9,7 @@ import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widget/edit_comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommentCard extends StatefulWidget {
 
@@ -125,25 +126,25 @@ class _CommentCardState extends State<CommentCard> {
     try {
 
       if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
-        diff = current.difference(posted).inSeconds.toString() + "s ago";
+        diff = current.difference(posted).inSeconds.toString() + AppLocalizations.of(context)!.s;
       } 
       else if (current.difference(posted).inMinutes < 60 && current.difference(posted).inMinutes >= 1) {
-        diff = current.difference(posted).inMinutes.toString() + "m ago";
+        diff = current.difference(posted).inMinutes.toString() + AppLocalizations.of(context)!.m;
       } 
       else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
-        diff = current.difference(posted).inHours.toString() + "h ago";
+        diff = current.difference(posted).inHours.toString() + AppLocalizations.of(context)!.h;
       }
       else if (current.difference(posted).inDays < 7 && current.difference(posted).inDays >= 1) {
-        diff = current.difference(posted).inDays.toString() + "d ago";
+        diff = current.difference(posted).inDays.toString() + AppLocalizations.of(context)!.d;
       }
-      else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 7) {
-        diff = (current.difference(posted).inDays ~/ 7).toInt().toString() + "w ago";
+      else if (current.difference(posted).inDays < 31 && current.difference(posted).inDays >= 7) {
+        diff = (current.difference(posted).inDays ~/ 7).toInt().toString() + AppLocalizations.of(context)!.w;
       }
       else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 31) {
-        diff = (current.difference(posted).inDays ~/ 31).toInt().toString() + "w ago";
+        diff = (current.difference(posted).inDays ~/ 31).toInt().toString() + AppLocalizations.of(context)!.month;
       }
       else if (current.difference(posted).inDays >= 365) {
-        diff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
+        diff = (current.difference(posted).inDays ~/ 365).toString() + AppLocalizations.of(context)!.y;
       } 
       else {
         diff = "now";
@@ -271,7 +272,9 @@ class _CommentCardState extends State<CommentCard> {
                     Padding(
                       padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, top: MediaQuery.of(context).size.height * 0.008),
                       child: Text(
-                        likes.toString() + " likes",
+                        likes! > 1 ?  
+                        likes.toString() + " " + AppLocalizations.of(context)!.likes :
+                        likes.toString() + " " + AppLocalizations.of(context)!.like,
                         style: TextStyle(
                           fontSize: fontSize * 0.9,
                           fontWeight: FontWeight.w400
@@ -372,14 +375,14 @@ class _CommentCardState extends State<CommentCard> {
               children: [
                 ListTile(
                   leading: Icon(Icons.edit),
-                  title: Text('Edit Comment'),
+                  title: Text(AppLocalizations.of(context)!.editCom),
                   onTap: () {
                     nextScreenReplace(context, EditCommentWidget(postId: widget.postId, uId: widget.uId, description: commentInfo!["description"], commentId: widget.commentId,));
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.remove_circle),
-                  title: Text('Remove Comment'),
+                  title: Text(AppLocalizations.of(context)!.rmCom),
                   onTap: () async{
                     try {
                       CommentService commentService = new CommentService();

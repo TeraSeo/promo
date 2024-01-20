@@ -6,6 +6,7 @@ import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key, required this.scrollController});
@@ -27,12 +28,7 @@ class _HomeState extends State<Home> {
 
   String? uId; 
 
-  late List<String> sortItems = [
-    "Latest",
-    "Oldest",
-    "Popular",
-    "Not popular"
-  ];
+  late List<String>? sortItems;
   String? sort = "Latest";
   bool isSortItemsLoading = true;
 
@@ -50,27 +46,26 @@ class _HomeState extends State<Home> {
     getUId();
     getPosts();
     setAudioSession();
-    setSortContents();
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   setSortContents();
-  // }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setSortContents();
+  }
 
   AudioSession? audioSession;
 
   void setSortContents() {
     setState(() {
       if (this.mounted) {
-        // sortItems = [
-        //   AppLocalizations.of(context)!.latest,
-        //   AppLocalizations.of(context)!.oldest,
-        //   AppLocalizations.of(context)!.popular,
-        //   AppLocalizations.of(context)!.notPopular,
-        // ];
-        // sort = AppLocalizations.of(context)!.latest;
+        sortItems = [
+          AppLocalizations.of(context)!.latest,
+          AppLocalizations.of(context)!.oldest,
+          AppLocalizations.of(context)!.popular,
+          AppLocalizations.of(context)!.notPopular,
+        ];
+        sort = AppLocalizations.of(context)!.latest;
         isSortItemsLoading = false;
       }
     });
@@ -156,6 +151,7 @@ class _HomeState extends State<Home> {
     return 
       isErrorOccurred? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 if (this.mounted) {
@@ -256,7 +252,7 @@ class _HomeState extends State<Home> {
                     child: DropdownButton<String>(
                       value: sort,
                       isExpanded: true,
-                      items: sortItems.map(buildMenuItem).toList(),
+                      items: sortItems!.map(buildMenuItem).toList(),
                       onChanged: (value) {
                         if (this.mounted) {
                           setState(() {
@@ -282,6 +278,7 @@ class _HomeState extends State<Home> {
               } catch(e) {
                 return Center(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         IconButton(onPressed: () {
                           if (this.mounted) {
@@ -310,6 +307,7 @@ class _HomeState extends State<Home> {
     catch(e) {
       return Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 if (this.mounted) {

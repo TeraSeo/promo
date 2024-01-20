@@ -12,6 +12,7 @@ import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OthersProfilePages extends StatefulWidget {
 
@@ -178,6 +179,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
     try {
     return isErrorOccurred? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                   setState(() {
@@ -195,7 +197,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                 });
 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) : (_isImg || _isBackground || isPostLoading || isRankingLoading)? Container(
@@ -302,6 +304,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                   } catch(e) {
                     return Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(onPressed: () {
                                 setState(() {
@@ -318,7 +321,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                               });
 
                             }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-                            Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                            Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
                           ],
                         )
                     );
@@ -356,6 +359,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
     );} catch(e) {
       return Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                   setState(() {
@@ -374,7 +378,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                 });
 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );
@@ -389,7 +393,9 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           ),
           SizedBox(height: (MediaQuery.of(context).size.height * 0.026) / 6),
           Text(
-            user["email"].toString(),
+            user["isEmailVisible"]? 
+            user["email"].toString() : 
+            "",
             style: TextStyle(color: Colors.grey),
           )
         ],

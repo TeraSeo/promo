@@ -105,5 +105,21 @@
     "post": "Posts",
     "acc": "खाता",
     "tag": "Tags",
-    "search": "कुछ भी खोजें"
+    "search": "कुछ भी खोजें",
+
+
+    "comment": "एक टिप्पणी जोड़ने...",
+    "editCom": "टिप्पणी संपादित करें",
+    "rmCom": "टिप्पणी हटाएँ",
+
+
+    "like": "like",
+    "likes": "likes",
+    "s": "s ago",
+    "m": "m ago",
+    "h": "h ago",
+    "d": "d ago",
+    "w": "w ago",
+    "month": "month ago",
+    "y": "y ago"
 }

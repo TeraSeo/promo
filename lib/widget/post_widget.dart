@@ -66,15 +66,13 @@ class _PostWidgetState extends State<PostWidget> {
     viewportFraction: 1,
   );
 
-  String timeDiff = "";
+  String? timeDiff = "";
 
   var logger = Logger();
 
   @override
   void initState() {
     super.initState();
-
-    calTimeDiff();
 
     getImages();
     if (this.mounted) {
@@ -88,39 +86,46 @@ class _PostWidgetState extends State<PostWidget> {
     getOwnerProfile();
   }
 
-  calTimeDiff() {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
+    calTimeDiff();
+  }
+
+  calTimeDiff() {
     try {
 
       DateTime current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
       DateTime posted = DateTime.fromMicrosecondsSinceEpoch(widget.posted.microsecondsSinceEpoch);
 
-      if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
-        timeDiff = current.difference(posted).inSeconds.toString() + "s ago";
+     if (current.difference(posted).inSeconds < 60 && current.difference(posted).inSeconds >= 1) {
+        timeDiff = current.difference(posted).inSeconds.toString() + AppLocalizations.of(context)!.s;
       } 
       else if (current.difference(posted).inMinutes < 60 && current.difference(posted).inMinutes >= 1) {
-        timeDiff = current.difference(posted).inMinutes.toString() + "m ago";
+        timeDiff = current.difference(posted).inMinutes.toString() + AppLocalizations.of(context)!.m;
       } 
       else if (current.difference(posted).inHours < 24 && current.difference(posted).inHours >= 1) {
-        timeDiff = current.difference(posted).inHours.toString() + "h ago";
+        timeDiff = current.difference(posted).inHours.toString() + AppLocalizations.of(context)!.h;
       }
       else if (current.difference(posted).inDays < 7 && current.difference(posted).inDays >= 1) {
-        timeDiff = current.difference(posted).inDays.toString() + "d ago";
+        timeDiff = current.difference(posted).inDays.toString() + AppLocalizations.of(context)!.d;
       }
       else if (current.difference(posted).inDays < 31 && current.difference(posted).inDays >= 7) {
-        timeDiff = (current.difference(posted).inDays ~/ 7).toInt().toString() + "w ago";
+        timeDiff = (current.difference(posted).inDays ~/ 7).toInt().toString() + AppLocalizations.of(context)!.w;
       }
       else if (current.difference(posted).inDays < 365 && current.difference(posted).inDays >= 31) {
-        timeDiff = (current.difference(posted).inDays ~/ 31).toInt().toString() + " month ago";
+        timeDiff = (current.difference(posted).inDays ~/ 31).toInt().toString() + " " + AppLocalizations.of(context)!.month;
       }
       else if (current.difference(posted).inDays >= 365) {
-        timeDiff = (current.difference(posted).inDays ~/ 365).toString() + "y ago";
+        timeDiff = (current.difference(posted).inDays ~/ 365).toString() + AppLocalizations.of(context)!.y;
       } 
       else {
         timeDiff = "now";
       }
 
     } catch(e) {
+      print(e);
       setState(() {
         if (this.mounted) {
           isErrorOccurred = true;
@@ -413,7 +418,11 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.8, fontWeight: FontWeight.bold),)
+                          Text(
+                            likes! > 1 ? 
+                            likes!.toString() + " " + AppLocalizations.of(context)!.likes : 
+                            likes!.toString() + " " +  AppLocalizations.of(context)!.like,
+                            style: TextStyle(fontSize: descriptionSize * 0.8, fontWeight: FontWeight.bold),)
                         ],
                       ),
                       Row(
@@ -446,7 +455,7 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text(timeDiff, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
+                          Text(timeDiff!, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
                         ],
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.05,),
@@ -641,7 +650,11 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text(likes!.toString() + " likes", style: TextStyle(fontSize: descriptionSize * 0.9, fontWeight: FontWeight.bold),)
+                          Text(
+                            likes! > 1 ? 
+                            likes!.toString() + " " + AppLocalizations.of(context)!.likes: 
+                            likes!.toString() + " " + AppLocalizations.of(context)!.like
+                            , style: TextStyle(fontSize: descriptionSize * 0.9, fontWeight: FontWeight.bold),)
                         ],
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.003,),
@@ -683,7 +696,7 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text(timeDiff, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
+                          Text(timeDiff!, style: TextStyle(fontSize: descriptionSize * 0.8, color: Colors.grey),)
                         ],
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.07,),
