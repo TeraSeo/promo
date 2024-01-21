@@ -1,7 +1,9 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -170,5 +172,24 @@ class HelperFunctions {
     }
 
   }
+
+  Future reportPost() async {
+    try {
+      final Email email = Email(
+        body: 'Email body',
+        subject: 'Report a post',
+        recipients: ['seotj0413@gmail.com'],
+        cc: [],
+        bcc: [],
+        attachmentPaths: [],
+        isHTML: false,
+      );
+
+      await FlutterEmailSender.send(email);
+    } catch (e) {
+      Logger logger = new Logger();
+      logger.log(Level.error, "failed to send report email\n" + e.toString());
+    }
+  } 
 
 }

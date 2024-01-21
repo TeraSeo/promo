@@ -7,8 +7,12 @@ import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/postDB_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
+import 'package:logger/logger.dart';
 
 class PostService {
+
+  Logger logger = new Logger();
+
   String? email = ""; 
   String? name = "";
 
@@ -40,6 +44,8 @@ class PostService {
         await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames);
         
       }
+
+      logger.log(Level.info,"$name added a new post");
 
       return true;
 
@@ -407,6 +413,8 @@ class PostService {
             "likes" : likes,
             "wholeLikes" : likes.length
           });
+
+          logger.log(Level.debug, "$postId's wholeLikes : " + likes.length.toString() + "$uId liked this post");
 
         });
 

@@ -803,7 +803,6 @@ class _PostWidgetState extends State<PostWidget> {
                             await postService.postRemoveLike(widget.postID!);
                             await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                           }
-                      Navigator.pop(context);
                     } catch(e) {
                       logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
                     }
@@ -833,7 +832,6 @@ class _PostWidgetState extends State<PostWidget> {
                           await postService.removeBookMark(widget.postID!, widget.uId!);
                         }
                         
-                      Navigator.pop(context);
                     } catch(e) {
                       logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
                     }
@@ -852,7 +850,7 @@ class _PostWidgetState extends State<PostWidget> {
                   leading: Icon(Icons.report, color: Colors.red,),
                   title: Text(AppLocalizations.of(context)!.report),
                   onTap: () {
-                    Navigator.pop(context);
+                    HelperFunctions().reportPost();
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
