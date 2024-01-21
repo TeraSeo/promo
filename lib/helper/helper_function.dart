@@ -173,22 +173,14 @@ class HelperFunctions {
 
   }
 
-  Future reportPost() async {
+  Future reportPost(String postId) async {
     try {
-      final Email email = Email(
-        body: 'Email body',
-        subject: 'Report a post',
-        recipients: ['seotj0413@gmail.com'],
-        cc: [],
-        bcc: [],
-        attachmentPaths: [],
-        isHTML: false,
-      );
 
-      await FlutterEmailSender.send(email);
+      
+
     } catch (e) {
       Logger logger = new Logger();
-      logger.log(Level.error, "failed to send report email\n" + e.toString());
+      logger.log(Level.error, "failed to report\n" + e.toString());
     }
   } 
 

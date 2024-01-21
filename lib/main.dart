@@ -75,7 +75,6 @@ class _MyAppState extends State<MyApp> {
       await HelperFunctions.getUserLanguageFromSF().then((value) {
         if (value!=null) {
           setState(() {
-            print(value);
             language = value;
             isLanguageLoading = false;
           });
@@ -91,6 +90,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   getLocalLanguageCode() {
+    print(window.locale.languageCode);
     if (window.locale.languageCode == "en") {
       language = "en";
     } 

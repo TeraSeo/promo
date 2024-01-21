@@ -294,7 +294,9 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
             ],
           ),
           SizedBox(height: top * 0.9,),
-          SizedBox(height: MediaQuery.of(context).size.height * 0.05 * postUser!["intro"].toString().split("\n").length,),
+          postUser!["intro"].toString().split("\n").length <= 4 ?
+          SizedBox(height: MediaQuery.of(context).size.height * 0.32) :
+          SizedBox(height: MediaQuery.of(context).size.height * 0.08 * postUser!["intro"].toString().split("\n").length,),
 
           Column(
             children: 

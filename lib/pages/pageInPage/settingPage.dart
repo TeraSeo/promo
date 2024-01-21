@@ -64,7 +64,7 @@ class _SettingPageState extends State<SettingPage> {
 
   void setLanguageText(String language) {
     try {
-      if (language == null || language == "") {
+      if (language != null && language != "") {
         setState(() {
           if (this.mounted) {
             if (language == "en") {
