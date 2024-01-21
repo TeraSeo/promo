@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -133,6 +134,41 @@ class HelperFunctions {
     } catch(e) {
       logger.log(Level.error, e.toString());
     }
+  }
+
+  String changeCategoryToEnglish(String category) {
+
+    if (category == "Nachricht" || category == "News" || category == "Noticias" || category == "Nouvelles" || category == "समाचार" || category == "ニュース" || category == "뉴스") {
+      return "News";
+    }
+    else if (category == "Unterhaltung" || category == "Entertainment" || category == "Entretenimiento" || category == "Divertissement" || category == "मनोरंजन" || category == "エンターテインメント" || category == "연예") {
+      return "Entertainment";
+    }
+    else if (category == "Sports" || category == "Deportes" || category == "Des sports" || category == "スポーツ" || category == "스포츠") {
+      return "Sports";
+    } 
+    else if (category == "Essen" || category == "Food" || category == "Alimento" || category == "Nourriture" || category == "खाना" || category == "食べ物" || category == "음식") {
+      return "Food";
+    }
+    else if (category == "Wirtschaft" || category == "Economy" || category == "Economía" || category == "Économie" || category == "अर्थव्यवस्था" || category == "経済" || category == "경제") {
+      return "Economy";
+    }
+    else if (category == "Aktie" || category == "Stock" || category == "Existencias" || category == "株式" || category == "주식") {
+      return "Stock";
+    }
+    else if (category == "Einkaufen" || category == "Shopping" || category == "Compras" || category == "ショッピング" || category == "쇼핑") {
+      return "Shopping";
+    }
+    else if (category == "Wissenschaft" || category == "Science" || category == "Ciencia" || category == "विज्ञान" || category == "科学" || category == "과학") {
+      return "Science";
+    }
+    else if (category == "Etc." || category == "その他" || category == "기타") {
+      return "Etc.";
+    }
+    else {
+      return "";
+    }
+
   }
 
 }

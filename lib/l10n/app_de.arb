@@ -81,7 +81,7 @@
     "category": "Kategorie",
     "news": "Nachricht",
     "entertainment": "Unterhaltung",
-    "sports": "Sport",
+    "sports": "Sports",
     "food": "Essen",
     "economy": "Wirtschaft",
     "stock": "Aktie",
@@ -121,5 +121,9 @@
     "d": "d ago",
     "w": "w ago",
     "month": "month ago",
-    "y": "y ago"
+    "y": "y ago",
+
+
+    "rel": "verwandt",
+    "notRel": "nicht verwandten"
 }

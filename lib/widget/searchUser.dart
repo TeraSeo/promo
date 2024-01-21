@@ -4,6 +4,7 @@ import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchUser extends StatefulWidget {
 
@@ -159,6 +160,7 @@ class _SesarchUserState extends State<SearchUser> {
 
       return isErrorOccurred? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 if (this.mounted) {
@@ -177,7 +179,7 @@ class _SesarchUserState extends State<SearchUser> {
                   await getUsersBySearchName(widget.searchedName);
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) : (isUserLoading || isProfileLoading) ? Center(child:  CircularProgressIndicator(),) :
@@ -237,8 +239,12 @@ class _SesarchUserState extends State<SearchUser> {
                                 height: MediaQuery.of(context).size.height * 0.05,
                                 decoration: BoxDecoration(
                                   color: const Color(0xff7c94b6),
-                                  image: DecorationImage(
-                                    image: NetworkImage(profileURLs[index]),
+                                  image: profileURLs[index] == "" ? DecorationImage(
+                                    image:  AssetImage("assets/blank.avif"),
+                                    fit: BoxFit.cover,
+                                  ) : 
+                                  DecorationImage(
+                                    image:  NetworkImage(profileURLs[index]),
                                     fit: BoxFit.cover,
                                   ),
                                   borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
@@ -261,6 +267,7 @@ class _SesarchUserState extends State<SearchUser> {
                       } catch(e) {
                         return Center(
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               IconButton(onPressed: () {
                                 if (this.mounted) {
@@ -279,7 +286,7 @@ class _SesarchUserState extends State<SearchUser> {
                                   await getUsersBySearchName(widget.searchedName);
                                 });
                               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-                              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
                             ],
                           )
                       );
@@ -293,6 +300,7 @@ class _SesarchUserState extends State<SearchUser> {
     } catch(e) {
       return Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 if (this.mounted) {
@@ -311,7 +319,7 @@ class _SesarchUserState extends State<SearchUser> {
                   await getUsersBySearchName(widget.searchedName);
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );

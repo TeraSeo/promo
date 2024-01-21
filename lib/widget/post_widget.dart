@@ -140,7 +140,7 @@ class _PostWidgetState extends State<PostWidget> {
     QuerySnapshot snapshot =
         await DatabaseService().gettingUserData(widget.email!);
 
-    Storage storage = new Storage();
+    Storage storage = new Storage(); 
     try {
       await storage.loadProfileFile(widget.email.toString(), snapshot.docs[0]["profilePic"].toString()).then((value) => {
         image = NetworkImage(value),

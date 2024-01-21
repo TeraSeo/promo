@@ -121,5 +121,9 @@
     "d": "d ago",
     "w": "w ago",
     "month": "month ago",
-    "y": "y ago"
+    "y": "y ago",
+
+
+    "rel": "en rapport",
+    "notRel": "pas de lien"
 }

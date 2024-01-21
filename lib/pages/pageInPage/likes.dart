@@ -328,7 +328,7 @@ class _LikesRankingState extends State<LikesRanking> {
                 nextScreen(context, OthersProfilePages(uId: uId!, postOwnerUId: uId!));
               },
               child: ListTile(
-                leading: Container(
+                leading: Container( 
                   width: MediaQuery.of(context).size.height * 0.05,
                   height: MediaQuery.of(context).size.height * 0.05,
                   decoration: BoxDecoration(

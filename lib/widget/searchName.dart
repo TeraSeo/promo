@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:logger/logger.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchName extends StatefulWidget {
 
@@ -22,11 +24,13 @@ class _SearchNameState extends State<SearchName> {
   bool isPostLoading = true;
   bool isMoreLoading = false;
   bool isLoadingMorePostsPossible = true;
+  bool isSortItemsLoading = true;
+  bool isCategoryItemsLoading = true;
 
   bool isErrorOccurred = false;
   var logger = Logger();
 
-  final categoryItems = [
+  List<String>? categoryItems = [
     '',
     'News',
     'Entertainment',
@@ -39,7 +43,7 @@ class _SearchNameState extends State<SearchName> {
     'Etc.'
   ];
 
-  final sortedBy = [
+  List<String>? sortedBy = [
     'related',
     'not related',
   ];
@@ -55,6 +59,46 @@ class _SearchNameState extends State<SearchName> {
     });
 
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setSortContents();
+    setCategoryContents();
+  }
+
+  void setSortContents() {
+    setState(() {
+      if (this.mounted) {
+        sortedBy = [
+          AppLocalizations.of(context)!.rel,
+          AppLocalizations.of(context)!.notRel,
+        ];
+        sort = AppLocalizations.of(context)!.rel;
+        isSortItemsLoading = false;
+      }
+    });
+  }
+
+  void setCategoryContents() {
+    setState(() {
+      if (this.mounted) {
+        categoryItems = [
+          '',
+          AppLocalizations.of(context)!.news,
+          AppLocalizations.of(context)!.entertainment,
+          AppLocalizations.of(context)!.sports,
+          AppLocalizations.of(context)!.food,
+          AppLocalizations.of(context)!.economy,
+          AppLocalizations.of(context)!.stock,
+          AppLocalizations.of(context)!.shopping,
+          AppLocalizations.of(context)!.science,
+          AppLocalizations.of(context)!.etc
+        ];
+        isCategoryItemsLoading = false;
+      }
+    });
   }
 
   Future getPostsBySearchName(String searchedName) async {
@@ -123,6 +167,7 @@ class _SearchNameState extends State<SearchName> {
     try {
       return isErrorOccurred ? Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 if (this.mounted) {
@@ -137,10 +182,10 @@ class _SearchNameState extends State<SearchName> {
                   await getPostsBySearchName(widget.searchedName);
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (isPostLoading) ? Center(child: CircularProgressIndicator()) : NotificationListener<ScrollNotification>(
+      ) : (isPostLoading || isSortItemsLoading || isCategoryItemsLoading) ? Center(child: CircularProgressIndicator()) : NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && isLoadingMorePostsPossible && !isMoreLoading) {
 
@@ -187,7 +232,7 @@ class _SearchNameState extends State<SearchName> {
                     child: DropdownButton<String>(
                       value: category,
                       isExpanded: true,
-                      items: categoryItems.map(buildMenuItem).toList(),
+                      items: categoryItems!.map(buildMenuItem).toList(),
                       onChanged: (value) {
                         if (this.mounted) {
                           setState(() {
@@ -209,7 +254,7 @@ class _SearchNameState extends State<SearchName> {
                     child: DropdownButton<String>(
                       value: sort,
                       isExpanded: true,
-                      items: sortedBy.map(buildMenuItem).toList(),
+                      items: sortedBy!.map(buildMenuItem).toList(),
                       onChanged: (value) async {
                         try {
                           if (this.mounted) {
@@ -237,12 +282,12 @@ class _SearchNameState extends State<SearchName> {
               Wrap(children: List.generate(posts!.length, (index) {
                 try {
 
-                  if (sort == "related") {
+                  if (sort == "related" || sort == "verwandt" || sort == "relacionada" || sort == "en rapport" || sort == "संबंधित" || sort == "関連順" || sort == "관련") {
 
                     if (category == "") {
                       return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true,);
                     } 
-                    else if (posts![index]['category'] == category) {
+                    else if (posts![index]['category'] == HelperFunctions().changeCategoryToEnglish(category)) {
                       return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true,);
                     }
                     else {
@@ -252,7 +297,7 @@ class _SearchNameState extends State<SearchName> {
                     if (category == "") {
                       return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true,);
                     } 
-                    else if (posts![posts!.length - 1 - index]['category'] == category) {
+                    else if (posts![posts!.length - 1 - index]['category'] == HelperFunctions().changeCategoryToEnglish(category)) {
                       return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true,);
                     }
                     else {
@@ -264,6 +309,7 @@ class _SearchNameState extends State<SearchName> {
                 } catch(e) {
                   return Center(
                         child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(onPressed: () {
                               if (this.mounted) {
@@ -278,7 +324,7 @@ class _SearchNameState extends State<SearchName> {
                                 await getPostsBySearchName(widget.searchedName);
                               });
                             }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-                            Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+                            Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
                           ],
                         )
                     );
@@ -291,6 +337,7 @@ class _SearchNameState extends State<SearchName> {
     } catch(e) {
       return Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(onPressed: () {
                 if (this.mounted) {
@@ -305,7 +352,7 @@ class _SearchNameState extends State<SearchName> {
                   await getPostsBySearchName(widget.searchedName);
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
-              Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
+              Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );

@@ -36,8 +36,6 @@ class _CommentCardState extends State<CommentCard> {
 
   bool isLoading = true;
 
-  String? profileUrl = "";
-  
   bool isProfileLoading = true;
 
   DateTime? current;
@@ -47,6 +45,8 @@ class _CommentCardState extends State<CommentCard> {
   int? likes;
 
   String? diff = "";
+  
+  var image;
 
   DatabaseService databaseService = new DatabaseService();
 
@@ -72,7 +72,7 @@ class _CommentCardState extends State<CommentCard> {
     Storage storage = new Storage();
     try {
       await storage.loadProfileFile(widget.email!, snapshot.docs[0]["profilePic"].toString()).then((value) => {
-        profileUrl = value,
+        image = NetworkImage(value),
         if (this.mounted) {
           setState(() {
             isProfileLoading = false;
@@ -82,6 +82,7 @@ class _CommentCardState extends State<CommentCard> {
     } catch(e) {
       if (this.mounted) {
         setState(() {
+          image = AssetImage('assets/blank.avif');
           isProfileLoading = false;
         });
       }
@@ -229,7 +230,7 @@ class _CommentCardState extends State<CommentCard> {
                   decoration: BoxDecoration(
                     color: const Color(0xff7c94b6),
                     image: DecorationImage(
-                      image: NetworkImage(profileUrl!),
+                      image: image,
                       fit: BoxFit.cover,
                     ),
                     borderRadius: BorderRadius.all(Radius.circular(MediaQuery.of(context).size.height * 0.8)),
