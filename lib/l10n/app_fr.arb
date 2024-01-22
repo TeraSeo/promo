@@ -125,5 +125,10 @@
 
 
     "rel": "en rapport",
-    "notRel": "pas de lien"
+    "notRel": "pas de lien",
+
+
+    "report": "Déclaration",
+    "reportS": "Rapport réussi!",
+    "reportF": "Échec du rapport!"
 }

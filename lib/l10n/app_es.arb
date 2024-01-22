@@ -125,5 +125,10 @@
 
 
     "rel": "relacionada",
-    "notRel": "no relacionada"
+    "notRel": "no relacionada",
+
+
+    "report": "Declaración",
+    "reportS": "Informe exitoso!",
+    "reportF": "Informe fallido!"
 }

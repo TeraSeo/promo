@@ -850,7 +850,14 @@ class _PostWidgetState extends State<PostWidget> {
                   leading: Icon(Icons.report, color: Colors.red,),
                   title: Text(AppLocalizations.of(context)!.report),
                   onTap: () {
-                    HelperFunctions().reportPost();
+                    HelperFunctions().reportPost(widget.postID!).then((value) {
+                      if (value) {
+                        showReportSucceededMsg(context);
+                      }
+                      else {
+                        showReportFailedMsg(context);
+                      }
+                    });
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
@@ -860,5 +867,47 @@ class _PostWidgetState extends State<PostWidget> {
         }
       );
     }
+  }
+
+  void showReportSucceededMsg(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.report),
+          content: Text(AppLocalizations.of(context)!.reportS),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the message box when the button is pressed
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showReportFailedMsg(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.report),
+          content: Text(AppLocalizations.of(context)!.reportF),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the message box when the button is pressed
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }

@@ -124,5 +124,10 @@
 
 
     "rel": "related",
-    "notRel": "not related"
+    "notRel": "not related",
+
+
+    "report": "Report",
+    "reportS": "Reported successfully!",
+    "reportF": "Failed to report!"
 }

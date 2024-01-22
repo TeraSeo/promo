@@ -1,11 +1,9 @@
 import 'dart:io';
-import 'dart:math';
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 class HelperFunctions {
 
@@ -173,14 +171,29 @@ class HelperFunctions {
 
   }
 
-  Future reportPost(String postId) async {
+  Future<bool> reportPost(String postId) async {
     try {
 
-      
+      final CollectionReference userCollection = 
+        FirebaseFirestore.instance.collection("report");
+
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+      String reportId = Uuid().v4();
+
+      await userCollection.doc(reportId).set({
+        "reportId": reportId,
+        "postId" : postId,
+        "reported" : tsdate
+      });
+
+      return true;
 
     } catch (e) {
       Logger logger = new Logger();
       logger.log(Level.error, "failed to report\n" + e.toString());
+      return false;
     }
   } 
 

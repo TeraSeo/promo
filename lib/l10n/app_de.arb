@@ -125,5 +125,10 @@
 
 
     "rel": "verwandt",
-    "notRel": "nicht verwandten"
+    "notRel": "nicht verwandten",
+
+
+    "report": "Bericht",
+    "reportS": "Ihr Bericht wurde erfolgreich übermittelt!",
+    "reportF": "Bericht fehlgeschlagen!"
 }
