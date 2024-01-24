@@ -64,6 +64,9 @@ class _ProfilePageState extends State<ProfilePage> {
 
   CommentService commentService = CommentService.instance;
 
+  String? preferredLanguage;
+  bool isPreferredLanguageLoading = true;
+
   var logger = Logger();
 
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
@@ -76,9 +79,21 @@ class _ProfilePageState extends State<ProfilePage> {
     Future.delayed(Duration.zero,() async {
       await getUser();
       await getPosts();
+      setPreferredLanguageLoading();
       getUserProfile();
       getUserBackground();
     });
+  }
+
+  void setPreferredLanguageLoading() {
+    HelperFunctions.getUserLanguageFromSF().then((value) {
+      preferredLanguage = value;
+      setState(() {
+        if (this.mounted) {
+          isPreferredLanguageLoading = false;
+        }
+      });
+    }); 
   }
 
   Future getUser() async {
@@ -202,6 +217,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     isPostLoading = true;
                     isUIdLoading = true;
                     isRankingLoading = true;
+                    isPreferredLanguageLoading = true;
                   }
                 });
                 Future.delayed(Duration.zero,() async {
@@ -209,6 +225,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   await getPosts();
                   getUserProfile();
                   getUserBackground();
+                  setPreferredLanguageLoading();
                 });
 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
@@ -216,7 +233,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           )
       ) :
-    (_isImg || _isBackground || isPostLoading || isUIdLoading || isRankingLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+    (_isImg || _isBackground || isPostLoading || isUIdLoading || isRankingLoading || isPreferredLanguageLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
       RefreshIndicator(
         child: SingleChildScrollView(
           controller: widget.scrollController,
@@ -308,7 +325,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   List.generate(posts!.length, (index) {
                     try {
 
-                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true,);
+                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true, preferredLanguage: preferredLanguage!,);
                     } catch(e) {
 
                       return Center(
@@ -394,6 +411,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       isPostLoading = true;
                       isUIdLoading = true;
                       isRankingLoading = true;
+                      isPreferredLanguageLoading = true;
                     });
                   }
                   Future.delayed(Duration.zero,() async {
@@ -401,6 +419,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     await getPosts();
                     getUserProfile();
                     getUserBackground();
+                    setPreferredLanguageLoading();
                   });
                 } catch(e) {
                   if (this.mounted) {

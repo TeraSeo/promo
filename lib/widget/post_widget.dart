@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
@@ -7,6 +8,7 @@ import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
+import 'package:like_app/services/translatorServer.dart';
 import 'package:like_app/widget/VideoPlayerWidget.dart';
 import 'package:like_app/widget/searchByTag.dart';
 import 'package:like_app/services/post_service.dart';
@@ -32,10 +34,11 @@ class PostWidget extends StatefulWidget {
   final bool? isBookMark;
   final List<dynamic> tags;
   final Timestamp posted;
+  final String? preferredLanguage;
 
   final bool isProfileClickable;
   
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable});
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -50,6 +53,8 @@ class _PostWidgetState extends State<PostWidget> {
   String? profileFileName = "";
   Logging logging = new Logging();
 
+  TranslatorServer translatorServer = TranslatorServer();
+
   bool isPostRemoving = false;
   
   List<String>? images;
@@ -58,6 +63,8 @@ class _PostWidgetState extends State<PostWidget> {
   bool? isBookMark;
 
   bool isErrorOccurred = false;
+
+  String? description;
 
   var image;
 
@@ -74,6 +81,7 @@ class _PostWidgetState extends State<PostWidget> {
   void initState() {
     super.initState();
 
+    description = widget.description;
     getImages();
     if (this.mounted) {
       setState(() {
@@ -323,7 +331,30 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text(widget.description.toString(), style: TextStyle(fontSize: descriptionSize),)
+                          Text.rich(
+                            TextSpan(
+                              text: "",
+                              children: <TextSpan>[
+                                TextSpan(text: description, style: TextStyle(fontSize: descriptionSize),),
+                                TextSpan(
+                                  text: '  See translation',
+                                  style: TextStyle(
+                                    color: Colors.grey, // Set the color you desire
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
+                                        setState(() {
+                                          if (this.mounted) {
+                                            description = value;
+                                          }
+                                        });
+                                      });
+                                    },
+                                ),
+                              ]
+                            )
+                          )
                         ],
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
@@ -663,7 +694,30 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text(widget.description.toString(), style: TextStyle(fontSize: descriptionSize),)
+                          Text.rich(
+                            TextSpan(
+                              text: "",
+                              children: <TextSpan>[
+                                TextSpan(text: description, style: TextStyle(fontSize: descriptionSize),),
+                                TextSpan(
+                                  text: '  See translation',
+                                  style: TextStyle(
+                                    color: Colors.grey, // Set the color you desire
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
+                                        setState(() {
+                                          if (this.mounted) {
+                                            description = value;
+                                          }
+                                        });
+                                      });
+                                    },
+                                ),
+                              ]
+                            )
+                          )
                         ],
                       ),
                       Row(

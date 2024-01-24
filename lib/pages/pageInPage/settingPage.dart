@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
-import 'package:like_app/main.dart';
 import 'package:like_app/services/userService.dart';
-import 'package:like_app/widgets/widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -64,7 +62,7 @@ class _SettingPageState extends State<SettingPage> {
 
   void setLanguageText(String language) {
     try {
-      if (language != null && language != "") {
+      if (language != "") {
         setState(() {
           if (this.mounted) {
             if (language == "en") {
@@ -229,9 +227,8 @@ class _SettingPageState extends State<SettingPage> {
     isLanguageTxtLoading = true;
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await HelperFunctions.saveUserLanguageSF(languageCode).then((value) {
-        nextScreenReplace(context, MyApp(language: languageCode));
+        HelperFunctions().restartApp();
       });
-      // setLanguageText(languageCode);
     });
   }
 

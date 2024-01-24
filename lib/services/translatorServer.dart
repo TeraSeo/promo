@@ -12,12 +12,12 @@ class TranslatorServer {
 
   final url = "http://translator-server-promo-app-env.eba-nqejxiwr.us-east-1.elasticbeanstalk.com/translator";
 
-  Future<void> translate(String description, String targetLang) async {
+  Future<String> translate(String description, String targetLang) async {
     Response response;
     Dio dio = new Dio();
     response = await dio.get(url + "?description=$description&targetLang=$targetLang");
 
-    print(response.data.toString());
+    return response.data.toString();
   }
 
 }

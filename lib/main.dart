@@ -90,7 +90,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   getLocalLanguageCode() {
-    print(window.locale.languageCode);
     if (window.locale.languageCode == "en") {
       language = "en";
     } 

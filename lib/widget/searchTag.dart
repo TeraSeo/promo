@@ -54,11 +54,15 @@ class _SearchTagState extends State<SearchTag> {
   String category = "";
   String sort = "Latest";
 
+  String? preferredLanguage;
+  bool isPreferredLanguageLoading = true;
+
   @override
   void initState() {
 
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await getTagsBySearchName(widget.searchedName);
+      setPreferredLanguageLoading();
     });
     super.initState();
   }
@@ -68,6 +72,17 @@ class _SearchTagState extends State<SearchTag> {
     super.didChangeDependencies();
     setSortContents();
     setCategoryContents();
+  }
+
+  void setPreferredLanguageLoading() {
+    HelperFunctions.getUserLanguageFromSF().then((value) {
+      preferredLanguage = value;
+      setState(() {
+        if (this.mounted) {
+          isPreferredLanguageLoading = false;
+        }
+      });
+    }); 
   }
 
   void setSortContents() {
@@ -175,17 +190,19 @@ class _SearchTagState extends State<SearchTag> {
                       isErrorOccurred = false;
                       isTagLoading = true;
                       isLoadingMoreTagsPossible = true;
+                      isPreferredLanguageLoading = true;
                     }
                   );
                 }
                 Future.delayed(Duration(seconds: 0)).then((value) async {
                   await getTagsBySearchName(widget.searchedName);
+                  setPreferredLanguageLoading();
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (isTagLoading || isSortItemsLoading || isCategoryItemsLoading) ? Center(child: CircularProgressIndicator()) :
+      ) : (isTagLoading || isSortItemsLoading || isCategoryItemsLoading || isPreferredLanguageLoading) ? Center(child: CircularProgressIndicator()) :
        NotificationListener<ScrollNotification>(
               onNotification: (scrollNotification) {
                 if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent  && isLoadingMoreTagsPossible && !isMoreLoading) {
@@ -263,11 +280,11 @@ class _SearchTagState extends State<SearchTag> {
 
                   if (sort == "Latest" || sort == "Neueste" || sort == "El último" || sort == "Dernière" || sort == "नवीनतम" || sort == "最新" || sort == "최신순") {
                     if (category == "") {
-                      return PostWidget(email: tags![index]["email"], postID: tags![index]["postId"], name: tags![index]["writer"], image: tags![index]["images"], description: tags![index]["description"],isLike: tags![index]["likes"].contains(widget.uId), likes: tags![index]["likes"].length, uId: widget.uId, postOwnerUId: tags![index]["uId"], withComment: tags![index]["withComment"], isBookMark: tags![index]["bookMarks"].contains(widget.uId), tags: tags![index]["tags"], posted: tags![index]["posted"], isProfileClickable: true,);
+                      return PostWidget(email: tags![index]["email"], postID: tags![index]["postId"], name: tags![index]["writer"], image: tags![index]["images"], description: tags![index]["description"],isLike: tags![index]["likes"].contains(widget.uId), likes: tags![index]["likes"].length, uId: widget.uId, postOwnerUId: tags![index]["uId"], withComment: tags![index]["withComment"], isBookMark: tags![index]["bookMarks"].contains(widget.uId), tags: tags![index]["tags"], posted: tags![index]["posted"], isProfileClickable: true, preferredLanguage: preferredLanguage!,);
                     } 
                     else {
                       if (tags![index]['category'] == HelperFunctions().changeCategoryToEnglish(category)) {
-                        return PostWidget(email: tags![index]["email"], postID: tags![index]["postId"], name: tags![index]["writer"], image: tags![index]["images"], description: tags![index]["description"],isLike: tags![index]["likes"].contains(widget.uId), likes: tags![index]["likes"].length, uId: widget.uId, postOwnerUId: tags![index]["uId"], withComment: tags![index]["withComment"], isBookMark: tags![index]["bookMarks"].contains(widget.uId), tags: tags![index]["tags"], posted: tags![index]["posted"], isProfileClickable: true,);
+                        return PostWidget(email: tags![index]["email"], postID: tags![index]["postId"], name: tags![index]["writer"], image: tags![index]["images"], description: tags![index]["description"],isLike: tags![index]["likes"].contains(widget.uId), likes: tags![index]["likes"].length, uId: widget.uId, postOwnerUId: tags![index]["uId"], withComment: tags![index]["withComment"], isBookMark: tags![index]["bookMarks"].contains(widget.uId), tags: tags![index]["tags"], posted: tags![index]["posted"], isProfileClickable: true, preferredLanguage: preferredLanguage!,);
                       }
                       else {
                         return Container();
@@ -276,11 +293,11 @@ class _SearchTagState extends State<SearchTag> {
                   } 
                   else if (sort == "Oldest" || sort == "Alter Schuss" || sort == "Más antiguo" || sort == "Le plus ancien" || sort == "सबसे पुराने" || sort == "最古の" || sort == "오래된순") {
                     if (category == "") {
-                      return PostWidget(email: tags![tags!.length - 1 - index]['email'], postID: tags![tags!.length - 1 - index]['postId'], name: tags![tags!.length - 1 - index]['writer'], image: tags![tags!.length - 1 - index]['images'], description: tags![tags!.length - 1 - index]['description'],isLike: tags![tags!.length - 1 - index]['likes'].contains(widget.uId), likes: tags![tags!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: tags![tags!.length - 1 - index]['uId'], withComment: tags![tags!.length - 1 - index]["withComment"], isBookMark: tags![tags!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: tags![tags!.length - 1 - index]["tags"], posted: tags![tags!.length - 1 - index]["posted"],isProfileClickable: true,);
+                      return PostWidget(email: tags![tags!.length - 1 - index]['email'], postID: tags![tags!.length - 1 - index]['postId'], name: tags![tags!.length - 1 - index]['writer'], image: tags![tags!.length - 1 - index]['images'], description: tags![tags!.length - 1 - index]['description'],isLike: tags![tags!.length - 1 - index]['likes'].contains(widget.uId), likes: tags![tags!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: tags![tags!.length - 1 - index]['uId'], withComment: tags![tags!.length - 1 - index]["withComment"], isBookMark: tags![tags!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: tags![tags!.length - 1 - index]["tags"], posted: tags![tags!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,);
                     } 
                     else {
                       if (tags![tags!.length - 1 - index]['category'] == HelperFunctions().changeCategoryToEnglish(category)) {
-                        return PostWidget(email: tags![tags!.length - 1 - index]['email'], postID: tags![tags!.length - 1 - index]['postId'], name: tags![tags!.length - 1 - index]['writer'], image: tags![tags!.length - 1 - index]['images'], description: tags![tags!.length - 1 - index]['description'],isLike: tags![tags!.length - 1 - index]['likes'].contains(widget.uId), likes: tags![tags!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: tags![tags!.length - 1 - index]['uId'], withComment: tags![tags!.length - 1 - index]["withComment"], isBookMark: tags![tags!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: tags![tags!.length - 1 - index]["tags"], posted: tags![tags!.length - 1 - index]["posted"],isProfileClickable: true,);
+                        return PostWidget(email: tags![tags!.length - 1 - index]['email'], postID: tags![tags!.length - 1 - index]['postId'], name: tags![tags!.length - 1 - index]['writer'], image: tags![tags!.length - 1 - index]['images'], description: tags![tags!.length - 1 - index]['description'],isLike: tags![tags!.length - 1 - index]['likes'].contains(widget.uId), likes: tags![tags!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: tags![tags!.length - 1 - index]['uId'], withComment: tags![tags!.length - 1 - index]["withComment"], isBookMark: tags![tags!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: tags![tags!.length - 1 - index]["tags"], posted: tags![tags!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,);
                       }
                       else {
                         return Container();
@@ -302,11 +319,13 @@ class _SearchTagState extends State<SearchTag> {
                                   isErrorOccurred = false;
                                   isTagLoading = true;
                                   isLoadingMoreTagsPossible = true;
+                                  isPreferredLanguageLoading = true;
                                 }
                               );
                             }
                             Future.delayed(Duration(seconds: 0)).then((value) async {
                               await getTagsBySearchName(widget.searchedName);
+                              setPreferredLanguageLoading();
                             });
                           }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
                           Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
@@ -330,11 +349,13 @@ class _SearchTagState extends State<SearchTag> {
                       isErrorOccurred = false;
                       isTagLoading = true;
                       isLoadingMoreTagsPossible = true;
+                      isPreferredLanguageLoading = true;
                     }
                   );
                 }
                 Future.delayed(Duration(seconds: 0)).then((value) async {
                   await getTagsBySearchName(widget.searchedName);
+                  setPreferredLanguageLoading();
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))

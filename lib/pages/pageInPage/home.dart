@@ -32,6 +32,9 @@ class _HomeState extends State<Home> {
   String? sort = "Latest";
   bool isSortItemsLoading = true;
 
+  String? preferredLanguage;
+  bool isPreferredLanguageLoading = true;
+
   PostService postService = PostService.instance;
 
   final CollectionReference postCollection = 
@@ -46,6 +49,7 @@ class _HomeState extends State<Home> {
     getUId();
     getPosts();
     setAudioSession();
+    setPreferredLanguageLoading();
   }
 
   @override
@@ -70,6 +74,17 @@ class _HomeState extends State<Home> {
       }
     });
   
+  }
+
+  void setPreferredLanguageLoading() {
+    HelperFunctions.getUserLanguageFromSF().then((value) {
+      preferredLanguage = value;
+      setState(() {
+        if (this.mounted) {
+          isPreferredLanguageLoading = false;
+        }
+      });
+    }); 
   }
 
   void setAudioSession() async {
@@ -102,6 +117,7 @@ class _HomeState extends State<Home> {
 
   void getPosts() async {
     try {
+      PostService postService = PostService.instance;
       await postService.getPosts(sort!).then((value) => {
         posts = value,
         if (this.mounted) {
@@ -159,17 +175,19 @@ class _HomeState extends State<Home> {
                     isUIdLoading = false;
                     isLoading = false;
                     isLoadingMorePostsPossible = true;
+                    isPreferredLanguageLoading = true;
                   });
                 }
                 getUId();
                 getPosts();
+                setPreferredLanguageLoading();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       ) : 
-      (isUIdLoading || isLoading || isSortItemsLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+      (isUIdLoading || isLoading || isSortItemsLoading || isPreferredLanguageLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
         NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
                   try {
@@ -272,7 +290,7 @@ class _HomeState extends State<Home> {
             List.generate(posts!.length, (index) {
               try {
                 return Container(
-                  child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true,),
+                  child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,),
                 );
               } catch(e) {
                 return Center(
@@ -285,11 +303,13 @@ class _HomeState extends State<Home> {
                               isErrorOccurred = false;
                               isUIdLoading = false;
                               isLoading = false;
+                              isLoadingMorePostsPossible = true;
+                              isPreferredLanguageLoading = true;
                             });
                           }
                           getUId();
                           getPosts();
-                          
+                          setPreferredLanguageLoading();
                         }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
                         Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
                       ],
@@ -315,10 +335,12 @@ class _HomeState extends State<Home> {
                     isUIdLoading = false;
                     isLoading = false;
                     isLoadingMorePostsPossible = true;
+                    isPreferredLanguageLoading = true;
                   });
                 }
                 getUId();
                 getPosts();
+                setPreferredLanguageLoading();
                 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))

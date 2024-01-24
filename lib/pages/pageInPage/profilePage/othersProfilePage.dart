@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
@@ -59,17 +60,32 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   var logger = Logger();
   PostService postService = PostService.instance;
 
+  String? preferredLanguage;
+  bool isPreferredLanguageLoading = true;
+
   @override
   void initState() {
     super.initState();
     try {
       getUser();
       getRanking();
+      setPreferredLanguageLoading();
     } catch(e) {
       setState(() {
         isErrorOccurred = true;
       });
     }
+  }
+
+  void setPreferredLanguageLoading() {
+    HelperFunctions.getUserLanguageFromSF().then((value) {
+      preferredLanguage = value;
+      setState(() {
+        if (this.mounted) {
+          isPreferredLanguageLoading = false;
+        }
+      });
+    }); 
   }
 
   Future getUser() async {
@@ -189,18 +205,20 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                     _isBackground = true;
                     isPostLoading = true;
                     isRankingLoading = true;
+                    isPreferredLanguageLoading = true;
                   }
                 });
                 Future.delayed(Duration.zero,() async {
                   await getUser();
                   getRanking();
+                  setPreferredLanguageLoading();
                 });
 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (_isImg || _isBackground || isPostLoading || isRankingLoading)? Container(
+      ) : (_isImg || _isBackground || isPostLoading || isRankingLoading || isPreferredLanguageLoading)? Container(
         color: Colors.white,
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -302,7 +320,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
             children: 
                 List.generate(posts!.length, (index) {
                   try {
-                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: false,);
+                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: false, preferredLanguage: preferredLanguage!);
                   } catch(e) {
                     return Center(
                         child: Column(
@@ -343,12 +361,14 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           _isBackground = true;
           isPostLoading = true;
           isRankingLoading = true;
+          isPreferredLanguageLoading = true;
         });
       }
 
       try {
         getUser();
         getRanking();
+        setPreferredLanguageLoading();
       } catch(e) {
         setState(() {
           isErrorOccurred = true;

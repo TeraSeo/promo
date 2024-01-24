@@ -52,6 +52,9 @@ class _SearchNameState extends State<SearchName> {
   String category = "";
   String sort = "related";
 
+  String? preferredLanguage;
+  bool isPreferredLanguageLoading = true;
+
   @override
   void initState() {
 
@@ -67,6 +70,18 @@ class _SearchNameState extends State<SearchName> {
     super.didChangeDependencies();
     setSortContents();
     setCategoryContents();
+    setPreferredLanguageLoading();
+  }
+
+  void setPreferredLanguageLoading() {
+    HelperFunctions.getUserLanguageFromSF().then((value) {
+      preferredLanguage = value;
+      setState(() {
+        if (this.mounted) {
+          isPreferredLanguageLoading = false;
+        }
+      });
+    }); 
   }
 
   void setSortContents() {
@@ -173,17 +188,19 @@ class _SearchNameState extends State<SearchName> {
                       isErrorOccurred = false;
                       isPostLoading = true;
                       isLoadingMorePostsPossible = true;
+                      isPreferredLanguageLoading = true;
                     }
                   );
                 }
                 Future.delayed(Duration(seconds: 0)).then((value) async {
                   await getPostsBySearchName(widget.searchedName);
+                  setPreferredLanguageLoading();
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (isPostLoading || isSortItemsLoading || isCategoryItemsLoading) ? Center(child: CircularProgressIndicator()) : NotificationListener<ScrollNotification>(
+      ) : (isPostLoading || isSortItemsLoading || isCategoryItemsLoading || isPreferredLanguageLoading) ? Center(child: CircularProgressIndicator()) : NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && isLoadingMorePostsPossible && !isMoreLoading) {
 
@@ -283,20 +300,20 @@ class _SearchNameState extends State<SearchName> {
                   if (sort == "related" || sort == "verwandt" || sort == "relacionada" || sort == "en rapport" || sort == "संबंधित" || sort == "関連順" || sort == "관련") {
 
                     if (category == "") {
-                      return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true,);
+                      return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,);
                     } 
                     else if (posts![index]['category'] == HelperFunctions().changeCategoryToEnglish(category)) {
-                      return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true,);
+                      return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,);
                     }
                     else {
                       return Container();
                     }
                   } else {
                     if (category == "") {
-                      return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true,);
+                      return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!);
                     } 
                     else if (posts![posts!.length - 1 - index]['category'] == HelperFunctions().changeCategoryToEnglish(category)) {
-                      return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true,);
+                      return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!);
                     }
                     else {
                       return Container();
@@ -315,11 +332,13 @@ class _SearchNameState extends State<SearchName> {
                                     isErrorOccurred = false;
                                     isPostLoading = true;
                                     isLoadingMorePostsPossible = true;
+                                    isPreferredLanguageLoading = true;
                                   }
                                 );
                               }
                               Future.delayed(Duration(seconds: 0)).then((value) async {
                                 await getPostsBySearchName(widget.searchedName);
+                                setPreferredLanguageLoading();
                               });
                             }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
                             Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
@@ -343,11 +362,13 @@ class _SearchNameState extends State<SearchName> {
                       isErrorOccurred = false;
                       isPostLoading = true;
                       isLoadingMorePostsPossible = true;
+                      isPreferredLanguageLoading = true;
                     }
                   );
                 }
                 Future.delayed(Duration(seconds: 0)).then((value) async {
                   await getPostsBySearchName(widget.searchedName);
+                  setPreferredLanguageLoading();
                 });
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))

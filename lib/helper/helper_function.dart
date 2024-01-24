@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/services.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -103,7 +104,17 @@ class HelperFunctions {
       throw Exception('Invalid value type for key $userEmailKey');
     }
   }
-
+  
+  void restartApp() {
+    if (Platform.isAndroid) {
+      // For Android
+      SystemNavigator.pop();
+    } else if (Platform.isIOS) {
+      // For iOS
+      exit(0);
+    }
+  }
+  
   bool isVideoFile(File file) {
     String extension = file.path.split('.').last.toLowerCase();
 
