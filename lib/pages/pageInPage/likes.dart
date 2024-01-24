@@ -72,7 +72,7 @@ class _LikesRankingState extends State<LikesRanking> {
   }
 
   getMyProfile(String email, String profile) async {
-    Storage storage = new Storage();
+    Storage storage = Storage.instance;
 
     try {
       await storage.loadProfileFile(email, profile).then((value) => {
@@ -133,7 +133,7 @@ class _LikesRankingState extends State<LikesRanking> {
 
   getProfileURL(String email, String profile, int index) async {
 
-    Storage storage = new Storage();
+    Storage storage = Storage.instance;
 
     try {
       await storage.loadProfileFile(email, profile).then((value) => {

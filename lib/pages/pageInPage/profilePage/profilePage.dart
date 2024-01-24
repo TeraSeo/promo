@@ -33,8 +33,8 @@ class _ProfilePageState extends State<ProfilePage> {
   DocumentSnapshot<Map<String, dynamic>>? postUser;
 
   DatabaseService databaseService = new DatabaseService();
-  Storage storage = new Storage();
-  PostService postService = new PostService();
+  Storage storage = Storage.instance;
+  PostService postService = PostService.instance;
 
   bool _isImg = true;
   bool _isBackground = true;
@@ -62,7 +62,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<DocumentSnapshot<Map<String, dynamic>>>? posts;
 
-  CommentService commentService = new CommentService();
+  CommentService commentService = CommentService.instance;
 
   var logger = Logger();
 
@@ -121,7 +121,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   getPosts() async {
     try {
-    PostService postService = new PostService();
      await postService.getProfilePosts(postUser!["posts"]).then((value) => {
       posts = value,
       if (this.mounted) {

@@ -13,7 +13,7 @@ class DatabaseService {
   final CollectionReference userCollection = 
         FirebaseFirestore.instance.collection("user");
 
-  Storage storage = new Storage();
+  Storage storage = Storage.instance;
 
   // updating the user data
   Future savingeUserData(String name, String email) async {

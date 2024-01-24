@@ -36,6 +36,7 @@ dependencies:
   chewie: ^1.7.4
   cloud_firestore: ^4.6.0
   cupertino_icons: ^1.0.2
+  dio: ^5.4.0
   dot_navigation_bar: ^1.0.1+4
   email_otp: ^2.0.1
   firebase_auth: ^4.5.0

@@ -11,6 +11,12 @@ import 'package:logger/logger.dart';
 
 class PostService {
 
+  PostService._privateConstructor();
+
+  static final PostService _instance = PostService._privateConstructor();
+
+  static PostService get instance => _instance;
+
   Logger logger = new Logger();
 
   String? email = ""; 
@@ -74,7 +80,7 @@ class PostService {
       }
 
       if (filePaths.length == fileNames.length) {
-        Storage storage = new Storage();
+        Storage storage = Storage.instance;
         await storage.deletePostImages(email, postId);
         for (int i = 0; i < filePaths.length; i++) {
           await storage.uploadPostImage(filePaths[i], fileNames[i], email, postId);
@@ -103,8 +109,7 @@ class PostService {
     try {
 
       final post = FirebaseFirestore.instance.collection("post").doc(postId);
-      CommentService commentService = new CommentService();
-      
+      CommentService commentService = CommentService.instance;
 
       await post.get().then((value) =>  {
         databaseService.removePostInUser(value["likes"].length, value["uId"], postId),
@@ -124,7 +129,7 @@ class PostService {
 
       });
 
-      Storage storage = new Storage();
+      Storage storage = Storage.instance;
       await storage.deletePostImages(email, postId);
 
       await post.delete();

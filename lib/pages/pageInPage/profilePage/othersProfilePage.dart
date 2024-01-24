@@ -30,7 +30,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   DocumentSnapshot<Map<String, dynamic>>? postUser;
 
   DatabaseService databaseService = new DatabaseService();
-  Storage storage = new Storage();
+  Storage storage = Storage.instance;
 
   bool _isImg = true;
   bool _isBackground = true;
@@ -39,7 +39,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   bool isErrorOccurred = false;
   bool isRankingLoading = true;
 
-  CommentService commentService = new CommentService();
+  CommentService commentService = CommentService.instance;
 
   int likes = 0;
 
@@ -57,6 +57,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   List<DocumentSnapshot<Map<String, dynamic>>>? posts;
 
   var logger = Logger();
+  PostService postService = PostService.instance;
 
   @override
   void initState() {
@@ -107,7 +108,6 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
   getPosts() async {
     try {
-      PostService postService = new PostService();
       await postService.getProfilePosts(postUser!["posts"]).then((value) => {
         posts = value,
         if (this.mounted) {

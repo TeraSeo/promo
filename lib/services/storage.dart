@@ -7,6 +7,12 @@ class Storage {
   final firebase_storage.FirebaseStorage storage = 
     firebase_storage.FirebaseStorage.instance;
 
+  Storage._privateConstructor();
+
+  static final Storage _instance = Storage._privateConstructor();
+
+  static Storage get instance => _instance;
+
   Future<void> uploadProfileImage(String filePath, String fileName, String email) async {
     File file = File(filePath);
 

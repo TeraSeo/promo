@@ -320,7 +320,7 @@ class _PostState extends State<Post> {
                           postAble = false;
                         });
                         tags = _controllerTag.getTags!;
-                        PostService postService = new PostService();
+                        PostService postService = PostService.instance;
                         await postService.post(widget.images, description, category, tags, withComment);
                         Future.delayed(Duration(seconds: 2)).then((value) => {
                           nextScreenReplace(context, HomePage(pageIndex: 0,))

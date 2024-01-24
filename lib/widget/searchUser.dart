@@ -134,7 +134,7 @@ class _SesarchUserState extends State<SearchUser> {
 
   getProfileURL(String email, String profile, int index) async {
 
-    Storage storage = new Storage();
+    Storage storage = Storage.instance;
 
     try {
       await storage.loadProfileFile(email, profile).then((value) => {

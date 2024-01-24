@@ -140,7 +140,7 @@ class _PostWidgetState extends State<PostWidget> {
     QuerySnapshot snapshot =
         await DatabaseService().gettingUserData(widget.email!);
 
-    Storage storage = new Storage(); 
+    Storage storage = Storage.instance;
     try {
       await storage.loadProfileFile(widget.email.toString(), snapshot.docs[0]["profilePic"].toString()).then((value) => {
         image = NetworkImage(value),
@@ -163,7 +163,7 @@ class _PostWidgetState extends State<PostWidget> {
 
   void getImages() async {
     try {
-      Storage storage = new Storage();
+      Storage storage = Storage.instance;
       await storage.loadPostImages(widget.email!, widget.postID!, widget.image!).then((value) => {
         images = value,
         if (this.mounted) {
@@ -186,7 +186,7 @@ class _PostWidgetState extends State<PostWidget> {
     super.dispose();
   }
 
-  PostService postService = new PostService();
+  PostService postService = PostService.instance;
 
   @override
   Widget build(BuildContext context) {

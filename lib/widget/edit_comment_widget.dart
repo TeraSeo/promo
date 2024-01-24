@@ -32,6 +32,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
   bool isErrorOccurred = false;
 
   var logger = Logger();
+  CommentService commentService = CommentService.instance;
 
   @override
   void initState() {
@@ -45,7 +46,6 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
 
   getComments() async {
     try {
-      CommentService commentService = new CommentService(postId: widget.postId);
       await commentService.getComments(widget.postId!).then((value) => {
         comments = value,
         if (this.mounted) {
@@ -67,8 +67,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
 
   getMoreComments() async {
     try {
-      CommentService commentService = new CommentService(postId: widget.postId);
-      await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!).then((value) => {
+      await commentService.getMoreComments(DateTime.fromMicrosecondsSinceEpoch(comments![comments!.length - 1]["posted"].microsecondsSinceEpoch) ,widget.postId!, widget.postId!).then((value) => {
         for (int i = 0; i < value.length; i++) {
           setState(() {
             comments![comments!.length] = value[i];
@@ -120,7 +119,6 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
   @override
   Widget build(BuildContext context) {
 
-    bool isTablet;
     double logoSize; 
     double commentPadLeft;
     double commentPadTop;
@@ -132,7 +130,6 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
     double radiusWidth;
 
     if(Device.get().isTablet) {
-      isTablet = true;
       logoSize = MediaQuery.of(context).size.width * 0.035;
       commentPadLeft = MediaQuery.of(context).size.width * 0.035 * 0.6;
       commentPadRight = MediaQuery.of(context).size.width * 0.035 * 0.6 * 0.8;
@@ -145,7 +142,6 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
 
     }
     else {
-      isTablet = false;
       logoSize = MediaQuery.of(context).size.width * 0.053;
       commentPadLeft = MediaQuery.of(context).size.width * 0.03;
       commentPadRight = MediaQuery.of(context).size.width * 0.035;
@@ -177,14 +173,20 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : isLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Scaffold(
+      ) : isLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : WillPopScope(
+  onWillPop: () async => false,
+  child : Scaffold(
       appBar: AppBar(
         toolbarHeight: MediaQuery.of(context).size.height * 0.07,
         backgroundColor: Constants().primaryColor,
         title: Text("Comments", style: TextStyle(fontSize: barFontSize),),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white, size: iconSize,),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () => {
+            if (!isCommentSubmitting) {
+              Navigator.of(context).pop()
+            }
+          }
         ), 
       ),
       body: 
@@ -284,10 +286,9 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
                                   setState(() {
                                   isCommentSubmitting = true;
                                   });
-                                  CommentService commnetService = new CommentService(description: content);
-                                  await commnetService.updateComment(widget.commentId!);
+                                  await commentService.updateComment(widget.commentId!, content!);
                                   Future.delayed(Duration(seconds: 1)).then((value) => {
-                                    nextScreen(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
+                                    nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
                                   });
                                 }
                               }
@@ -311,7 +312,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
               ),
             ],
           ),
-        )),
+        )),)
     );
 
     } catch(e) {

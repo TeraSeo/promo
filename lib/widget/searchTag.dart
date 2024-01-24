@@ -27,6 +27,7 @@ class _SearchTagState extends State<SearchTag> {
 
   bool isErrorOccurred = false;
   var logger = Logger();
+  PostService postService = PostService.instance;
 
   String? userName;
 
@@ -105,7 +106,6 @@ class _SearchTagState extends State<SearchTag> {
 
   Future getTagsBySearchName(String searchedName) async {
     try {
-      PostService postService = new PostService();
       await postService.getTagsBySearchName(searchedName).then((value) => {
         tags = value,
         if (this.mounted) {
@@ -127,8 +127,6 @@ class _SearchTagState extends State<SearchTag> {
 
   Future getMoreTagsBySearchName(String searchedName, String postNumber) async {
     try {
-
-      PostService postService = new PostService();
       await postService.loadMoreTagsBySearchName(searchedName, postNumber).then((value) => {
         if (value.length == 0) {
           if (this.mounted) {

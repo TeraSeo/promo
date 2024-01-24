@@ -29,7 +29,7 @@ class EditPost extends StatefulWidget {
 class _EditPostState extends State<EditPost> {
 
   DatabaseService? databaseService;
-  PostService postService = new PostService();
+  PostService postService = PostService.instance;
   DocumentSnapshot<Map<String, dynamic>>? post;
   bool isPostLoading = true;
 
@@ -145,7 +145,11 @@ class _EditPostState extends State<EditPost> {
       ),
     ],
   ),
-) : isPostLoading? Center(child: CircularProgressIndicator(color: Colors.white,),) : !isPostAble? Center(child: CircularProgressIndicator(color: Colors.white,),) : AbsorbPointer(
+) : isPostLoading? WillPopScope(
+  onWillPop: () async => false,
+  child: Center(child: CircularProgressIndicator(color: Colors.white,),)) : !isPostAble? WillPopScope(
+  onWillPop: () async => false,
+  child: Center(child: CircularProgressIndicator(color: Colors.white,),)) : AbsorbPointer(
          absorbing: isImagesLoading || !isPostAble,
         child: Scaffold(
       appBar: AppBar(
@@ -416,8 +420,6 @@ class _EditPostState extends State<EditPost> {
                           }
                         });
                         tags = _controllerTag.getTags!;
-
-                        PostService postService = new PostService();
                         if (!selectedImages.isEmpty) {
                           await postService.updatePost(selectedImages, description, category, tags, withComment, widget.postId, widget.email);
                           nextScreen(context, HomePage(pageIndex: 0,));

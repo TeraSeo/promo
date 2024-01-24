@@ -32,7 +32,7 @@ class _HomeState extends State<Home> {
   String? sort = "Latest";
   bool isSortItemsLoading = true;
 
-  PostService postService = new PostService();
+  PostService postService = PostService.instance;
 
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("post");
@@ -102,7 +102,6 @@ class _HomeState extends State<Home> {
 
   void getPosts() async {
     try {
-      PostService postService = new PostService();
       await postService.getPosts(sort!).then((value) => {
         posts = value,
         if (this.mounted) {

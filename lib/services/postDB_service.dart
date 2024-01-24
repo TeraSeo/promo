@@ -33,7 +33,7 @@ class PostDBService {
     });  // collection 크기 받기
     String postId = Uuid().v4();
 
-    Storage storage = new Storage();
+    Storage storage = Storage.instance;
     for (int i = 0; i < filePaths.length; i++) {
       storage.uploadPostImage(filePaths[i], fileNames[i], email!, postId);
     }  

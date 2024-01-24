@@ -29,6 +29,7 @@ class _SearchNameState extends State<SearchName> {
 
   bool isErrorOccurred = false;
   var logger = Logger();
+  PostService postService = PostService.instance;
 
   List<String>? categoryItems = [
     '',
@@ -103,7 +104,6 @@ class _SearchNameState extends State<SearchName> {
 
   Future getPostsBySearchName(String searchedName) async {
     try {
-      PostService postService = new PostService();
       await postService.getPostsBySearchName(searchedName).then((value) => {
         posts = value,
         if (this.mounted) {
@@ -125,8 +125,6 @@ class _SearchNameState extends State<SearchName> {
 
   Future getMorePostsBySearchName(String searchedName, String postId, String searchedTxt) async {
     try {
-
-      PostService postService = new PostService();
       await postService.loadMorePostsPostsBySearchName(searchedName, postId, searchedTxt).then((value) => {
         if (value.length == 0) {
           if (this.mounted) {

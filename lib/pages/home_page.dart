@@ -153,9 +153,7 @@ class _HomePageState extends State<HomePage> {
       absorbing: isImagesLoading,
       child:
         WillPopScope(
-        onWillPop: () async {
-          return Future.value(false);
-        },
+        onWillPop: () async => false,
         child: isErrorOccurred ? Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,

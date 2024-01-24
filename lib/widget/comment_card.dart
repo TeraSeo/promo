@@ -49,6 +49,7 @@ class _CommentCardState extends State<CommentCard> {
   var image;
 
   DatabaseService databaseService = new DatabaseService();
+  CommentService commentService = CommentService.instance;
 
   var logger = Logger();
   bool isErrorOccurred = false;
@@ -69,7 +70,7 @@ class _CommentCardState extends State<CommentCard> {
     QuerySnapshot snapshot =
         await DatabaseService().gettingUserData(widget.email!);
 
-    Storage storage = new Storage();
+    Storage storage = Storage.instance;
     try {
       await storage.loadProfileFile(widget.email!, snapshot.docs[0]["profilePic"].toString()).then((value) => {
         image = NetworkImage(value),
@@ -93,8 +94,7 @@ class _CommentCardState extends State<CommentCard> {
   getCommentInfo() async {
     try {
 
-      CommentService commentService = new CommentService(commentId: widget.commentId);
-      await commentService.getCommentInfo().then((value) => {
+      await commentService.getCommentInfo(widget.commentId!).then((value) => {
         commentInfo = value,
         if (mounted) {
           setState(() {
@@ -169,8 +169,6 @@ class _CommentCardState extends State<CommentCard> {
     double radiusWidth;
     double iconSize;
 
-    CommentService commentService = new CommentService(commentId: widget.commentId);
-
     if(Device.get().isTablet) {
       fontSize = MediaQuery.of(context).size.width * 0.026;
       radiusWidth = MediaQuery.of(context).size.width * 0.026;
@@ -192,11 +190,11 @@ class _CommentCardState extends State<CommentCard> {
               if (isCommentLike!) {
                 isCommentLike = false;
                 likes = likes! - 1;
-                commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
+                commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
               } else {
                 isCommentLike = true;
                 likes = likes! + 1;
-                commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
+                commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
               }
             });
 
@@ -299,12 +297,12 @@ class _CommentCardState extends State<CommentCard> {
                       if (isCommentLike!) {
                         isCommentLike = false;
                         likes = likes! - 1;
-                        commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
+                        commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
                         
                       } else {
                         isCommentLike = true;
                         likes = likes! + 1;
-                        commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
+                        commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
                       }
                     });
 
@@ -332,11 +330,11 @@ class _CommentCardState extends State<CommentCard> {
                       if (isCommentLike!) {
                         isCommentLike = false;
                         likes = likes! - 1;
-                        commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
+                        commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
                       } else {
                         isCommentLike = true;
                         likes = likes! + 1;
-                        commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!);
+                        commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
                       }
                     });
 
@@ -378,6 +376,7 @@ class _CommentCardState extends State<CommentCard> {
                   leading: Icon(Icons.edit),
                   title: Text(AppLocalizations.of(context)!.editCom),
                   onTap: () {
+                    Navigator.pop(context);
                     nextScreenReplace(context, EditCommentWidget(postId: widget.postId, uId: widget.uId, description: commentInfo!["description"], commentId: widget.commentId,));
                   },
                 ),
@@ -386,8 +385,8 @@ class _CommentCardState extends State<CommentCard> {
                   title: Text(AppLocalizations.of(context)!.rmCom),
                   onTap: () async{
                     try {
-                      CommentService commentService = new CommentService();
                       await commentService.removeComment(widget.commentId!, widget.postId!).then((value) {
+                        Navigator.pop(context);
                         nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,));
                       });
                     } catch(e) {

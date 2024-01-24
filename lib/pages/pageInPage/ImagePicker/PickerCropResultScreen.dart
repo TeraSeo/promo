@@ -68,11 +68,13 @@ class CropResultView extends StatefulWidget {
 
 class _CropResultViewState extends State<CropResultView> {
   bool isProfileChanging = false;
-  Storage storage = Storage();
+  Storage storage = Storage.instance;
   DatabaseService databaseService = DatabaseService();
 
   Widget _buildTitle(String title, int length) {
-    return SizedBox(
+    return WillPopScope(
+  onWillPop: () async => !isProfileChanging,
+  child: SizedBox(
       height: 20.0,
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -94,7 +96,7 @@ class _CropResultViewState extends State<CropResultView> {
             ),
           ),
         ],
-      ),
+      ),)
     );
   }
 
