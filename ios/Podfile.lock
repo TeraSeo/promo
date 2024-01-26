@@ -982,7 +982,7 @@ SPEC CHECKSUMS:
   AppAuth: 3bb1d1cd9340bd09f5ed189fb00b1cc28e1e8570
   audio_session: 4f3e461722055d21515cf3261b64c973c062f345
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
-  camera_avfoundation: 8b8d780bcfb6a4a02b0fbe2b4bd17b5b71946e68
+  camera_avfoundation: 759172d1a77ae7be0de08fc104cfb79738b8a59e
   cloud_firestore: 73eece22ce25a0565238c283ee9990f1618d8063
   Firebase: 414ad272f8d02dfbf12662a9d43f4bba9bec2a06
   firebase_auth: 8e9ec02991ca4659111cc671c84d0c010b6bfb26
@@ -1025,7 +1025,7 @@ SPEC CHECKSUMS:
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
   share_plus: c3fef564749587fc939ef86ffb283ceac0baf9f5
   shared_preferences_foundation: b4c3b4cddf1c21f02770737f147a3f5da9d39695
-  sqflite: 31f7eba61e3074736dff8807a9b41581e4f7f15a
+  sqflite: 50a33e1d72bd59ee092a519a35d107502757ebed
   TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   video_player_avfoundation: 02011213dab73ae3687df27ce441fbbcc82b5579
   wakelock_plus: 8b09852c8876491e4b6d179e17dfe2a0b5f60d47

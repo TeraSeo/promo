@@ -151,15 +151,15 @@ class _SettingPageState extends State<SettingPage> {
                 leading: Icon(Icons.format_paint),
                 title: Text('Enable custom theme'),
               ),
-              SettingsTile.switchTile(
-                onToggle: (value) {
-                  isEmailVisible = !isEmailVisible!;
-                  _changeEmailVisibility(value);
-                },
-                initialValue: isEmailVisible,
-                leading: Icon(Icons.email),
-                title: Text('Show email in profile page'),
-              ),
+              // SettingsTile.switchTile(
+              //   onToggle: (value) {
+              //     isEmailVisible = !isEmailVisible!;
+              //     _changeEmailVisibility(value);
+              //   },
+              //   initialValue: isEmailVisible,
+              //   leading: Icon(Icons.email),
+              //   title: Text('Show email in profile page'),
+              // ),
             ],
           ),
         ],
@@ -177,43 +177,43 @@ class _SettingPageState extends State<SettingPage> {
               ListTile(
                 title: Text('English'),
                 onTap: () {
-                  _changeLanguage('en');
+                  showYesNoBox(context, 'en');
                 },
               ),
               ListTile(
                 title: Text('French'),
                 onTap: () {
-                  _changeLanguage('fr');
+                  showYesNoBox(context, 'fr');
                 },
               ),
               ListTile(
                 title: Text('German'),
                 onTap: () {
-                  _changeLanguage('de');
+                  showYesNoBox(context, 'de');
                 },
               ),
               ListTile(
                 title: Text('Hindi'),
                 onTap: () {
-                  _changeLanguage('hi');
+                  showYesNoBox(context, 'hi');
                 },
               ),
               ListTile(
                 title: Text('Japanese'),
                 onTap: () {
-                  _changeLanguage('ja');
+                  showYesNoBox(context, 'ja');
                 },
               ),
               ListTile(
                 title: Text('Korean'),
                 onTap: () {
-                  _changeLanguage('ko');
+                  showYesNoBox(context, 'ko');
                 },
               ),
               ListTile(
                 title: Text('Spanish'),
                 onTap: () {
-                  _changeLanguage('es');
+                  showYesNoBox(context, 'es');
                 },
               ),
             ],
@@ -227,9 +227,41 @@ class _SettingPageState extends State<SettingPage> {
     isLanguageTxtLoading = true;
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await HelperFunctions.saveUserLanguageSF(languageCode).then((value) {
+        setState(() {
+          if (this.mounted) {
+            isLanguageTxtLoading = false;
+          }
+        });
         HelperFunctions().restartApp();
       });
     });
+  }
+
+  void showYesNoBox(BuildContext context, String languageCode) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.languageChange),
+          content: Text(AppLocalizations.of(context)!.clickYes),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+                _changeLanguage(languageCode);
+              },
+              child: Text(AppLocalizations.of(context)!.yes),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text(AppLocalizations.of(context)!.no),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _changeEmailVisibility(bool isEmailVisible) {

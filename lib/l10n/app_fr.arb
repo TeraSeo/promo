@@ -130,5 +130,11 @@
 
     "report": "Déclaration",
     "reportS": "Rapport réussi!",
-    "reportF": "Échec du rapport!"
+    "reportF": "Échec du rapport!",
+
+
+    "languageChange": "Changement de langue",
+    "yes": "Oui",
+    "no": "Non",
+    "clickYes": "Cliquez sur 'Oui' et exécutez à nouveau cette application pour changer la langue."
 }

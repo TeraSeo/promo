@@ -3,45 +3,45 @@
     "bookmarkThisPost": "북마크",
     "aboutThisAccount": "계정 보기",
     "report": "신고",
-    "editThisPost": "계시물 수정",
-    "removeThisPost": "계시물 삭제",
+    "editThisPost": "게시물 수정",
+    "removeThisPost": "게시물 삭제",
 
 
     "latest": "최신순",
-    "oldest": "오래된순",
+    "oldest": "오래된 순",
     "popular": "인기순",
-    "notPopular": "비인기순",
+    "notPopular": "비인기 순",
 
 
     "searchAnything": "검색",
 
 
     "oTPVerification": "OTP 인증",
-    "threeMinutes": "OTP코드는 3분동안만 유효합니다",
+    "threeMinutes": "OTP 코드는 3분 동안만 유효합니다",
     "verify": "인증",
     "codeLate": "아직 코드를 못받으셨나요?",
-    "resend": "코드 다시보내기",
+    "resend": "코드 다시 보내기",
     "backLogin": "로그인 페이지로 가기",
     "otpVerified": "OTP가 인증되었습니다",
-    "invalidOtp": "유효하지않은 OTP",
+    "invalidOtp": "유효하지 않은 OTP",
     "otpSent": "OTP가 보내졌습니다",
-    "otpFailed": "OTP를 보내는데 실패했습니다",
+    "otpFailed": "OTP를 보내는 데 실패했습니다",
     "verificationFailed": "인증 실패",
 
 
-    "loadFailed": "불러오는데 실패했습니다",
-    "enterEmail": "유효한 이메일 주소를 입력해주세요",
+    "loadFailed": "불러오는 데 실패했습니다",
+    "enterEmail": "유효한 이메일 주소를 입력해 주세요",
     "enterPassword": "패스워드는 적어도 6자 이상이어야 합니다.",
     "login": "로그인",
     "accountInExist": "계정이 없으신가요? ",
     "goToRegisterPage": "회원가입",
-    "existing": "계정이름이 존재합니다!",
+    "existing": "계정 이름이 존재합니다!",
     "loginFailed": "이메일 혹은 비밀번호가 일치하지 않습니다",
 
 
     "email": "이메일",
     "accoutnName": "계정 이름",
-    "nameEmpty": "계정 이름을 입력해주세요",
+    "nameEmpty": "계정 이름을 입력해 주세요",
     "passWordCheck": "비밀번호 확인",
     "password": "비밀번호",
     "pwNotSame": "비밀번호가 같아야 합니다",
@@ -130,5 +130,11 @@
 
     "report": "신고",
     "reportS": "신고가 성공적으로 접수 됐습니다!",
-    "reportF": "신고에 실패했습니다!"
+    "reportF": "신고에 실패했습니다!",
+
+
+    "languageChange": "언어 변경",
+    "yes": "네",
+    "no": "아니요",
+    "clickYes": "언어 변경하시려면, '예' 버튼을 눌러주세요, 그 후에 이 앱을 다시 실행해 주세요"
 }

@@ -513,74 +513,72 @@ class _HomePageState extends State<HomePage> {
             },
           );
         } 
-        else if (status.isPermanentlyDenied) {
+        else {
           openAppSettings();
         }
-        else {
-          await Permission.photos.request().then((value) async {
-          if (value.isGranted) {
+        // else {
+        //   await Permission.photos.request().then((value) async {
+        //   if (value.isGranted) {
 
-            final pickedFile = await picker.pickMultipleMedia(
-            imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
-            List<XFile> xfilePick = pickedFile;
-            setState(
-              () {
-                if (xfilePick.isNotEmpty) {
-                  if (xfilePick.length > 8) {
-                    final snackBar = SnackBar(
-                      content: const Text('Until 8 images can be posted!'),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    for (var i = 0; i < 8; i++) {
-                      if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                        if (getFileSize(xfilePick[i]) > 40) {
-                          final snackBar = SnackBar(
-                            content: const Text('File size is so large!'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        } else {
-                          print("path" + xfilePick[i].path);
-                          selectedImages.add(File(xfilePick[i].path));
-                        }
-                      }
-                      else {
-                        selectedImages.add(File(xfilePick[i].path));
-                      }
+        //     final pickedFile = await picker.pickMultipleMedia(
+        //     imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
+        //     List<XFile> xfilePick = pickedFile;
+        //     setState(
+        //       () {
+        //         if (xfilePick.isNotEmpty) {
+        //           if (xfilePick.length > 8) {
+        //             final snackBar = SnackBar(
+        //               content: const Text('Until 8 images can be posted!'),
+        //             );
+        //             ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        //             for (var i = 0; i < 8; i++) {
+        //               if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+        //                 if (getFileSize(xfilePick[i]) > 40) {
+        //                   final snackBar = SnackBar(
+        //                     content: const Text('File size is so large!'),
+        //                   );
+        //                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        //                 } else {
+        //                   selectedImages.add(File(xfilePick[i].path));
+        //                 }
+        //               }
+        //               else {
+        //                 selectedImages.add(File(xfilePick[i].path));
+        //               }
                       
-                    }
-                  }
-                  else {
-                    for (var i = 0; i < xfilePick.length; i++) {
-                      if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                        if (getFileSize(xfilePick[i]) > 40) {
-                          final snackBar = SnackBar(
-                            content: const Text('File size is so large!'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        } else {
-                          print("path" + xfilePick[i].path);
-                          selectedImages.add(File(xfilePick[i].path));
-                        }
-                      }
-                      else {
-                        selectedImages.add(File(xfilePick[i].path));
-                      }
-                    }
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Nothing is selected')));
-                }
-              },
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Permission needed')));
-          } 
-          });
+        //             }
+        //           }
+        //           else {
+        //             for (var i = 0; i < xfilePick.length; i++) {
+        //               if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+        //                 if (getFileSize(xfilePick[i]) > 40) {
+        //                   final snackBar = SnackBar(
+        //                     content: const Text('File size is so large!'),
+        //                   );
+        //                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        //                 } else {
+        //                   selectedImages.add(File(xfilePick[i].path));
+        //                 }
+        //               }
+        //               else {
+        //                 selectedImages.add(File(xfilePick[i].path));
+        //               }
+        //             }
+        //           }
+        //         } else {
+        //           ScaffoldMessenger.of(context).showSnackBar(
+        //               const SnackBar(content: Text('Nothing is selected')));
+        //         }
+        //       },
+        //     );
+        //   } else {
+        //     ScaffoldMessenger.of(context).showSnackBar(
+        //       const SnackBar(content: Text('Permission needed')));
+        //   } 
+        //   });
 
           
-        }
+        // }
 
     } catch (e) {
       if (this.mounted) {

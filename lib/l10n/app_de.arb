@@ -130,5 +130,11 @@
 
     "report": "Bericht",
     "reportS": "Ihr Bericht wurde erfolgreich übermittelt!",
-    "reportF": "Bericht fehlgeschlagen!"
+    "reportF": "Bericht fehlgeschlagen!",
+
+
+    "languageChange": "Sprachwechsel",
+    "yes": "Ja",
+    "no": "NEIN",
+    "clickYes": "Klicken Sie auf 'Ja' und führen Sie die App erneut aus, um die Sprache zu ändern."
 }
