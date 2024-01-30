@@ -76,45 +76,45 @@ class _SearchNameState extends State<SearchName> {
   void setPreferredLanguageLoading() {
     HelperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
-      setState(() {
-        if (this.mounted) {
-          isPreferredLanguageLoading = false;
-        }
-      });
+      if (this.mounted) {
+        setState(() {
+            isPreferredLanguageLoading = false;
+        });
+      }
     }); 
   }
 
   void setSortContents() {
-    setState(() {
-      if (this.mounted) {
+    if (this.mounted) {
+      setState(() {
         sortedBy = [
           AppLocalizations.of(context)!.rel,
           AppLocalizations.of(context)!.notRel,
         ];
         sort = AppLocalizations.of(context)!.rel;
         isSortItemsLoading = false;
-      }
-    });
+      });
+    }
   }
 
   void setCategoryContents() {
-    setState(() {
-      if (this.mounted) {
-        categoryItems = [
-          '',
-          AppLocalizations.of(context)!.news,
-          AppLocalizations.of(context)!.entertainment,
-          AppLocalizations.of(context)!.sports,
-          AppLocalizations.of(context)!.food,
-          AppLocalizations.of(context)!.economy,
-          AppLocalizations.of(context)!.stock,
-          AppLocalizations.of(context)!.shopping,
-          AppLocalizations.of(context)!.science,
-          AppLocalizations.of(context)!.etc
-        ];
-        isCategoryItemsLoading = false;
-      }
-    });
+    if (this.mounted) {
+      setState(() {
+          categoryItems = [
+            '',
+            AppLocalizations.of(context)!.news,
+            AppLocalizations.of(context)!.entertainment,
+            AppLocalizations.of(context)!.sports,
+            AppLocalizations.of(context)!.food,
+            AppLocalizations.of(context)!.economy,
+            AppLocalizations.of(context)!.stock,
+            AppLocalizations.of(context)!.shopping,
+            AppLocalizations.of(context)!.science,
+            AppLocalizations.of(context)!.etc
+          ];
+          isCategoryItemsLoading = false;
+      });
+    }
   }
 
   Future getPostsBySearchName(String searchedName) async {
@@ -122,9 +122,9 @@ class _SearchNameState extends State<SearchName> {
       await postService.getPostsBySearchName(searchedName).then((value) => {
         posts = value,
         if (this.mounted) {
-            setState(() {
-              isPostLoading = false;
-            })
+          setState(() {
+            isPostLoading = false;
+          })
         }
       });
     } catch(e) {

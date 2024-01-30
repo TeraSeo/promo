@@ -61,8 +61,8 @@ class _HomeState extends State<Home> {
   AudioSession? audioSession;
 
   void setSortContents() {
-    setState(() {
-      if (this.mounted) {
+    if (this.mounted) {
+      setState(() {
         sortItems = [
           AppLocalizations.of(context)!.latest,
           AppLocalizations.of(context)!.oldest,
@@ -71,19 +71,18 @@ class _HomeState extends State<Home> {
         ];
         sort = AppLocalizations.of(context)!.latest;
         isSortItemsLoading = false;
-      }
-    });
-  
+      });
+    }
   }
 
   void setPreferredLanguageLoading() {
     HelperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
-      setState(() {
-        if (this.mounted) {
-          isPreferredLanguageLoading = false;
-        }
-      });
+      if (this.mounted) {
+        setState(() {
+            isPreferredLanguageLoading = false;
+        });
+      }
     }); 
   }
 
@@ -200,13 +199,14 @@ class _HomeState extends State<Home> {
                           }
                         }
                         else {
-                          for (int i = 0; i < value.length; i++) {
-                            setState(() {
-                              posts![posts!.length] = value[i];
-                            })
-                          },
+                          if (this.mounted) {
+                            for (int i = 0; i < value.length; i++) {
+                              setState(() {
+                                posts![posts!.length] = value[i];
+                              })
+                            }
+                          }
                         },
-                        
                         setState(() {
                           isMoreLoading = false;
                         })
@@ -228,14 +228,14 @@ class _HomeState extends State<Home> {
         onRefresh: () async {
           try {
             await Future.delayed(Duration(seconds: 1)).then((value) => {
-              setState(() {
               if (this.mounted) {
-                isUIdLoading = true;
-                isLoading = true;
-                isMoreLoading = false;
-                isLoadingMorePostsPossible = true;
+                setState(() {
+                    isUIdLoading = true;
+                    isLoading = true;
+                    isMoreLoading = false;
+                    isLoadingMorePostsPossible = true;
+                })
               }
-            })
             });
             getUId();
             getPosts();

@@ -28,24 +28,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   }
 
   void toggleMute() {
-    setState(() {
-      isMuted = !isMuted;
-      _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
-    });
+    if (this.mounted) {
+      setState(() {
+        isMuted = !isMuted;
+        _chewieController!.setVolume(isMuted ? 0.0 : 1.0);
+      });
+    }
   }
 
   Future<void> initializeVideo() async {
     try {
       _videoPlayerController = VideoPlayerController.network(widget.videoUrl);
-
-      // _videoPlayerController.addListener(() {
-      //   if (_videoPlayerController.value.isInitialized) {
-      //     // Video is initialized, you can now use _videoPlayerController.value
-      //     if (this.mounted) {
-      //       setState(() {});
-      //     }
-      //   }
-      // });
 
       _videoPlayerController!.initialize().then((_) {
         if (this.mounted) {
@@ -62,11 +55,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         }
       });
     } catch(e) {
-      setState(() {
-        if (this.mounted) {
-          isErrorOccurred = true;
-        }
-      });
+      if (this.mounted) {
+        setState(() {
+            isErrorOccurred = true;
+        });
+      }
     }
   }
 
@@ -113,11 +106,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     }
                   });
                 } catch(e) {
-                  setState(() {
-                    if (this.mounted) {
+                  if (this.mounted) {
+                    setState(() {
                       isErrorOccurred = true;
-                    }
-                  });
+                    });
+                  }
                 }
               },
               icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey),
@@ -132,12 +125,10 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       key: Key('videoPlayerKey${widget.videoUrl}'),
       onVisibilityChanged: (info) {
         if (info.visibleFraction == 0) {
-          // Widget is not visible, pause or dispose video here
           if (this.mounted) {
             _videoPlayerController!.pause();
           }
         } else {
-          // Widget is visible, resume or initialize video here
           if (this.mounted) {
             _videoPlayerController!.play();
           }

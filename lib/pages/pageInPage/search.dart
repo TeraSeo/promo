@@ -45,9 +45,11 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       getUId();
 
       _tabController.addListener(() {
-        setState(() {
-          _currentIndex = _tabController.index;
-        });
+        if (this.mounted) {
+          setState(() {
+            _currentIndex = _tabController.index;
+          });
+        }
       });
     } catch(e) {
       if (this.mounted) {

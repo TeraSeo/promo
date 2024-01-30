@@ -172,10 +172,9 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
             children: [
               IconButton(onPressed: () {
                 if (this.mounted) {
-                  setState(() {
+                    setState(() {
                       isErrorOccurred = false;
                       isUIdLoading = true;
-                      
                     }
                   );
                 }

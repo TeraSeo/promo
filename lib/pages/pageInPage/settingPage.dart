@@ -41,11 +41,11 @@ class _SettingPageState extends State<SettingPage> {
       final user = userCollection.doc(widget.uId);
       await user.get().then((value) {
         isEmailVisible = value["isEmailVisible"];
-        setState(() {
-          if (this.mounted) {
+        if (this.mounted) {
+          setState(() {
             isUserLoading = false;
-          }
-        });
+          });
+        }
       });
       HelperFunctions.getUserLanguageFromSF().then((value) {
         setLanguageText(value!);
@@ -235,11 +235,11 @@ class _SettingPageState extends State<SettingPage> {
     isLanguageTxtLoading = true;
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await HelperFunctions.saveUserLanguageSF(languageCode).then((value) {
-        setState(() {
-          if (this.mounted) {
-            isLanguageTxtLoading = false;
-          }
-        });
+        if (this.mounted) {
+          setState(() {
+              isLanguageTxtLoading = false;
+          });
+        }
         HelperFunctions().restartApp();
       });
     });

@@ -181,26 +181,13 @@ class _EditInfoState extends State<EditInfo> {
                     try {
                       if (!isInfoChanging) {
                         if (formKey.currentState!.validate()) {
-                          // existing(changedName).then((value) async {
-                          // if (value == true || widget.postUser!["name"].toString() == changedName) {
-
                             setState(() {
                               isInfoChanging = true;
                             });
-
-                          
                             Future.delayed(Duration(seconds: 0),() async { 
                               await databaseService.setUserInfo(widget.postUser!["uid"].toString(), changedName, changedIntro);
-                              // await postService.changeWriterName(changedName, widget.postUser!["posts"]);
                               nextScreen(context, HomePage(pageIndex: 3,));
                             });
-                            // }
-                          // else {
-                          //   ScaffoldMessenger.of(context).showSnackBar(
-                          //     SnackBar(content: Text("Unavailable Name"))
-                          //   );
-                          // }
-                          // });
                         }
                       }
 
@@ -266,8 +253,8 @@ class _EditInfoState extends State<EditInfo> {
     }
   }
 
-  OutlineInputBorder myinputborder(BuildContext context){ //return type is OutlineInputBorder
-    return OutlineInputBorder( //Outline border type for TextFeild
+  OutlineInputBorder myinputborder(BuildContext context){ 
+    return OutlineInputBorder(
       borderRadius: BorderRadius.all(Radius.circular(20)),
       borderSide: BorderSide(
           color:Theme.of(context).primaryColor,

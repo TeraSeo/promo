@@ -78,11 +78,11 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   void setPreferredLanguageLoading() {
     HelperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
-      setState(() {
-        if (this.mounted) {
-          isPreferredLanguageLoading = false;
-        }
-      });
+      if (this.mounted) {
+        setState(() {
+            isPreferredLanguageLoading = false;
+        });
+      }
     }); 
   }
 

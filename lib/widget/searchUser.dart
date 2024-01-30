@@ -198,7 +198,6 @@ class _SesarchUserState extends State<SearchUser> {
               child: RefreshIndicator(
                 onRefresh: () async {
                   try {
-
                     if (this.mounted) {
                       setState(() {
                         isUserLoading = true;
@@ -220,7 +219,6 @@ class _SesarchUserState extends State<SearchUser> {
                 child: SingleChildScrollView(
                   child: Wrap(children: List.generate(users!.length, (index) {
                       try {
-
                         return 
                           isprofLoadings[index] ? Center(
                             child: CircularProgressIndicator(),
@@ -293,7 +291,6 @@ class _SesarchUserState extends State<SearchUser> {
                     )),
                 )
               ));
-
     } catch(e) {
       return Center(
           child: Column(

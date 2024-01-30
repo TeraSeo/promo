@@ -200,16 +200,17 @@ class _LikesRankingState extends State<LikesRanking> {
               IconButton(onPressed: () async {
                 try {
                   if (this.mounted) {
-                  setState(() {
-                    isUIdLoading = true;
-                    isMyLoading = true;
-                    isprofLoadings = [];
-                    profileURLs = [];
-                    isProfileLoading = true;
+                    setState(() {
+                      isUIdLoading = true;
+                      isMyLoading = true;
+                      isprofLoadings = [];
+                      profileURLs = [];
+                      isProfileLoading = true;
 
-                  });
-                  getUId();
-                }} catch(e) {
+                    });
+                    getUId();
+                  }
+                } catch(e) {
                 } 
               }, icon: Icon(Icons.replay))
             ],

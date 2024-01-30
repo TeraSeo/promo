@@ -77,30 +77,30 @@ class _SearchTagState extends State<SearchTag> {
   void setPreferredLanguageLoading() {
     HelperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
-      setState(() {
-        if (this.mounted) {
+      if (this.mounted) {
+        setState(() {
           isPreferredLanguageLoading = false;
-        }
-      });
+        });
+      }
     }); 
   }
 
   void setSortContents() {
-    setState(() {
-      if (this.mounted) {
-        sortedBy = [
-          AppLocalizations.of(context)!.latest,
-          AppLocalizations.of(context)!.oldest,
-        ];
-        sort = AppLocalizations.of(context)!.latest;
-        isSortItemsLoading = false;
-      }
-    });
+    if (this.mounted) {
+      setState(() {
+          sortedBy = [
+            AppLocalizations.of(context)!.latest,
+            AppLocalizations.of(context)!.oldest,
+          ];
+          sort = AppLocalizations.of(context)!.latest;
+          isSortItemsLoading = false;
+      });
+    }
   }
 
   void setCategoryContents() {
-    setState(() {
-      if (this.mounted) {
+    if (this.mounted) {
+      setState(() {
         categoryItems = [
           '',
           AppLocalizations.of(context)!.news,
@@ -114,8 +114,8 @@ class _SearchTagState extends State<SearchTag> {
           AppLocalizations.of(context)!.etc
         ];
         isCategoryItemsLoading = false;
-      }
-    });
+      });
+    }
   }
 
 

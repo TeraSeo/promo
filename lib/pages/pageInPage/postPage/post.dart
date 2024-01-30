@@ -107,10 +107,6 @@ class _PostState extends State<Post> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // getLabel(title: 'Images'),
-                  // SizedBox(
-                  //   height: MediaQuery.of(context).size.height * 0.01,
-                  // ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
                   ),

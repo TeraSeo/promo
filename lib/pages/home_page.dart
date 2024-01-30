@@ -69,13 +69,13 @@ class _HomePageState extends State<HomePage> {
 
     selectedIndex = widget.pageIndex;
 
-    setState(() {
-      if (this.mounted) {
-        _widgetOptions[0] =  Home(scrollController: homeScrollController);
-        _widgetOptions[1] =  LikesRanking(scrollController: likeScrollController);
-        _widgetOptions[3] = ProfilePage(scrollController: profileScrollController);
-      }
-    });
+    if (this.mounted) {
+      setState(() {
+          _widgetOptions[0] =  Home(scrollController: homeScrollController);
+          _widgetOptions[1] =  LikesRanking(scrollController: likeScrollController);
+          _widgetOptions[3] = ProfilePage(scrollController: profileScrollController);
+      });
+    }
 
     gettingUserData();
 
@@ -123,11 +123,13 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _pageController.dispose();
-    homeScrollController.dispose();
-    profileScrollController.dispose();
-    likeScrollController.dispose();
-    super.dispose();
+    if (this.mounted) {
+      _pageController.dispose();
+      homeScrollController.dispose();
+      profileScrollController.dispose();
+      likeScrollController.dispose();
+      super.dispose();
+    }
   }
 
   @override

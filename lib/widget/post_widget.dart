@@ -74,6 +74,9 @@ class _PostWidgetState extends State<PostWidget> {
 
   String? timeDiff = "";
 
+  bool? isTranslated;
+  String? translatedTxt;
+
   @override
   void initState() {
     super.initState();
@@ -131,13 +134,12 @@ class _PostWidgetState extends State<PostWidget> {
 
     } catch(e) {
       print(e);
-      setState(() {
         if (this.mounted) {
-          isErrorOccurred = true;
+          setState(() {
+              isErrorOccurred = true;
+          });
         }
-      });
-    }
-
+     }
   }
 
   getOwnerProfile() async {
@@ -339,13 +341,36 @@ class _PostWidgetState extends State<PostWidget> {
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () async {
-                                      await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
-                                        setState(() {
-                                          if (this.mounted) {
-                                            description = value;
-                                          }
+                                      if (isTranslated == null) {
+                                        await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
+                                          setState(() {
+                                            if (this.mounted) {
+                                              description = value;
+                                              translatedTxt = value;
+                                              isTranslated = true;
+                                            }
+                                          });
                                         });
-                                      });
+                                      }
+                                      else {
+                                        if (isTranslated!) {
+                                          setState(() {
+                                            if (this.mounted) {
+                                              description = widget.description;
+                                              isTranslated = false;
+                                            }
+                                          });
+                                        }
+                                        else {
+                                          setState(() {
+                                            if (this.mounted) {
+                                              description = translatedTxt;
+                                              isTranslated = true;
+                                            }
+                                          });
+                                        }
+                                      }
+                                      
                                     },
                                 ),
                               ]
@@ -697,13 +722,36 @@ class _PostWidgetState extends State<PostWidget> {
                                   ),
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () async {
-                                      await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
-                                        setState(() {
-                                          if (this.mounted) {
-                                            description = value;
-                                          }
+                                      if (isTranslated == null) {
+                                        await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
+                                          setState(() {
+                                            if (this.mounted) {
+                                              description = value;
+                                              translatedTxt = value;
+                                              isTranslated = true;
+                                            }
+                                          });
                                         });
-                                      });
+                                      }
+                                      else {
+                                        if (isTranslated!) {
+                                          if (this.mounted) {
+                                            setState(() {
+                                                description = widget.description;
+                                                isTranslated = false;
+                                              }
+                                            );
+                                          }
+                                        }
+                                        else {
+                                          if (this.mounted) {
+                                            setState(() {
+                                                description = translatedTxt;
+                                                isTranslated = true;
+                                            });
+                                          } 
+                                        }
+                                      }
                                     },
                                 ),
                               ]
@@ -829,7 +877,8 @@ class _PostWidgetState extends State<PostWidget> {
                   onTap: () async{
                     try {
                       DatabaseService databaseService = DatabaseService(uid: widget.uId);
-                      setState(()  {
+                      if (this.mounted) {
+                        setState(()  {
                           if (!isLike!) {
                               isLikeAnimation = true;
                               isLike = true;
@@ -840,14 +889,15 @@ class _PostWidgetState extends State<PostWidget> {
                               likes = likes! - 1;
                             }
                           });
-                          if (isLike!) {
-                            await postService.postAddLike(widget.postID!);
-                            await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
-                          }
-                          else {
-                            await postService.postRemoveLike(widget.postID!);
-                            await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
-                          }
+                      }
+                      if (isLike!) {
+                        await postService.postAddLike(widget.postID!);
+                        await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
+                      }
+                      else {
+                        await postService.postRemoveLike(widget.postID!);
+                        await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
+                      }
                     } catch(e) {
                     }
                   },
@@ -858,7 +908,8 @@ class _PostWidgetState extends State<PostWidget> {
                   onTap: () async{
                     try {
                       DatabaseService databaseService = DatabaseService(uid: widget.uId);
-                      setState(()  {
+                      if (this.mounted) {
+                        setState(()  {
                           if (isBookMark!) {
                             isBookMark = false;
                           }
@@ -866,15 +917,15 @@ class _PostWidgetState extends State<PostWidget> {
                             isBookMark = true;
                           }
                         });
+                      }
+                      if (isBookMark!) {
+                        await databaseService.addUserBookMark(widget.postID!);
+                        await postService.addBookMark(widget.postID!, widget.uId!);
 
-                        if (isBookMark!) {
-                          await databaseService.addUserBookMark(widget.postID!);
-                          await postService.addBookMark(widget.postID!, widget.uId!);
-
-                        } else {
-                          await databaseService.removeUserBookMark(widget.postID!);
-                          await postService.removeBookMark(widget.postID!, widget.uId!);
-                        }
+                      } else {
+                        await databaseService.removeUserBookMark(widget.postID!);
+                        await postService.removeBookMark(widget.postID!, widget.uId!);
+                      }
                         
                     } catch(e) {
                     }
@@ -943,7 +994,6 @@ class _PostWidgetState extends State<PostWidget> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                // Close the message box when the button is pressed
                 Navigator.of(context).pop();
               },
               child: Text('OK'),

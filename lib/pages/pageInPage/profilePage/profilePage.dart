@@ -84,11 +84,11 @@ class _ProfilePageState extends State<ProfilePage> {
   void setPreferredLanguageLoading() {
     HelperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
-      setState(() {
-        if (this.mounted) {
+      if (this.mounted) {
+        setState(() {
           isPreferredLanguageLoading = false;
-        }
-      });
+        });
+      }
     }); 
   }
 
@@ -122,9 +122,11 @@ class _ProfilePageState extends State<ProfilePage> {
         likes = postUser!["wholeLikes"],
       });
     } catch(e) {
-      if (this.mounted) {setState(() {
-        isErrorOccurred = true;
-      });}
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
       logger.message_warning("Error occurred while getting user information");
     }
     
