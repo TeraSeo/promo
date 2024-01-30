@@ -136,5 +136,9 @@
     "languageChange": "Cambio de idioma",
     "yes": "Sí",
     "no": "No",
-    "clickYes": "Haga clic en 'Sí' y vuelva a ejecutar esta aplicación para cambiar el idioma."
+    "clickYes": "Haga clic en 'Sí' y vuelva a ejecutar esta aplicación para cambiar el idioma.",
+
+
+    "liked": "Apreciada",
+    "bookmarked": "Marcado como favorito"
 }

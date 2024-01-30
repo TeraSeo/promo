@@ -7,6 +7,7 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/login_page.dart';
 import 'package:like_app/pages/pageInPage/home.dart';
 import 'package:like_app/pages/pageInPage/likes.dart';
@@ -17,7 +18,6 @@ import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:image/image.dart' as img;
@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   AuthServie authServie = AuthServie();
   final picker = ImagePicker();
-  var logger = Logger();
+  Logging logger = Logging();
 
   String userName = "";
   String email = "";
@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
       if (this.mounted) {setState(() {
         isErrorOccurred = true;
       });}
-      logger.log(Level.error, "error occurred while getting user data\nerror: " + e.toString());
+      logger.message_warning("error occurred while getting user data\nerror: " + e.toString());
     }
   }
 
@@ -389,7 +389,6 @@ class _HomePageState extends State<HomePage> {
                         curve: Curves.easeInOut,
                       );
                     } catch(e) {
-                      logger.log(Level.error, e.toString());
                     }
                     
                   }
@@ -462,10 +461,9 @@ class _HomePageState extends State<HomePage> {
   Future getImages() async {
     selectedImages = [];
     try {
-        final status = await Permission.photos.request();
-        if (status.isGranted) {
+        if (await Permission.photos.request().isGranted) {
           final pickedFile = await picker.pickMultipleMedia(
-          imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
+          imageQuality: 90, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {
@@ -513,6 +511,56 @@ class _HomePageState extends State<HomePage> {
             },
           );
         } 
+        else if (await Permission.storage.request().isGranted) {
+          final pickedFile = await picker.pickMultipleMedia(
+          imageQuality: 90, maxHeight: 1000, maxWidth: 1000);
+          List<XFile> xfilePick = pickedFile;
+          setState(
+            () {
+              if (xfilePick.isNotEmpty) {
+                if (xfilePick.length > 8) {
+                  for (var i = 0; i < 8; i++) {
+                    if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                      if (getFileSize(xfilePick[i]) > 40) {
+                        final snackBar = SnackBar(
+                          content: const Text('File size is so large!'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        print("path" + xfilePick[i].path);
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                    else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                  }
+                }
+                else {
+                  for (var i = 0; i < xfilePick.length; i++) {
+                    if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                      if (getFileSize(xfilePick[i]) > 40) {
+                        final snackBar = SnackBar(
+                          content: const Text('File size is so large!'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        print("path" + xfilePick[i].path);
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                    else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                  }
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Nothing is selected')));
+              }
+            },
+          );
+        }
         else {
           openAppSettings();
         }
@@ -588,7 +636,7 @@ class _HomePageState extends State<HomePage> {
           selectedIndex = 0;
         });
       }
-      logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
+      logger.message_warning("Error occurred while picking image\nerror: " + e.toString());
     }
   }
 
@@ -707,7 +755,7 @@ class _HomePageState extends State<HomePage> {
                         isErrorOccurred = true;
                       });
                     }
-                    logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
+                    logger.message_warning("Error occurred while picking image\nerror: " + e.toString());
                   }
                 },
               ),

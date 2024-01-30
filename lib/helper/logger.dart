@@ -1,6 +1,13 @@
 import 'package:logger/logger.dart';
 
 class Logging {
+  
+  static final Logging _instance = Logging._internal();
+
+  Logging._internal();
+
+  factory Logging() => _instance;
+
   final logger = Logger();
 
   void message_verbose(String message) {
@@ -8,23 +15,19 @@ class Logging {
   }
 
   void message_debug(String message) {
-    logger.v('Level.debug',message);
+    logger.d('Level.debug',message);
   }
 
   void message_info(String message) {
-    logger.v('Level.info',message);
+    logger.i('Level.info',message);
   }
 
   void message_warning(String message) {
-    logger.v('Level.warning',message);
+    logger.w('Level.warning',message);
   }
 
   void message_error(String message) {
-    logger.v('Level.error',message);
-  }
-
-  void message_wtf(String message) {
-    logger.v('Level.wtf',message);
+    logger.e('Level.error',message);
   }
 
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchTag extends StatefulWidget {
@@ -26,7 +26,7 @@ class _SearchTagState extends State<SearchTag> {
   bool isCategoryItemsLoading = true;
 
   bool isErrorOccurred = false;
-  var logger = Logger();
+  Logging logger = Logging();
   PostService postService = PostService.instance;
 
   String? userName;
@@ -135,7 +135,7 @@ class _SearchTagState extends State<SearchTag> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while getting posts by tags\nerror: " + e.toString());
+      logger.message_warning("error occurred while getting posts by tags\nerror: " + e.toString());
     }
     
   }
@@ -172,7 +172,7 @@ class _SearchTagState extends State<SearchTag> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while getting more posts by tags\nerror: " + e.toString());
+      logger.message_warning("error occurred while getting more posts by tags\nerror: " + e.toString());
     }
     
   }
@@ -291,7 +291,7 @@ class _SearchTagState extends State<SearchTag> {
                       }
                     }
                   } 
-                  else if (sort == "Oldest" || sort == "Alter Schuss" || sort == "Más antiguo" || sort == "Le plus ancien" || sort == "सबसे पुराने" || sort == "最古の" || sort == "오래된순") {
+                  else if (sort == "Oldest" || sort == "Alter Schuss" || sort == "Más antiguo" || sort == "Le plus ancien" || sort == "सबसे पुराने" || sort == "最古の" || sort == "오래된 순") {
                     if (category == "") {
                       return PostWidget(email: tags![tags!.length - 1 - index]['email'], postID: tags![tags!.length - 1 - index]['postId'], name: tags![tags!.length - 1 - index]['writer'], image: tags![tags!.length - 1 - index]['images'], description: tags![tags!.length - 1 - index]['description'],isLike: tags![tags!.length - 1 - index]['likes'].contains(widget.uId), likes: tags![tags!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: tags![tags!.length - 1 - index]['uId'], withComment: tags![tags!.length - 1 - index]["withComment"], isBookMark: tags![tags!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: tags![tags!.length - 1 - index]["tags"], posted: tags![tags!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,);
                     } 

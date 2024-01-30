@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/search.dart';
 import 'package:like_app/widget/searchName.dart';
 import 'package:like_app/widget/searchTag.dart';
 import 'package:like_app/widget/searchUser.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
@@ -30,7 +30,7 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
   int _currentIndex = 2;
 
   bool isErrorOccurred = false;
-  var logger = Logger();
+  Logging logger = Logging();
 
   @override
   void initState() {
@@ -69,7 +69,6 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while getting uId\nerror: " + e.toString());
     }
     
   }

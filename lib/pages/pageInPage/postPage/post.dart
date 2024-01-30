@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -22,7 +22,7 @@ class _PostState extends State<Post> {
   DatabaseService? databaseService;
   String? uId;
 
-  var logger = Logger();
+  Logging logger = Logging();
 
   bool isErrorOccurred = false;
 
@@ -332,7 +332,7 @@ class _PostState extends State<Post> {
                           isErrorOccurred = true;
                         });
                       }
-                      logger.log(Level.error, "Error occurred while posting\nerror: " + e.toString());
+                      logger.message_warning("Error occurred while posting\nerror: " + e.toString());
                     }
                   }, 
                   child: Text(AppLocalizations.of(context)!.post, style: TextStyle(color: Colors.white),),

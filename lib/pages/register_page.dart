@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/emailVerification.dart';
 import 'package:like_app/pages/login_page.dart';
-import 'package:like_app/pages/otp.dart';
 import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';

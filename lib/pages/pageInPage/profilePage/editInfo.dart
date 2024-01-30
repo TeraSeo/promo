@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class EditInfo extends StatefulWidget {
@@ -34,7 +34,7 @@ class _EditInfoState extends State<EditInfo> {
   late PostService postService;
   late DatabaseService databaseService;
 
-  var logger = Logger();
+  Logging logger = Logging();
 
   @override
   void initState() {
@@ -56,7 +56,7 @@ class _EditInfoState extends State<EditInfo> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting edit informaiton");
+      logger.message_warning("Error occurred while getting edit informaiton");
     }
   }
 
@@ -210,7 +210,7 @@ class _EditInfoState extends State<EditInfo> {
                           isErrorOccurred = true;
                         });
                       }
-                      logger.log(Level.error, "Error occurred while editing information");
+                      logger.message_warning("Error occurred while editing information");
                     }
                     
                   }, 
@@ -305,7 +305,6 @@ class _EditInfoState extends State<EditInfo> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while check name existence");
       return true;
     }
   }  

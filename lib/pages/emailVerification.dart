@@ -30,6 +30,8 @@ class _EmailVerificationState extends State<EmailVerification> {
   void initState() {
     super.initState();
 
+    FirebaseAuth.instance.currentUser!.reload();
+
     isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
 
     if (!isEmailVerified) {

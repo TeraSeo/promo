@@ -2,7 +2,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/emailVerification.dart';
-import 'package:like_app/pages/otp.dart';
 import 'package:like_app/pages/register_page.dart';
 import 'package:like_app/services/auth_service.dart';
 import 'package:like_app/widgets/widgets.dart';
@@ -24,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
   AuthServie authServie = AuthServie(); 
 
-    bool isErrorOccurred = false;
+  bool isErrorOccurred = false;
 
   @override
   Widget build(BuildContext context) {

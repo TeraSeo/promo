@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/storage.dart';
-import 'package:logger/logger.dart';
 
 class DatabaseService {
   final String? uid;
@@ -569,8 +568,6 @@ class DatabaseService {
   }
 
  Future<int> getRanking(String uId) async {
-  Logger logger = new Logger();
-
   try {
     final user = FirebaseFirestore.instance.collection("user").orderBy("wholeLikes", descending: true);
     final querySnapshot = await user.get();
@@ -583,7 +580,6 @@ class DatabaseService {
 
     return 0;
   } catch (e) {
-    logger.log(Level.error, "Failed to get $uId's ranking");
     return 0;
   }
 }

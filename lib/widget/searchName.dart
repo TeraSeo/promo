@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchName extends StatefulWidget {
@@ -28,7 +28,7 @@ class _SearchNameState extends State<SearchName> {
   bool isCategoryItemsLoading = true;
 
   bool isErrorOccurred = false;
-  var logger = Logger();
+  Logging logger = Logging();
   PostService postService = PostService.instance;
 
   List<String>? categoryItems = [
@@ -133,7 +133,7 @@ class _SearchNameState extends State<SearchName> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while getting posts by name\nerror: " + e.toString());
+      logger.message_warning("error occurred while getting posts by name\nerror: " + e.toString());
     }
   } 
 
@@ -170,7 +170,7 @@ class _SearchNameState extends State<SearchName> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while getting more posts by name\nerror: " + e.toString());
+      logger.message_warning("error occurred while getting more posts by name\nerror: " + e.toString());
     }
     
   }
@@ -227,7 +227,6 @@ class _SearchNameState extends State<SearchName> {
                   isErrorOccurred = true;
                 });
               }
-              logger.log(Level.error, "error occurred while refreshing\nerror: " + e.toString());
             }
             
           },
@@ -287,7 +286,6 @@ class _SearchNameState extends State<SearchName> {
                               isErrorOccurred = true;
                             });
                           }
-                          logger.log(Level.error, "error occurred while refreshing\nerror: " + e.toString());
                         }
                       }
                     ),

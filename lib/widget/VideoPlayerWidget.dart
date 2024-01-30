@@ -1,6 +1,5 @@
 import 'package:chewie/chewie.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
-import 'package:logger/logger.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:visibility_detector/visibility_detector.dart';
@@ -21,8 +20,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   bool isMuted = true;
 
   bool isErrorOccurred = false;
-
-  Logger logger = new Logger();
 
   @override
   void initState() {
@@ -65,7 +62,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         }
       });
     } catch(e) {
-      logger.log(Level.error, "Error occurred while loading video\n" + e.toString());
       setState(() {
         if (this.mounted) {
           isErrorOccurred = true;
@@ -117,7 +113,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     }
                   });
                 } catch(e) {
-                  logger.log(Level.error, "Error occurred while loading video\n" + e.toString());
                   setState(() {
                     if (this.mounted) {
                       isErrorOccurred = true;
@@ -191,7 +186,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         super.dispose();
       }
     } catch(e) {
-      logger.log(Level.error, "Error occurred while disposing\n" + e.toString());
       
     }
   

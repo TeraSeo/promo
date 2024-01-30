@@ -136,5 +136,9 @@
     "languageChange": "Sprachwechsel",
     "yes": "Ja",
     "no": "NEIN",
-    "clickYes": "Klicken Sie auf 'Ja' und führen Sie die App erneut aus, um die Sprache zu ändern."
+    "clickYes": "Klicken Sie auf 'Ja' und führen Sie die App erneut aus, um die Sprache zu ändern.",
+
+
+    "liked": "Gefallen",
+    "bookmarked": "Mit Lesezeichen versehen"
 }

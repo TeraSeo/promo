@@ -2,11 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommentWidget extends StatefulWidget {
@@ -37,7 +37,7 @@ class _CommentWidgetState extends State<CommentWidget> {
   bool isMoreLoading = false;
   int wholePostsLength = 0;
   
-  var logger = Logger();
+  Logging logger = Logging();
   CommentService commentService = CommentService.instance;
 
   @override
@@ -66,7 +66,6 @@ class _CommentWidgetState extends State<CommentWidget> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting comments\nerror: " + e.toString());
 
     }
     
@@ -90,7 +89,6 @@ class _CommentWidgetState extends State<CommentWidget> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting email\nerror: " + e.toString());
 
     }
   }
@@ -115,8 +113,7 @@ class _CommentWidgetState extends State<CommentWidget> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting more comments\nerror: " + e.toString());
-
+      logger.message_warning("Error occurred while getting more comments\nerror: " + e.toString());
     }
     
   }
@@ -141,8 +138,6 @@ class _CommentWidgetState extends State<CommentWidget> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting comment length\nerror: " + e.toString());
-
     }
     
   }

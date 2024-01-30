@@ -16,7 +16,6 @@ import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -51,7 +50,7 @@ class _PostWidgetState extends State<PostWidget> {
   bool isProfileLoading = true;
   int? likes;
   String? profileFileName = "";
-  Logging logging = new Logging();
+  Logging logger = Logging();
 
   TranslatorServer translatorServer = TranslatorServer();
 
@@ -74,8 +73,6 @@ class _PostWidgetState extends State<PostWidget> {
   );
 
   String? timeDiff = "";
-
-  var logger = Logger();
 
   @override
   void initState() {
@@ -165,7 +162,6 @@ class _PostWidgetState extends State<PostWidget> {
           isProfileLoading = false;
         });
       }
-      logging.message_error(widget.name.toString() + "'s error " + e.toString());
     }
   }
 
@@ -394,7 +390,6 @@ class _PostWidgetState extends State<PostWidget> {
                                     await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                                   }
                                 } catch(e) {
-                                  logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
                                 }
                               }, 
                                 icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -435,7 +430,6 @@ class _PostWidgetState extends State<PostWidget> {
                                     await postService.removeBookMark(widget.postID!, widget.uId!);
                                   }
                                 } catch(e) {
-                                  logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
                                 }
                               },
                               icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
@@ -517,7 +511,6 @@ class _PostWidgetState extends State<PostWidget> {
                                 await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                               }
                           } catch(e) {
-                            logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
                           }
                         }, 
                         child: Stack(
@@ -623,7 +616,6 @@ class _PostWidgetState extends State<PostWidget> {
                                     await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                                   }
                                 } catch(e) {
-                                  logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
                                 }
                               }, 
                                 icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -666,7 +658,6 @@ class _PostWidgetState extends State<PostWidget> {
                                     await postService.removeBookMark(widget.postID!, widget.uId!);
                                   }
                                 } catch(e) {
-                                  logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
                                 }
                               },
                               icon: isBookMark!? Icon(Icons.bookmark, size: logoSize) : Icon(Icons.bookmark_outline, size: logoSize),
@@ -805,7 +796,7 @@ class _PostWidgetState extends State<PostWidget> {
                       if (this.mounted) {
                         setState(() {
                           isErrorOccurred = true;
-                          logger.log(Level.error, "error occurred while user removes post\nerror : " + e.toString());
+                          logger.message_warning("error occurred while user removes post\nerror : " + e.toString());
                         });
                       }
                     }                    
@@ -858,7 +849,6 @@ class _PostWidgetState extends State<PostWidget> {
                             await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
                           }
                     } catch(e) {
-                      logger.log(Level.error, "error occurred while user likes post\nerror : " + e.toString());
                     }
                   },
                 ),
@@ -887,7 +877,6 @@ class _PostWidgetState extends State<PostWidget> {
                         }
                         
                     } catch(e) {
-                      logger.log(Level.error, "error occurred while user bookmarks post\nerror : " + e.toString());
                     }
                   }
                 ),

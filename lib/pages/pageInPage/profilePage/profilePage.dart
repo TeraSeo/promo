@@ -16,7 +16,6 @@ import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -41,8 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
   bool isPostLoading = true;
   bool isUIdLoading = true;
   bool isMoreLoading = false;
-
-  Logging logging = new Logging();
+  Logging logger = Logging();
 
   File image = new File("");
 
@@ -66,8 +64,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   String? preferredLanguage;
   bool isPreferredLanguageLoading = true;
-
-  var logger = Logger();
 
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
     nextScreen(context, SinglePicker(usage: usage, uID: uId, email: email,));
@@ -129,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage> {
       if (this.mounted) {setState(() {
         isErrorOccurred = true;
       });}
-      logger.log(Level.error, "Error occurred while getting user information");
+      logger.message_warning("Error occurred while getting user information");
     }
     
   }
@@ -150,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting posts\nerror: " + e.toString());
+      logger.message_warning("Error occurred while getting posts\nerror: " + e.toString());
     }
   }
 
@@ -172,7 +168,6 @@ class _ProfilePageState extends State<ProfilePage> {
           // isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
     }
   }
 
@@ -194,7 +189,6 @@ class _ProfilePageState extends State<ProfilePage> {
           // isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting background profiles\nerror: " + e.toString());
     }
   }
 
@@ -392,7 +386,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 isErrorOccurred = true;
               });
             }
-            logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
           }
           
         },

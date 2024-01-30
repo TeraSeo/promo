@@ -145,11 +145,19 @@ class _SettingPageState extends State<SettingPage> {
                   _showLanguageOptions(context);
                 },
               ),
-              SettingsTile.switchTile(
-                onToggle: (value) {},
-                initialValue: true,
+              SettingsTile.navigation(
                 leading: Icon(Icons.format_paint),
-                title: Text('Enable custom theme'),
+                title: Text(AppLocalizations.of(context)!.liked),
+                onPressed: (context) {
+                  
+                },
+              ),
+              SettingsTile.navigation(
+                leading: Icon(Icons.format_paint),
+                title: Text(AppLocalizations.of(context)!.bookmarked),
+                onPressed: (context) {
+                  
+                },
               ),
               // SettingsTile.switchTile(
               //   onToggle: (value) {

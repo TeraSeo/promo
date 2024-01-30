@@ -136,4 +136,8 @@
     "yes": "Yes",
     "no": "No",
     "clickYes": "Click 'yes' and please rerun this app again to change language.",
+
+
+    "liked": "Liked",
+    "bookmarked": "Bookmarked"
 }

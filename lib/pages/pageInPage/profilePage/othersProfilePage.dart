@@ -12,7 +12,6 @@ import 'package:like_app/widget/numbers_widget.dart';
 import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/userService.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class OthersProfilePages extends StatefulWidget {
@@ -46,7 +45,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
   int? ranking = 0;
 
-  Logging logging = new Logging();
+  Logging logger = Logging();
 
   File image = new File("");
 
@@ -57,7 +56,6 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
   List<DocumentSnapshot<Map<String, dynamic>>>? posts;
 
-  var logger = Logger();
   PostService postService = PostService.instance;
 
   String? preferredLanguage;
@@ -106,7 +104,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting user\nerror: " + e.toString());
+      logger.message_warning("Error occurred while getting user\nerror: " + e.toString());
     }
     
   }
@@ -138,7 +136,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting posts\nerror: " + e.toString());
+      logger.message_warning("Error occurred while getting posts\nerror: " + e.toString());
     }
     
   }
@@ -160,7 +158,6 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           img_url = 'assets/blank.avif';
         });
       }
-      logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
     }
   }
 
@@ -181,7 +178,6 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
           background_url = 'assets/backgroundDef.jpeg';
         });
       }
-      logger.log(Level.error, "Error occurred while getting background profiles\nerror: " + e.toString());
     }
   }
 

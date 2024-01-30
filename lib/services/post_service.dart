@@ -3,11 +3,11 @@ import 'dart:collection';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/postDB_service.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
-import 'package:logger/logger.dart';
 
 class PostService {
 
@@ -17,7 +17,7 @@ class PostService {
 
   static PostService get instance => _instance;
 
-  Logger logger = new Logger();
+  Logging logger = Logging();
 
   String? email = ""; 
   String? name = "";
@@ -50,8 +50,6 @@ class PostService {
         await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames);
         
       }
-
-      logger.log(Level.info,"$name added a new post");
 
       return true;
 
@@ -180,7 +178,7 @@ class PostService {
           })
         });
       } 
-      else if (sort == "Oldest" || sort == "Alter Schuss" || sort == "Más antiguo" || sort == "Le plus ancien" || sort == "सबसे पुराने" || sort == "最古の" || sort == "오래된순") {
+      else if (sort == "Oldest" || sort == "Alter Schuss" || sort == "Más antiguo" || sort == "Le plus ancien" || sort == "सबसे पुराने" || sort == "最古の" || sort == "오래된 순") {
         await postCollection.
           orderBy("postNumber", descending: false).limit(7).get().then((value) => {
           value.docs.forEach((element) {
@@ -202,7 +200,7 @@ class PostService {
           })
         });
       }
-      else if (sort == "Not popular" || sort == "Nicht populär" || sort == "No popular" || sort == "Pas populaire" || sort == "लोकप्रिय नहीं" || sort == "人気がない" || sort == "비인기순") {
+      else if (sort == "Not popular" || sort == "Nicht populär" || sort == "No popular" || sort == "Pas populaire" || sort == "लोकप्रिय नहीं" || sort == "人気がない" || sort == "비인기 순") {
         await postCollection.
           orderBy("wholeLikes", descending: false).
             orderBy("postNumber", descending: true)
@@ -418,8 +416,6 @@ class PostService {
             "likes" : likes,
             "wholeLikes" : likes.length
           });
-
-          logger.log(Level.debug, "$postId's wholeLikes : " + likes.length.toString() + "$uId liked this post");
 
         });
 

@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class LikesRanking extends StatefulWidget {
@@ -31,7 +31,7 @@ class _LikesRankingState extends State<LikesRanking> {
 
   bool isUIdLoading = true;
 
-  var logger = Logger();
+  Logging logger = Logging();
 
   int myRank = 0;
   String myUName = "";
@@ -65,7 +65,7 @@ class _LikesRankingState extends State<LikesRanking> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting uId\nerror: " + e.toString());
+      logger.message_warning("Error occurred while getting uId\nerror: " + e.toString());
 
 
     }
@@ -90,7 +90,6 @@ class _LikesRankingState extends State<LikesRanking> {
           isProfileLoading = false;
         });
       }
-      logger.log(Level.error, "Error occurred while getting profile");
     }
   }
 
@@ -150,7 +149,6 @@ class _LikesRankingState extends State<LikesRanking> {
           isprofLoadings[index] = false;
         });
       }
-      logger.log(Level.error, "Error occurred while getting profile");
     }
   }
 
@@ -212,13 +210,11 @@ class _LikesRankingState extends State<LikesRanking> {
                   });
                   getUId();
                 }} catch(e) {
-                  logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
                 } 
               }, icon: Icon(Icons.replay))
             ],
           ),
           SizedBox(height: MediaQuery.of(context).size.height * 0.03,),
-          // SingleChildScrollView(child: 
             FutureBuilder(
             future: future,
             builder: (context, snapshot) {
@@ -241,11 +237,10 @@ class _LikesRankingState extends State<LikesRanking> {
                       shrinkWrap: true,
                       itemCount: (snapshot.data! as dynamic).docs.length,
                       itemBuilder: (context, index) {
-
                         if (profileURLs.length < (snapshot.data! as dynamic).docs.length) {
-                        profileURLs.add("");
-                        isprofLoadings.add(true);
-                        getProfileURL(snapshot.data!.docs[index]["email"], snapshot.data!.docs[index]["profilePic"], index);
+                          profileURLs.add("");
+                          isprofLoadings.add(true);
+                          getProfileURL(snapshot.data!.docs[index]["email"], snapshot.data!.docs[index]["profilePic"], index);
                         }
                         return Card(
                           child: InkWell(
@@ -297,7 +292,7 @@ class _LikesRankingState extends State<LikesRanking> {
               }
                 
               } catch(e) {
-                logger.log(Level.error, "Error occurred while getting ranks\nerror: " + e.toString());
+                logger.message_warning("Error occurred while getting ranks\nerror: " + e.toString());
                 return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -384,7 +379,6 @@ class _LikesRankingState extends State<LikesRanking> {
         });
         getUId();
       }} catch(e) {
-        logger.log(Level.error, "Error occurred while refreshing\nerror: " + e.toString());
       } 
     }
   );} 

@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/comment_card.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 
 class EditCommentWidget extends StatefulWidget {
 
@@ -31,7 +31,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
   bool isMoreLoading = false;
   bool isErrorOccurred = false;
 
-  var logger = Logger();
+  Logging logger = Logging();
   CommentService commentService = CommentService.instance;
 
   @override
@@ -60,7 +60,6 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
           isErrorOccurred = true;
         });
       } 
-      logger.log(Level.error, "Error occurred while getting comments\nerror: " + e.toString());
     }
     
   }
@@ -85,7 +84,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting more comments\nerror: " + e.toString());
+      logger.message_warning("Error occurred while getting more comments\nerror: " + e.toString());
 
     }
     
@@ -110,7 +109,6 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
         setState(() {
           isErrorOccurred = true;
         });
-        logger.log(Level.error, "Error occurred while getting comment length\nerror: " + e.toString());
       }
     }
     
@@ -299,7 +297,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
                                   isErrorOccurred = true;
                                 });
                               }
-                              logger.log(Level.error, "Error occurred while updating comment\nerror: " + e.toString());
+                              logger.message_warning("Error occurred while updating comment\nerror: " + e.toString());
                             }
                             
                           },

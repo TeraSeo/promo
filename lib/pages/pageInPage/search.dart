@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widget/searchName.dart';
 import 'package:like_app/widget/searchTag.dart';
 import 'package:like_app/widget/searchUser.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class Search extends StatefulWidget {
@@ -32,7 +32,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   int _currentIndex = 0;
 
-  var logger = Logger();
+  Logging logger = Logging();
 
   @override
   void initState() {
@@ -82,7 +82,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting uId\nerror: " + e.toString());
+      logger.message_warning("Error occurred while getting uId\nerror: " + e.toString());
     }
   }
 

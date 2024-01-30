@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:textfield_tags/textfield_tags.dart';
 import 'package:image/image.dart' as img;
@@ -39,8 +39,7 @@ class _EditPostState extends State<EditPost> {
   List<dynamic> images = [];
   final picker = ImagePicker();
 
-  Logger logger = new Logger();
-
+  Logging logger = Logging();
   bool isImagesLoading = false;
 
   @override
@@ -553,6 +552,7 @@ class _EditPostState extends State<EditPost> {
                 onTap: () {
                   setState(() {
                     images = [];
+                    selectedImages = [];
                   });
                   Navigator.pop(context);
                 },
@@ -582,7 +582,6 @@ class _EditPostState extends State<EditPost> {
                         isErrorOccurred = true;
                       });
                     }
-                    logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
                   }
                   // Navigator.pop(context);
                 },
@@ -598,10 +597,15 @@ class _EditPostState extends State<EditPost> {
   Future getImages() async {
     selectedImages = [];
     try {
-        final status = await Permission.photos.request();
-        if (status.isGranted) {
+        PermissionStatus? status;
+        if (Platform.isAndroid) {
+          status = await Permission.storage.request();
+        } else if (Platform.isIOS) {
+          status = await Permission.photos.request();
+        }
+        if (status!.isGranted) {
           final pickedFile = await picker.pickMultipleMedia(
-          imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
+          imageQuality: 90, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {
@@ -615,7 +619,6 @@ class _EditPostState extends State<EditPost> {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
-                        print("path" + xfilePick[i].path);
                         selectedImages.add(File(xfilePick[i].path));
                       }
                     }
@@ -633,7 +636,6 @@ class _EditPostState extends State<EditPost> {
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
-                        print("path" + xfilePick[i].path);
                         selectedImages.add(File(xfilePick[i].path));
                       }
                     }
@@ -649,73 +651,8 @@ class _EditPostState extends State<EditPost> {
             },
           );
         } 
-        else if (status.isPermanentlyDenied) {
-          openAppSettings();
-        }
         else {
-          await Permission.photos.request().then((value) async {
-          if (value.isGranted) {
-
-            final pickedFile = await picker.pickMultipleMedia(
-            imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
-            List<XFile> xfilePick = pickedFile;
-            setState(
-              () {
-                if (xfilePick.isNotEmpty) {
-                  if (xfilePick.length > 8) {
-                    final snackBar = SnackBar(
-                      content: const Text('Until 8 images can be posted!'),
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                    for (var i = 0; i < 8; i++) {
-                      if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                        if (getFileSize(xfilePick[i]) > 40) {
-                          final snackBar = SnackBar(
-                            content: const Text('File size is so large!'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        } else {
-                          print("path" + xfilePick[i].path);
-                          selectedImages.add(File(xfilePick[i].path));
-                        }
-                      }
-                      else {
-                        selectedImages.add(File(xfilePick[i].path));
-                      }
-                      
-                    }
-                  }
-                  else {
-                    for (var i = 0; i < xfilePick.length; i++) {
-                      if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-                        if (getFileSize(xfilePick[i]) > 40) {
-                          final snackBar = SnackBar(
-                            content: const Text('File size is so large!'),
-                          );
-                          ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                        } else {
-                          print("path" + xfilePick[i].path);
-                          selectedImages.add(File(xfilePick[i].path));
-                        }
-                      }
-                      else {
-                        selectedImages.add(File(xfilePick[i].path));
-                      }
-                    }
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Nothing is selected')));
-                }
-              },
-            );
-          } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Permission needed')));
-          } 
-          });
-
-          
+          openAppSettings();
         }
 
     } catch (e) {
@@ -724,7 +661,6 @@ class _EditPostState extends State<EditPost> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while picking image\nerror: " + e.toString());
     }
   }
 

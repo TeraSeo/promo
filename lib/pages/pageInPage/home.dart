@@ -2,9 +2,9 @@ import 'package:audio_session/audio_session.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
-import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -41,7 +41,7 @@ class _HomeState extends State<Home> {
         FirebaseFirestore.instance.collection("post");
 
 
-  var logger = Logger();
+  Logging logger = Logging();
 
   @override
   void initState() {
@@ -110,7 +110,6 @@ class _HomeState extends State<Home> {
         );
       }
     } catch(e) {
-      logger.log(Level.error, "Error occurred while loading Audio Session\n" + e.toString());
     }
     
   }
@@ -133,7 +132,7 @@ class _HomeState extends State<Home> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while getting posts\nerror: " + e.toString());
+      logger.message_warning("error occurred while getting posts\nerror: " + e.toString());
     }
   }
 
@@ -155,7 +154,6 @@ class _HomeState extends State<Home> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting uId\nerror: " + e.toString());
     }
     
   }
@@ -222,7 +220,7 @@ class _HomeState extends State<Home> {
                         isErrorOccurred = true;
                       });
                     }
-                    logger.log(Level.error, "error occurred while getting more posts\nerror: " + e.toString());
+                    logger.message_warning("error occurred while getting more posts\nerror: " + e.toString());
                   }
                   return true;
                 },
@@ -247,7 +245,6 @@ class _HomeState extends State<Home> {
                 isErrorOccurred = true;
               });
             }
-            logger.log(Level.error, "error occurred while refreshing\nerror: " + e.toString());
           }
         },
         child: SingleChildScrollView(

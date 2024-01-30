@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SearchUser extends StatefulWidget {
@@ -26,7 +26,7 @@ class _SesarchUserState extends State<SearchUser> {
   bool isProfileLoading = true;
 
   bool isErrorOccurred = false;
-  var logger = Logger();
+  Logging logger = Logging();
 
   List<bool> isprofLoadings = [];
   List<String> profileURLs = [];
@@ -61,7 +61,6 @@ class _SesarchUserState extends State<SearchUser> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while getting user by name\nerror: " + e.toString());
     }
     
   }
@@ -102,7 +101,7 @@ class _SesarchUserState extends State<SearchUser> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while getting more users by name\nerror: " + e.toString());
+      logger.message_warning("error occurred while getting more users by name\nerror: " + e.toString());
     }
   }
 
@@ -127,7 +126,6 @@ class _SesarchUserState extends State<SearchUser> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "error occurred while setting profil urls\nerror: " + e.toString());
     }
     
   }
@@ -216,7 +214,6 @@ class _SesarchUserState extends State<SearchUser> {
                         isErrorOccurred = true;
                       });
                     }
-                    logger.log(Level.error, "error occurred while refreshing\nerror: " + e.toString());
                   }
                   
                 },

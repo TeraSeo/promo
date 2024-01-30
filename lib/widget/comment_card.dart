@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/storage.dart';
@@ -8,7 +9,6 @@ import 'package:like_app/services/userService.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widget/edit_comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
-import 'package:logger/logger.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class CommentCard extends StatefulWidget {
@@ -51,7 +51,7 @@ class _CommentCardState extends State<CommentCard> {
   DatabaseService databaseService = new DatabaseService();
   CommentService commentService = CommentService.instance;
 
-  var logger = Logger();
+  Logging logger = Logging();
   bool isErrorOccurred = false;
 
   @override
@@ -87,7 +87,6 @@ class _CommentCardState extends State<CommentCard> {
           isProfileLoading = false;
         });
       }
-      logger.log(Level.error, "Error occurred while getting profiles\nerror: " + e.toString());
     }
   }
 
@@ -117,7 +116,7 @@ class _CommentCardState extends State<CommentCard> {
           isErrorOccurred = true;
         });
       }
-      logger.log(Level.error, "Error occurred while getting comments\nerror: " + e.toString());
+      logger.message_warning("Error occurred while getting comments\nerror: " + e.toString());
     }
     
   }
@@ -157,7 +156,6 @@ class _CommentCardState extends State<CommentCard> {
     }
     catch(e) {
       diff = "";
-      logger.log(Level.error, "Error occurred while calculating time\nerror: " + e.toString());
     }
 
   }
@@ -204,7 +202,6 @@ class _CommentCardState extends State<CommentCard> {
                 isErrorOccurred = true;
               });
             }
-            logger.log(Level.error, "Error occurred while comment liking\nerror: " + e.toString());
           }
             
         },
@@ -307,7 +304,11 @@ class _CommentCardState extends State<CommentCard> {
                     });
 
                   } catch(e) {
-                    logger.log(Level.error, "Error occurred while comment liking\nerror: " + e.toString());
+                    if (this.mounted) {
+                      setState(() {
+                        isErrorOccurred = true;
+                      });
+                    }
                   }
                   
                 }, icon: isCommentLike!? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
@@ -340,7 +341,11 @@ class _CommentCardState extends State<CommentCard> {
 
                     
                   } catch(e) {
-                    logger.log(Level.error, "Error occurred while comment liking\nerror: " + e.toString());
+                    if (this.mounted) {
+                      setState(() {
+                        isErrorOccurred = true;
+                      });
+                    }
                   }
                   
                 }, icon: isCommentLike!? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
@@ -390,7 +395,7 @@ class _CommentCardState extends State<CommentCard> {
                         nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,));
                       });
                     } catch(e) {
-                      logger.log(Level.error, "Error occurred while removing comments\nerror: " + e.toString());
+                      logger.message_warning("Error occurred while removing comments\nerror: " + e.toString());
                     }
                     
                   },

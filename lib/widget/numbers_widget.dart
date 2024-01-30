@@ -9,7 +9,7 @@ class NumbersWidget extends StatelessWidget {
   NumbersWidget(this.user, this.likes, this.ranking);
 
   @override
-  Widget build(BuildContext context) => Row(     //////
+  Widget build(BuildContext context) => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           buildButton(context, ranking.toString(), 'Ranking'),

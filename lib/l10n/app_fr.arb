@@ -136,5 +136,9 @@
     "languageChange": "Changement de langue",
     "yes": "Oui",
     "no": "Non",
-    "clickYes": "Cliquez sur 'Oui' et exécutez à nouveau cette application pour changer la langue."
+    "clickYes": "Cliquez sur 'Oui' et exécutez à nouveau cette application pour changer la langue.",
+
+
+    "liked": "Aimée",
+    "bookmarked": "Mis en signet"
 }
