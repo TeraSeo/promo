@@ -643,4 +643,30 @@ class PostService {
 
   }
 
+  Future<Map<dynamic, dynamic>> getLikedPosts(List<dynamic> postIds) async {
+    try {
+
+      Map likedPosts = new HashMap<int, Map<String, dynamic>>();
+      int i = 0;
+
+      await postCollection.
+        where("postId", whereIn: postIds).
+        limit(10).get().then((value) => {
+        value.docs.forEach((element) {
+          Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+          likedPosts[i] = post;
+          i += 1;
+        })
+      });
+
+      return likedPosts;
+
+    } catch(e) {
+
+      return new HashMap<int, Map<String, dynamic>>();
+
+    }
+
+  }
+
 }

@@ -2,13 +2,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/userService.dart';
+import 'package:like_app/pages/showBookmarked.dart';
+import 'package:like_app/pages/showLiked.dart';
+import 'package:like_app/widgets/widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SettingPage extends StatefulWidget {
 
   final String uId;
-  const SettingPage({super.key, required this.uId});
+  final List<dynamic> postsLiked;
+  final List<dynamic> postsBookmarked;
+
+  const SettingPage({super.key, required this.uId, required this.postsLiked, required this.postsBookmarked});
 
   @override
   State<SettingPage> createState() => _SettingPageState();
@@ -149,25 +155,16 @@ class _SettingPageState extends State<SettingPage> {
                 leading: Icon(Icons.format_paint),
                 title: Text(AppLocalizations.of(context)!.liked),
                 onPressed: (context) {
-                  
+                  nextScreen(context, ShowLikedPosts(likedPosts: widget.postsLiked, uId: widget.uId, preferredLanguage: languageTxt!,));
                 },
               ),
               SettingsTile.navigation(
                 leading: Icon(Icons.format_paint),
                 title: Text(AppLocalizations.of(context)!.bookmarked),
                 onPressed: (context) {
-                  
+                  nextScreen(context, ShowBookmarkedPosts(bookmarkedPosts: widget.postsBookmarked));
                 },
-              ),
-              // SettingsTile.switchTile(
-              //   onToggle: (value) {
-              //     isEmailVisible = !isEmailVisible!;
-              //     _changeEmailVisibility(value);
-              //   },
-              //   initialValue: isEmailVisible,
-              //   leading: Icon(Icons.email),
-              //   title: Text('Show email in profile page'),
-              // ),
+              )
             ],
           ),
         ],

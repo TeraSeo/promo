@@ -65,6 +65,9 @@ class _ProfilePageState extends State<ProfilePage> {
   String? preferredLanguage;
   bool isPreferredLanguageLoading = true;
 
+  List<dynamic>? postsLiked;
+  List<dynamic>? postsBookmarked;
+
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
     nextScreen(context, SinglePicker(usage: usage, uID: uId, email: email,));
   }
@@ -120,6 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
       await user.get().then((value) => {
         postUser = value as DocumentSnapshot<Map<String, dynamic>>,
         likes = postUser!["wholeLikes"],
+        postsLiked = postUser!["likes"],
+        postsBookmarked = postUser!["bookmarks"]
       });
     } catch(e) {
       if (this.mounted) {
@@ -167,7 +172,6 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           _isImg = false;
           img_url = 'assets/blank.avif';
-          // isErrorOccurred = true;
         });
       }
     }
@@ -188,7 +192,6 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           _isBackground = false;
           background_url = 'assets/backgroundDef.jpeg';
-          // isErrorOccurred = true;
         });
       }
     }
@@ -536,7 +539,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 title: Text(AppLocalizations.of(context)!.setting),
                 onTap: () {
                   Navigator.pop(context);
-                  nextScreen(context, SettingPage(uId: postUser!["uid"]));
+                  nextScreen(context, SettingPage(uId: postUser!["uid"], postsLiked: postsLiked!, postsBookmarked: postsBookmarked!));
                 },
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
@@ -568,13 +571,6 @@ class _ProfilePageState extends State<ProfilePage> {
                   pickImage(ImageSource.gallery, post_user!["email"].toString(), post_user!["uid"].toString(), usage);
                 },
               ),
-              // ListTile(
-              //   leading: Icon(Icons.camera_alt_outlined),
-              //   title: Text('From camera'),
-              //   onTap: () {
-              //     pickImage(ImageSource.camera, post_user!["email"].toString(), post_user!["uid"].toString(), usage);
-              //   },
-              // ),
               ListTile(
                 leading: Icon(Icons.cancel),
                 title: Text(AppLocalizations.of(context)!.cancel),
