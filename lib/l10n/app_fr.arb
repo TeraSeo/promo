@@ -140,5 +140,9 @@
 
 
     "liked": "Aimée",
-    "bookmarked": "Mis en signet"
+    "bookmarked": "Mis en signet",
+
+
+    "removementAssurance": "Êtes-vous sûr de supprimer ce message ?",
+    "ok": "D'ACCORD"
 }

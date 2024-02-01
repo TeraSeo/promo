@@ -55,7 +55,8 @@ class _PostWidgetState extends State<PostWidget> {
   TranslatorServer translatorServer = TranslatorServer();
 
   bool isPostRemoving = false;
-  
+  bool isRemovementPermitted = false; 
+
   List<String>? images;
 
   bool isLoading = true;
@@ -826,28 +827,36 @@ class _PostWidgetState extends State<PostWidget> {
                   leading: Icon(Icons.edit),
                   title: Text(AppLocalizations.of(context)!.editThisPost),
                   onTap: () {
-                    nextScreen(context, EditPost(postId: widget.postID!, email: widget.email!,));
+                    if (!isPostRemoving) {
+                      nextScreen(context, EditPost(postId: widget.postID!, email: widget.email!,));
+                    }
                   },
                 ),
                 ListTile(
                   leading: Icon(Icons.remove_circle),
                   title: Text(AppLocalizations.of(context)!.removeThisPost),
                   onTap: () async {
-                    try {
-                      if (!isPostRemoving) {
-                        isPostRemoving = true;
-                        await postService.removePost(widget.postID!, widget.email!);
-                        nextScreen(context, HomePage(pageIndex: 0,));
+                    showRemovementAssureMsg().then((value) async {
+                      if (isRemovementPermitted) {
+                        isRemovementPermitted = false;
+                        try {
+                          if (!isPostRemoving) {
+                            isPostRemoving = true;
+                            await postService.removePost(widget.postID!, widget.email!);
+                            nextScreen(context, HomePage(pageIndex: 0,));
+                            isPostRemoving = false;
+                          }
+                        } catch(e) {
+                          if (this.mounted) {
+                            setState(() {
+                              isErrorOccurred = true;
+                              logger.message_warning("error occurred while user removes post\nerror : " + e.toString());
+                            });
+                          }
+                        }       
                       }
-
-                    } catch(e) {
-                      if (this.mounted) {
-                        setState(() {
-                          isErrorOccurred = true;
-                          logger.message_warning("error occurred while user removes post\nerror : " + e.toString());
-                        });
-                      }
-                    }                    
+                    });
+                           
                   },
                 ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
@@ -946,10 +955,10 @@ class _PostWidgetState extends State<PostWidget> {
                   onTap: () {
                     HelperFunctions().reportPost(widget.postID!).then((value) {
                       if (value) {
-                        showReportSucceededMsg(context);
+                        showReportSucceededMsg();
                       }
                       else {
-                        showReportFailedMsg(context);
+                        showReportFailedMsg();
                       }
                     });
                   },
@@ -963,8 +972,33 @@ class _PostWidgetState extends State<PostWidget> {
     }
   }
 
-  void showReportSucceededMsg(BuildContext context) {
-    showDialog(
+  Future showRemovementAssureMsg() => showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.removeThisPost),
+          content: Text(AppLocalizations.of(context)!.removementAssurance),
+          actions: [
+            TextButton(
+              onPressed: () {
+                isRemovementPermitted = true;
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.yes),
+            ),
+            TextButton(
+              onPressed: () {
+                isRemovementPermitted = false;
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.no),
+            ),
+          ],
+        );
+      },
+    );
+
+    Future showReportSucceededMsg() => showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
@@ -973,18 +1007,16 @@ class _PostWidgetState extends State<PostWidget> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                // Close the message box when the button is pressed
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         );
       },
-    );
-  }
+    ); 
 
-  void showReportFailedMsg(BuildContext context) {
+    Future showReportFailedMsg() =>
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -996,11 +1028,11 @@ class _PostWidgetState extends State<PostWidget> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: Text(AppLocalizations.of(context)!.ok),
             ),
           ],
         );
       },
     );
-  }
+   
 }

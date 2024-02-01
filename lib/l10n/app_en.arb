@@ -139,5 +139,9 @@
 
 
     "liked": "Liked",
-    "bookmarked": "Bookmarked"
+    "bookmarked": "Bookmarked",
+
+
+    "removementAssurance": "Are you sure to remove this post?",
+    "ok": "OK"
 }

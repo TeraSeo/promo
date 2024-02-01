@@ -140,5 +140,9 @@
 
 
     "liked": "Apreciada",
-    "bookmarked": "Marcado como favorito"
+    "bookmarked": "Marcado como favorito",
+
+
+    "removementAssurance": "¿Estás segura de eliminar esta publicación?",
+    "ok": "DE ACUERDO"
 }

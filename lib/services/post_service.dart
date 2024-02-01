@@ -67,7 +67,6 @@ class PostService {
 
       int timestamp = DateTime.now().millisecondsSinceEpoch;
       DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-      // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
 
       List<String> filePaths = [];
       List<String> fileNames = [];

@@ -140,5 +140,9 @@
 
 
     "liked": "気に入った",
-    "bookmarked": "ブックマーク済み"
+    "bookmarked": "ブックマーク済み",
+
+
+    "removementAssurance": "この投稿を削除してもよろしいですか?",
+    "ok": "わかりました"
 }

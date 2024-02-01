@@ -55,16 +55,6 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
 
-    // selectedIndex = widget.pageIndex;
-
-    // setState(() {
-    //   if (this.mounted) {
-    //     _widgetOptions[0] =  Home(scrollController: homeScrollController);
-    //     _widgetOptions[1] =  LikesRanking(scrollController: likeScrollController);
-    //     _widgetOptions[3] = ProfilePage(scrollController: profileScrollController);
-    //   }
-    // });
-
     super.initState();
 
     selectedIndex = widget.pageIndex;
@@ -136,18 +126,15 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
 
     double toolbarHeight = MediaQuery.of(context).size.height * 0.08;
-    double sizedBox;
     double iconSize = MediaQuery.of(context).size.height * 0.023;
 
     bool isTablet;
 
     if(Device.get().isTablet) {
       isTablet = true;
-      sizedBox = MediaQuery.of(context).size.height * 0.00;
     }
     else {
       isTablet = false;
-      sizedBox = MediaQuery.of(context).size.height * 0.047;
     }
     
     try {
@@ -208,7 +195,6 @@ class _HomePageState extends State<HomePage> {
               },
             ),) 
           ],
-
           elevation: 0,
           centerTitle: true,
           backgroundColor: Theme.of(context).primaryColor,
@@ -240,7 +226,6 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
-
         body: 
         isErrorOccurred? Center(
           child: Column(
@@ -299,7 +284,6 @@ class _HomePageState extends State<HomePage> {
                   _showPicMenu();
                 }
                 else if (index == 0) {
-                  
                   if (selectedIndex == 0) {
                     homeScrollController.animateTo(
                       0,
@@ -307,13 +291,9 @@ class _HomePageState extends State<HomePage> {
                       curve: Curves.easeInOut,
                     );
                   }
-
                   selectedIndex = index;
-                  
                 }
-
                 else if (index == 1) {
-                  
                   if (selectedIndex == 1) {
                     likeScrollController.animateTo(
                       0,
@@ -321,13 +301,9 @@ class _HomePageState extends State<HomePage> {
                       curve: Curves.easeInOut,
                     );
                   }
-
                   selectedIndex = index;
-                  
                 }
-
                 else if (index == 3) {
-                  
                   if (selectedIndex == 3) {
                     profileScrollController.animateTo(
                       0,
@@ -335,13 +311,11 @@ class _HomePageState extends State<HomePage> {
                       curve: Curves.easeInOut,
                     );
                   }
-
                   selectedIndex = index;
-                  
                 }
                 else {
                   selectedIndex = index;
-              }
+                }
               }
             });
           },
@@ -392,15 +366,10 @@ class _HomePageState extends State<HomePage> {
                       );
                     } catch(e) {
                     }
-                    
                   }
-
                   selectedIndex = index;
-                  
                 }
-
                 else if (index == 1) {
-                  
                   if (selectedIndex == 1) {
                     likeScrollController.animateTo(
                       0,
@@ -408,13 +377,9 @@ class _HomePageState extends State<HomePage> {
                       curve: Curves.easeInOut,
                     );
                   }
-
                   selectedIndex = index;
-                  
                 }
-
                 else if (index == 3) {
-                  
                   if (selectedIndex == 3) {
                     profileScrollController.animateTo(
                       0,
@@ -422,9 +387,7 @@ class _HomePageState extends State<HomePage> {
                       curve: Curves.easeInOut,
                     );
                   }
-
                   selectedIndex = index;
-                  
                 }
                 else {
                   selectedIndex = index;
@@ -434,25 +397,21 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       )));
-
     } catch(e) {
       return Center(
           child: Column(
             children: [
               IconButton(onPressed: () {
-                
                 setState(() {
                   isErrorOccurred = false;
                   selectedIndex = 0;
                 });
                 gettingUserData();
-                
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
       );
-
     }
   }
 
@@ -465,7 +424,7 @@ class _HomePageState extends State<HomePage> {
     try {
         if (await Permission.photos.request().isGranted) {
           final pickedFile = await picker.pickMultipleMedia(
-          imageQuality: 90, maxHeight: 1000, maxWidth: 1000);
+          imageQuality: 85, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {
@@ -515,7 +474,7 @@ class _HomePageState extends State<HomePage> {
         } 
         else if (await Permission.storage.request().isGranted) {
           final pickedFile = await picker.pickMultipleMedia(
-          imageQuality: 90, maxHeight: 1000, maxWidth: 1000);
+          imageQuality: 85, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {
@@ -566,70 +525,6 @@ class _HomePageState extends State<HomePage> {
         else {
           openAppSettings();
         }
-        // else {
-        //   await Permission.photos.request().then((value) async {
-        //   if (value.isGranted) {
-
-        //     final pickedFile = await picker.pickMultipleMedia(
-        //     imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
-        //     List<XFile> xfilePick = pickedFile;
-        //     setState(
-        //       () {
-        //         if (xfilePick.isNotEmpty) {
-        //           if (xfilePick.length > 8) {
-        //             final snackBar = SnackBar(
-        //               content: const Text('Until 8 images can be posted!'),
-        //             );
-        //             ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        //             for (var i = 0; i < 8; i++) {
-        //               if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-        //                 if (getFileSize(xfilePick[i]) > 40) {
-        //                   final snackBar = SnackBar(
-        //                     content: const Text('File size is so large!'),
-        //                   );
-        //                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        //                 } else {
-        //                   selectedImages.add(File(xfilePick[i].path));
-        //                 }
-        //               }
-        //               else {
-        //                 selectedImages.add(File(xfilePick[i].path));
-        //               }
-                      
-        //             }
-        //           }
-        //           else {
-        //             for (var i = 0; i < xfilePick.length; i++) {
-        //               if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
-        //                 if (getFileSize(xfilePick[i]) > 40) {
-        //                   final snackBar = SnackBar(
-        //                     content: const Text('File size is so large!'),
-        //                   );
-        //                   ScaffoldMessenger.of(context).showSnackBar(snackBar);
-        //                 } else {
-        //                   selectedImages.add(File(xfilePick[i].path));
-        //                 }
-        //               }
-        //               else {
-        //                 selectedImages.add(File(xfilePick[i].path));
-        //               }
-        //             }
-        //           }
-        //         } else {
-        //           ScaffoldMessenger.of(context).showSnackBar(
-        //               const SnackBar(content: Text('Nothing is selected')));
-        //         }
-        //       },
-        //     );
-        //   } else {
-        //     ScaffoldMessenger.of(context).showSnackBar(
-        //       const SnackBar(content: Text('Permission needed')));
-        //   } 
-        //   });
-
-          
-        // }
-
     } catch (e) {
       if (this.mounted) {
         setState(() {
@@ -644,7 +539,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<dynamic>> cropImages(List<File> medias) async {
     try {
-
       List<dynamic> files = [];
 
       for (var media in medias) {

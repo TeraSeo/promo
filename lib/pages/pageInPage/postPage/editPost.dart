@@ -439,11 +439,7 @@ class _EditPostState extends State<EditPost> {
 
                       }
                     } catch(e) {
-                      if (this.mounted) {
-                        setState(() {
-                          isErrorOccurred = true;
-                        });
-                      }
+                      nextScreen(context, HomePage(pageIndex: 0,));
                     }
                   }, 
                   child: Text(AppLocalizations.of(context)!.editThisPost, style: TextStyle(color: Colors.white),),

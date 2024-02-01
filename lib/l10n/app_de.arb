@@ -140,5 +140,9 @@
 
 
     "liked": "Gefallen",
-    "bookmarked": "Mit Lesezeichen versehen"
+    "bookmarked": "Mit Lesezeichen versehen",
+
+
+    "removementAssurance": "Möchten Sie diesen Beitrag wirklich entfernen?",
+    "ok": "OK"
 }

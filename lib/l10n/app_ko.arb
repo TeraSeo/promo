@@ -92,7 +92,7 @@
     "enterTag": "태그 쓰기...",
     "commentSetting": "댓글 세팅",
     "comment": "댓글",
-    "post": "계시",
+    "post": "게시",
 
 
     "images": "사진",
@@ -140,5 +140,9 @@
 
 
     "liked": "좋아요",
-    "bookmarked": "북마크"
+    "bookmarked": "북마크",
+
+
+    "removementAssurance": "이 게시물을 삭제 하시겠습니까?",
+    "ok": "네"
 }
