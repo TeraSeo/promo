@@ -669,4 +669,30 @@ class PostService {
 
   }
 
+  Future<Map<dynamic, dynamic>> getBookMarkedPosts(List<dynamic> postIds) async {
+    try {
+
+      Map bookmarkedPosts = new HashMap<int, Map<String, dynamic>>();
+      int i = 0;
+
+      await postCollection.
+        where("postId", whereIn: postIds).
+        limit(10).get().then((value) => {
+        value.docs.forEach((element) {
+          Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+          bookmarkedPosts[i] = post;
+          i += 1;
+        })
+      });
+
+      return bookmarkedPosts;
+
+    } catch(e) {
+
+      return new HashMap<int, Map<String, dynamic>>();
+
+    }
+
+  }
+
 }

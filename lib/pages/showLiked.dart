@@ -22,14 +22,11 @@ class _ShowLikedPostsState extends State<ShowLikedPosts> {
   bool isLoadingMorePostsPossible = true;
   PostService postService = PostService.instance;
 
-  List<dynamic>? likedPostIds;
   int i = 10;
 
   @override
   void initState() {
     super.initState();
-
-    likedPostIds = widget.likedPosts;
     getLikedPosts().then((value) {
       likedPosts = value;
       if (this.mounted) {

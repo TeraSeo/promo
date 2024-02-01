@@ -162,7 +162,7 @@ class _SettingPageState extends State<SettingPage> {
                 leading: Icon(Icons.format_paint),
                 title: Text(AppLocalizations.of(context)!.bookmarked),
                 onPressed: (context) {
-                  nextScreen(context, ShowBookmarkedPosts(bookmarkedPosts: widget.postsBookmarked));
+                  nextScreen(context, ShowBookmarkedPosts(bookmarkedPosts: widget.postsBookmarked, uId: widget.uId, preferredLanguage: languageTxt!,));
                 },
               )
             ],
