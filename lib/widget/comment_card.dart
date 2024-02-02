@@ -4,7 +4,6 @@ import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/comment_service.dart';
-import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widget/edit_comment_widget.dart';
@@ -48,7 +47,7 @@ class _CommentCardState extends State<CommentCard> {
   
   var image;
 
-  DatabaseService databaseService = new DatabaseService();
+  DatabaseService databaseService = DatabaseService.instance;
   CommentService commentService = CommentService.instance;
 
   Logging logger = Logging();
@@ -68,18 +67,33 @@ class _CommentCardState extends State<CommentCard> {
   getOwnerProfile() async {
 
     QuerySnapshot snapshot =
-        await DatabaseService().gettingUserData(widget.email!);
+        await databaseService.getUserData(widget.email!);
 
-    Storage storage = Storage.instance;
     try {
-      await storage.loadProfileFile(widget.email!, snapshot.docs[0]["profilePic"].toString()).then((value) => {
-        image = NetworkImage(value),
+      if (snapshot.docs[0]["profilePic"].toString() == "" || snapshot.docs[0]["profilePic"].toString() == null) {
+        if (this.mounted) {
+          setState(() {
+            image = AssetImage('assets/blank.avif');
+            isProfileLoading = false;
+          });
+        }
+      }
+      else {
+        image = NetworkImage(snapshot.docs[0]["profilePic"].toString());
         if (this.mounted) {
           setState(() {
             isProfileLoading = false;
-          })
+          });
         }
-      });
+      }
+      // await storage.loadProfileFile(widget.email!, snapshot.docs[0]["profilePic"].toString()).then((value) => {
+      //   image = NetworkImage(value),
+      //   if (this.mounted) {
+      //     setState(() {
+      //       isProfileLoading = false;
+      //     })
+      //   }
+      // });
     } catch(e) {
       if (this.mounted) {
         setState(() {
@@ -164,18 +178,15 @@ class _CommentCardState extends State<CommentCard> {
   Widget build(BuildContext context) {
 
     double fontSize;
-    double radiusWidth;
     double iconSize;
 
     if(Device.get().isTablet) {
       fontSize = MediaQuery.of(context).size.width * 0.026;
-      radiusWidth = MediaQuery.of(context).size.width * 0.026;
       iconSize = MediaQuery.of(context).size.width * 0.03;
 
     }
     else {
       fontSize = MediaQuery.of(context).size.width * 0.037;
-      radiusWidth = MediaQuery.of(context).size.width * 0.035;
       iconSize = MediaQuery.of(context).size.width * 0.038;
     }
 

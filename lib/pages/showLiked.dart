@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
 
@@ -24,9 +25,24 @@ class _ShowLikedPostsState extends State<ShowLikedPosts> {
 
   int i = 10;
 
+  String? currentUsername;
+  bool isCurrentUsernameLoading = true;
+  
+  void getCurrentUsername() {
+    HelperFunctions.getUserNameFromSF().then((value) {
+      currentUsername = value;
+      if (this.mounted) {
+        setState(() {
+          isCurrentUsernameLoading = false;
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getCurrentUsername();
     getLikedPosts().then((value) {
       likedPosts = value;
       if (this.mounted) {
@@ -52,7 +68,7 @@ class _ShowLikedPostsState extends State<ShowLikedPosts> {
 
   @override
   Widget build(BuildContext context) {
-    return isLikedPostsLoading ? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
+    return (isLikedPostsLoading || isCurrentUsernameLoading) ? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.liked, style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
@@ -107,7 +123,7 @@ class _ShowLikedPostsState extends State<ShowLikedPosts> {
               List.generate(likedPosts!.length, (index) {
                 try {
                   return Container(
-                    child: PostWidget(email: likedPosts![index]['email'], postID: likedPosts![index]['postId'], name: likedPosts![index]['writer'], image: likedPosts![index]['images'], description: likedPosts![index]['description'],isLike: likedPosts![index]['likes'].contains(widget.uId), likes: likedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: likedPosts![index]['uId'], withComment: likedPosts![index]["withComment"], isBookMark: likedPosts![index]["bookMarks"].contains(widget.uId), tags: likedPosts![index]["tags"], posted: likedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage),
+                    child: PostWidget(email: likedPosts![index]['email'], postID: likedPosts![index]['postId'], name: likedPosts![index]['writer'], image: likedPosts![index]['images'], description: likedPosts![index]['description'],isLike: likedPosts![index]['likes'].contains(widget.uId), likes: likedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: likedPosts![index]['uId'], withComment: likedPosts![index]["withComment"], isBookMark: likedPosts![index]["bookMarks"].contains(widget.uId), tags: likedPosts![index]["tags"], posted: likedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: likedPosts![index]["likes"], currentUsername: currentUsername!,),
                   );
                 } catch(e) {
                   return Container();

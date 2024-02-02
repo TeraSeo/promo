@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/login_page.dart';
@@ -26,6 +27,9 @@ class _EmailVerificationState extends State<EmailVerification> {
   Timer? timer;
   bool isHomePageAble = false;
 
+  DatabaseService databaseService = DatabaseService.instance;
+  FirebaseNotification firebaseNotification = FirebaseNotification.instance;
+
   @override
   void initState() {
     super.initState();
@@ -42,7 +46,7 @@ class _EmailVerificationState extends State<EmailVerification> {
           checkEmailVerified();
           if (isEmailVerified) {
             QuerySnapshot snapshot =
-              await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(widget.email);
+              await databaseService.getUserData(widget.email);
             await HelperFunctions.saveUserLoggedInStatus(true);
             await HelperFunctions.saveUserEmailSF(widget.email);
             await HelperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
@@ -59,7 +63,7 @@ class _EmailVerificationState extends State<EmailVerification> {
 
       Future.delayed(Duration(seconds: 0)).then((value) async {
         QuerySnapshot snapshot =
-          await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(widget.email);
+          await databaseService.getUserData(widget.email);
         await HelperFunctions.saveUserLoggedInStatus(true);
         await HelperFunctions.saveUserEmailSF(widget.email);
         await HelperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
@@ -189,6 +193,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                               style: TextStyle(color: Colors.white, fontSize: borderCircular / 2),
                             ),
                             onPressed: () {
+                              firebaseNotification.addMsgTokenToUser(FirebaseAuth.instance.currentUser!.uid);
                               nextScreenReplace(context, const HomePage(pageIndex: 0,));
                             },
                           )

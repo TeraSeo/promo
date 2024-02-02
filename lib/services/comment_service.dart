@@ -32,7 +32,7 @@ class CommentService {
       CommentDBService commentDBService = new CommentDBService(username: name, description: description, commentId: commentId);
       await commentDBService.savingeCommentDBData(uID, email, postId!);
 
-      DatabaseService databaseService = new DatabaseService();
+      DatabaseService databaseService = DatabaseService.instance;
       await databaseService.addComment(uID, commentId);
 
       return true;
@@ -138,7 +138,7 @@ class CommentService {
 
     final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
 
-    DatabaseService databaseService = new DatabaseService();
+    DatabaseService databaseService = DatabaseService.instance;
     PostService postService = PostService.instance;
 
     String uId = "";
@@ -166,7 +166,7 @@ class CommentService {
 
     List<dynamic> likedUsers;
 
-    DatabaseService databaseService = new DatabaseService();
+    DatabaseService databaseService = DatabaseService.instance;
 
     comment.get().then((value) => {
 
@@ -190,7 +190,7 @@ class CommentService {
 
     final comment = FirebaseFirestore.instance.collection("comment").doc(commentId);
 
-    DatabaseService databaseService = new DatabaseService();
+    DatabaseService databaseService = DatabaseService.instance;
 
     List<dynamic> likedUsers;
 

@@ -12,7 +12,6 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:ui';
 
 void main() async {
-
   WidgetsFlutterBinding.ensureInitialized();
   if (kIsWeb) {
     await Firebase.initializeApp(options: FirebaseOptions(
@@ -25,7 +24,7 @@ void main() async {
     await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform );
   }
 
-  FireStoreNotification().initNotificaiton();
+  FirebaseNotification.instance.initNotificaiton();
 
   runApp(const MyApp(language: ""));
 }

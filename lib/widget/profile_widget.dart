@@ -24,15 +24,11 @@ class ProfileWidget extends StatelessWidget {
   Widget buildImage(BuildContext context) {
     var image;
 
-    if (imagePath.contains("assets/")) {
-      image = AssetImage(imagePath);
-    } else {
-      if (imagePath == "" || imagePath == null) {
-        image = AssetImage(imagePath);
-      } 
-      else {
-        image = NetworkImage(imagePath);
-      }
+    if (imagePath == "" || imagePath == null) {
+      image = AssetImage("assets/blank.avif");
+    } 
+    else {
+      image = NetworkImage(imagePath);
     }
 
     return Container(

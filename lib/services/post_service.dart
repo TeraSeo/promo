@@ -76,21 +76,23 @@ class PostService {
         fileNames.add(images[i].path.split('/').last);
       }
 
+      Storage storage = Storage.instance;
       if (filePaths.length == fileNames.length) {
-        Storage storage = Storage.instance;
         await storage.deletePostImages(email, postId);
         for (int i = 0; i < filePaths.length; i++) {
           await storage.uploadPostImage(filePaths[i], fileNames[i], email, postId);
         }          
       }
 
-      post.update({
-        "images" : fileNames,
+      await storage.loadPostImages(email, postId, fileNames).then((value) {
+        post.update({
+        "images" : value,
         "description" : description,
         "category" : category,
         "tags" : tags,
         "withComment" : withComment,
         "posted" : tsdate
+      });
       });
 
     } catch(e) {
@@ -101,7 +103,7 @@ class PostService {
 
   Future removePost(String postId, String email) async {
 
-    DatabaseService databaseService = new DatabaseService();
+    DatabaseService databaseService = DatabaseService.instance;
 
     try {
 

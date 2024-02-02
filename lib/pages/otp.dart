@@ -354,9 +354,11 @@ class _LoginPageState extends State<OtpScreen> {
   }
 
   verified() async  {
+
+      DatabaseService databaseService = DatabaseService.instance;
           
       QuerySnapshot snapshot =
-        await DatabaseService(uid: FirebaseAuth.instance.currentUser!.uid).gettingUserData(email);
+        await databaseService.getUserData(email);
       
       await HelperFunctions.saveUserLoggedInStatus(true);
       await HelperFunctions.saveUserEmailSF(email);

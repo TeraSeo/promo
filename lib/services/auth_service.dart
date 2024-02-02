@@ -32,8 +32,10 @@ class AuthServie {
         email: email, password: password
       )).user!;
 
+      DatabaseService databaseService = DatabaseService.instance;
+
       if (user != null) {
-        await DatabaseService(uid: user.uid).savingeUserData(name, email);
+        await databaseService.savingeUserData(name, email, user.uid);
 
         return true;
       }

@@ -22,7 +22,6 @@ class PostDBService {
 
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
-    // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
     int? size;
     await postCollection.orderBy("postNumber", descending: true).limit(1).get()
         .then((value)  {
@@ -30,27 +29,31 @@ class PostDBService {
           Map<String, dynamic> post = element.data() as Map<String, dynamic>;
           size = post["postNumber"] + 1;
       });
-    });  // collection 크기 받기
+    }); 
+     
     String postId = Uuid().v4();
 
     Storage storage = Storage.instance;
     for (int i = 0; i < filePaths.length; i++) {
-      storage.uploadPostImage(filePaths[i], fileNames[i], email!, postId);
+      await storage.uploadPostImage(filePaths[i], fileNames[i], email!, postId);
     }  
+ 
+    DatabaseService databaseService = DatabaseService.instance;
+    databaseService.addUserPost(postId, uId!);
 
-    DatabaseService databaseService = new DatabaseService(uid: uId!);
-    databaseService.addUserPost(postId);
-
-    List<String> comments = [];
+    if (size == null) {
+      size = 1;
+    }
+    List<String> images =  await storage.loadPostImages(email!, postId, fileNames);
     return await postCollection.doc(postId).set({
       "postId" : postId,
       "email" : email,
-      "images" : fileNames,
+      "images" : images,
       "description" : description,
       "writer" : userName,
       "category" :  category,
       "tags" : tags,
-      "comments" : comments,
+      "comments" : [],
       "likes" : [],
       "posted" : tsdate,
       "withComment" : withComment,

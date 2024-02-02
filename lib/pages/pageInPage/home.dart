@@ -25,8 +25,10 @@ class _HomeState extends State<Home> {
   bool isMoreLoading = false;
   bool isErrorOccurred = false;
   bool isLoadingMorePostsPossible = true;
+  bool isCurrentUsernameLoading = true;
 
   String? uId; 
+  String? currentUsername;
 
   late List<String>? sortItems;
   String? sort = "Latest";
@@ -48,6 +50,7 @@ class _HomeState extends State<Home> {
     super.initState();
     getUId();
     getPosts();
+    getCurrentUsername();
     setAudioSession();
     setPreferredLanguageLoading();
   }
@@ -157,6 +160,17 @@ class _HomeState extends State<Home> {
     
   }
 
+  void getCurrentUsername() {
+    HelperFunctions.getUserNameFromSF().then((value) {
+      currentUsername = value;
+      if (this.mounted) {
+        setState(() {
+          isCurrentUsernameLoading = false;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     try {
@@ -184,7 +198,7 @@ class _HomeState extends State<Home> {
             ],
           )
       ) : 
-      (isUIdLoading || isLoading || isSortItemsLoading || isPreferredLanguageLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+      (isUIdLoading || isLoading || isSortItemsLoading || isPreferredLanguageLoading || isCurrentUsernameLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
         NotificationListener<ScrollNotification>(
                 onNotification: (scrollNotification) {
                   try {
@@ -287,7 +301,7 @@ class _HomeState extends State<Home> {
             List.generate(posts!.length, (index) {
               try {
                 return Container(
-                  child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,),
+                  child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!),
                 );
               } catch(e) {
                 return Center(

@@ -6,29 +6,28 @@ import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/storage.dart';
 
 class DatabaseService {
-  final String? uid;
-  DatabaseService({this.uid});
 
+  static final DatabaseService _instance = DatabaseService._internal();
+
+  DatabaseService._internal();
+
+  static DatabaseService get instance => _instance;
+  
   final CollectionReference userCollection = 
         FirebaseFirestore.instance.collection("user");
 
   Storage storage = Storage.instance;
 
-  // updating the user data
-  Future savingeUserData(String name, String email) async {
+  Future savingeUserData(String name, String email, String uid) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
 
     final fcmToken = await FirebaseMessaging.instance.getToken();
 
-    // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString();
-    // int size = await userCollection.get()
-    //     .then((value) => value.size);  // collection 크기 받기
-
     return await userCollection.doc(uid).set({
       "name" : name,
       "email" : email,
-      "token" : fcmToken,
+      "token" : [fcmToken],
       "profilePic" : "",
       "backgroundPic" : "",
       "uid" : uid,
@@ -45,10 +44,50 @@ class DatabaseService {
     });
   }
 
-  // getting user data
-  Future gettingUserData(String email) async {
+  Future<Map<dynamic, dynamic>> getLikedUser(List<dynamic> likedPeopleUId) async {
+
+    try {
+
+      Map likedPeople = new HashMap<int, Map<String, dynamic>>();
+      int i = 0;
+
+      await userCollection.
+        where("uid", whereIn: likedPeopleUId).
+        limit(30).get().then((value) => {
+        value.docs.forEach((element) {
+          Map<String, dynamic> post = element.data() as Map<String, dynamic>;
+          likedPeople[i] = post;
+          i += 1;
+        })
+      });
+
+      return likedPeople;
+
+    } catch(e) {
+      return new HashMap<int, Map<String, dynamic>>();
+    }
+
+  }
+
+  Future getUserData(String email) async {
     QuerySnapshot querySnapshot = await userCollection.where("email", isEqualTo: email).get();
     return querySnapshot;
+  }
+
+  Future<List<dynamic>> getUserToken(String uId) async {
+
+    try {
+
+      List<dynamic>? name;
+      await userCollection.doc(uId).get().then((value) {
+        name = value["token"];
+      });
+      return name!;
+
+    } catch(e) {
+      return [];
+    }
+    
   }
 
   Future<bool> checkExist(String name) async {       
@@ -61,14 +100,18 @@ class DatabaseService {
     }
   }
 
-  Future updateMessagingToken(String updatedToken) async {
+  Future updateMessagingToken(String newToken, String uid) async {
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
 
+      print(newToken + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+
       user.get().then((value) {
 
+        List<dynamic> tokens = value["token"];
+        tokens.add(newToken);
         user.update({
-          "token" : updatedToken
+          "token" : tokens
         });
 
       });
@@ -78,7 +121,7 @@ class DatabaseService {
     }
   }
 
-  Future addUserPost(String postId) async {
+  Future addUserPost(String postId, String uid) async {
 
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
@@ -99,7 +142,7 @@ class DatabaseService {
     }
   }
 
-  Future addUserLike(String postId, String postOwnerUId) async {
+  Future addUserLike(String postId, String postOwnerUId, String uid) async {
 
     try {
 
@@ -134,7 +177,7 @@ class DatabaseService {
     }
   }
 
-  Future removeUserLike(String postId, String postOwnerUId) async {
+  Future removeUserLike(String postId, String postOwnerUId, String uid) async {
 
     int wholeLikes;
 
@@ -173,7 +216,7 @@ class DatabaseService {
     }
   }
 
-  Future addUserBookMark(String postId) async {
+  Future addUserBookMark(String postId, String uid) async {
 
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
@@ -196,7 +239,7 @@ class DatabaseService {
 
   }
 
-  Future removeUserBookMark(String postId) async {
+  Future removeUserBookMark(String postId, String uid) async {
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
 
@@ -300,12 +343,31 @@ class DatabaseService {
 
       final user = FirebaseFirestore.instance.collection("user").doc(uId);
 
-      await user.update({
-        "profilePic" : fileName
-      });
+      // await user.update({
+      //   "profilePicURL" : fileName
+      // });
               
       await storage.uploadProfileImage(path, fileName, email);
 
+      await setProfilePic(uId, fileName, email);
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future setProfilePic(String uId, String fileName, String email) async {
+
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await storage.loadProfileFile(email, fileName).then((value) {
+        user.update({
+          "profilePic" : value
+        });
+      });
 
     } catch(e) {
       print(e);
@@ -319,11 +381,31 @@ class DatabaseService {
 
       final user = FirebaseFirestore.instance.collection("user").doc(uId);
 
-      await user.update({
-        "backgroundPic" : fileName
-      });
+      // await user.update({
+      //   "backgroundPicURL" : fileName
+      // });
               
       await storage.uploadProfileBackground(path, fileName, email);
+
+      await setBackgroundPic(uId, fileName, email);
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future setBackgroundPic(String uId, String fileName, String email) async {
+
+    try {
+
+      final user = FirebaseFirestore.instance.collection("user").doc(uId);
+
+      await storage.loadProfileBackground(email, fileName).then((value) {
+        user.update({
+          "backgroundPic" : value
+        });
+      });
 
     } catch(e) {
       print(e);

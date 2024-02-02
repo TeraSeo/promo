@@ -26,9 +26,14 @@ class Storage {
   }
 
   Future<String> loadProfileFile(String email, String fileName) async {
-    final ref = await storage.ref().child(email+'/profile/$fileName');
-    final url = await ref.getDownloadURL();
-    return url;
+    try {
+      final ref = await storage.ref().child(email+'/profile/$fileName');
+      final url = await ref.getDownloadURL();
+      return url;
+    } catch(e) {
+      return "";
+    }
+    
   }
 
   Future<void> deleteProfileImage(String email) async {

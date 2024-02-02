@@ -2,45 +2,51 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:like_app/services/userService.dart';
 
-class FireStoreNotification {
+class FirebaseNotification {
 
-  final _firebaseMessaging = FirebaseMessaging.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  static final FirebaseNotification _instance = FirebaseNotification._internal();
+
+  FirebaseNotification._internal();
+
+  static FirebaseNotification get instance => _instance;
 
   Future handleBackgroundMessage(RemoteMessage message) async {
     print(message.notification?.title);
   }  
 
   Future initNotificaiton() async {
-    await _firebaseMessaging.requestPermission();
-
+    _firebaseMessaging.requestPermission();
   }
 
-  void requestPermission() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
+  Future addMsgTokenToUser(String uId) async {
+    try {
+      DatabaseService databaseService = DatabaseService.instance;
 
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+      NotificationSettings settings = await _firebaseMessaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted permission');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      print('User granted provisional permission');
-    } else {
-      print('User declined or has not accepted permission');
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        final fcmToken = await _firebaseMessaging.getToken();
+        databaseService.updateMessagingToken(fcmToken.toString(), uId);
+      }
+
+    } catch(e) {
+      print(e);
     }
   }
 
-  void sendPushMessage(String body, String title, String token) async {
-    print("push");
+  void sendPushMessage(String username, String token) async {
     try {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -52,8 +58,8 @@ class FireStoreNotification {
         body: jsonEncode(
           <String, dynamic>{
             'notification': <String, dynamic>{
-              'body': body,
-              'title': title,
+              'body': username + " liked you post",
+              'title': "Like Notification",
             },
             'priority': 'high',
             'data': <String, dynamic>{
@@ -65,7 +71,6 @@ class FireStoreNotification {
           },
         ),
       );
-      print('done');
     } catch (e) {
       print("error push notification");
     }

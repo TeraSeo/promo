@@ -285,7 +285,8 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   Future<bool> existing(String accountName) async {
-    return await DatabaseService(uid: FirebaseAuth.instance.currentUser?.uid).checkExist(accountName);
+    DatabaseService databaseService = DatabaseService.instance;
+    return await databaseService.checkExist(accountName);
   }  
 
   showAlertDialog(BuildContext context) {

@@ -69,7 +69,7 @@ class CropResultView extends StatefulWidget {
 class _CropResultViewState extends State<CropResultView> {
   bool isProfileChanging = false;
   Storage storage = Storage.instance;
-  DatabaseService databaseService = DatabaseService();
+  DatabaseService databaseService = DatabaseService.instance;
 
   Widget _buildTitle(String title, int length) {
     return WillPopScope(

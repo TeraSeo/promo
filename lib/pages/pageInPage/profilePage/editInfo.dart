@@ -41,7 +41,7 @@ class _EditInfoState extends State<EditInfo> {
     super.initState();
 
     postService = PostService.instance;
-    databaseService = new DatabaseService();
+    databaseService = DatabaseService.instance;
 
     try {
       _controllerName.text = widget.postUser!["name"].toString();
@@ -285,7 +285,7 @@ class _EditInfoState extends State<EditInfo> {
 
   Future<bool> existing(String accountName) async {
     try {
-      return await DatabaseService(uid: FirebaseAuth.instance.currentUser?.uid).checkExist(accountName);
+      return await databaseService.checkExist(accountName);
     } catch(e) {
       if (this.mounted) {
         setState(() {

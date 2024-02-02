@@ -29,7 +29,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
   DocumentSnapshot<Map<String, dynamic>>? postUser;
 
-  DatabaseService databaseService = new DatabaseService();
+  DatabaseService databaseService = DatabaseService.instance;
   Storage storage = Storage.instance;
 
   bool _isImg = true;
@@ -61,6 +61,20 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   String? preferredLanguage;
   bool isPreferredLanguageLoading = true;
 
+  String? currentUsername;
+  bool isCurrentUsernameLoading = true;
+  
+  void getCurrentUsername() {
+    HelperFunctions.getUserNameFromSF().then((value) {
+      currentUsername = value;
+      if (this.mounted) {
+        setState(() {
+          isCurrentUsernameLoading = false;
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -68,6 +82,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
       getUser();
       getRanking();
       setPreferredLanguageLoading();
+      getCurrentUsername();
     } catch(e) {
       setState(() {
         isErrorOccurred = true;
@@ -95,8 +110,10 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
       postUser = await docOwner.get() as DocumentSnapshot<Map<String, dynamic>>;
       getPosts();
       likes = postUser!["wholeLikes"];
-      getUserProfile();
-      getUserBackground();
+      img_url = postUser!["profilePic"];
+      background_url = postUser!["backgroundPic"];
+      // getUserProfile();
+      // getUserBackground();
 
     } catch(e) {
       if (this.mounted) {
@@ -141,45 +158,45 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
     
   }
 
-  getUserProfile() async {
-    try {
-      await storage.loadProfileFile(postUser!["email"].toString(), postUser!["profilePic"].toString()).then((value) => {
-        img_url = value,
-        if (this.mounted) {
-          setState(() {
-            _isImg = false;
-          })
-        }
-      });
-    } catch(e) {
-      if (this.mounted) {
-        setState(() {
-          _isImg = false;
-          img_url = 'assets/blank.avif';
-        });
-      }
-    }
-  }
+  // // getUserProfile() async {
+  // //   try {
+  // //     await storage.loadProfileFile(postUser!["email"].toString(), postUser!["profilePic"].toString()).then((value) => {
+  // //       img_url = value,
+  // //       if (this.mounted) {
+  // //         setState(() {
+  // //           _isImg = false;
+  // //         })
+  // //       }
+  // //     });
+  // //   } catch(e) {
+  // //     if (this.mounted) {
+  // //       setState(() {
+  // //         _isImg = false;
+  // //         img_url = 'assets/blank.avif';
+  // //       });
+  // //     }
+  // //   }
+  // }
 
-  getUserBackground() async {
-    try {
-      await storage.loadProfileBackground(postUser!["email"].toString(), postUser!["backgroundPic"].toString()).then((value) => {
-        background_url = value,
-        if (this.mounted) {
-          setState(() {
-            _isBackground = false;
-          })
-        }
-      });
-    } catch(e) {
-      if (this.mounted) {
-        setState(() {
-          _isBackground = false;
-          background_url = 'assets/backgroundDef.jpeg';
-        });
-      }
-    }
-  }
+  // getUserBackground() async {
+  //   try {
+  //     await storage.loadProfileBackground(postUser!["email"].toString(), postUser!["backgroundPic"].toString()).then((value) => {
+  //       background_url = value,
+  //       if (this.mounted) {
+  //         setState(() {
+  //           _isBackground = false;
+  //         })
+  //       }
+  //     });
+  //   } catch(e) {
+  //     if (this.mounted) {
+  //       setState(() {
+  //         _isBackground = false;
+  //         background_url = 'assets/backgroundDef.jpeg';
+  //       });
+  //     }
+  //   }
+  // }
 
 
   @override
@@ -214,7 +231,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (_isImg || _isBackground || isPostLoading || isRankingLoading || isPreferredLanguageLoading)? Container(
+      ) : (isPostLoading || isRankingLoading || isPreferredLanguageLoading || isCurrentUsernameLoading)? Container(
         color: Colors.white,
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -316,25 +333,29 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
             children: 
                 List.generate(posts!.length, (index) {
                   try {
-                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: false, preferredLanguage: preferredLanguage!);
+                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: false, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!,);
                   } catch(e) {
+                    print(e);
                     return Center(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             IconButton(onPressed: () {
                                 setState(() {
-                                if (this.mounted) {
-                                  isErrorOccurred = false;
-                                  _isImg = true;
-                                  _isBackground = true;
-                                  isPostLoading = true;
-                                  isRankingLoading = true;
-                                }
-                              });
-                              Future.delayed(Duration.zero,() async {
-                                await getUser();
-                              });
+                                  if (this.mounted) {
+                                    isErrorOccurred = false;
+                                    _isImg = true;
+                                    _isBackground = true;
+                                    isPostLoading = true;
+                                    isRankingLoading = true;
+                                    isPreferredLanguageLoading = true;
+                                  }
+                                });
+                                Future.delayed(Duration.zero,() async {
+                                  await getUser();
+                                  getRanking();
+                                  setPreferredLanguageLoading();
+                                });
 
                             }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),
                             Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
@@ -387,12 +408,13 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
                     _isBackground = true;
                     isPostLoading = true;
                     isRankingLoading = true;
+                    isPreferredLanguageLoading = true;
                   }
                 });
                 Future.delayed(Duration.zero,() async {
                   await getUser();
                   getRanking();
-                  
+                  setPreferredLanguageLoading();
                 });
 
               }, icon: Icon(Icons.refresh, size: MediaQuery.of(context).size.width * 0.08, color: Colors.blueGrey,),),

@@ -3,16 +3,17 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
+import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
+import 'package:like_app/pages/peopleLiked.dart';
 import 'package:like_app/services/translatorServer.dart';
 import 'package:like_app/widget/VideoPlayerWidget.dart';
 import 'package:like_app/widget/searchByTag.dart';
 import 'package:like_app/services/post_service.dart';
-import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widgets/widgets.dart';
@@ -34,10 +35,11 @@ class PostWidget extends StatefulWidget {
   final List<dynamic> tags;
   final Timestamp posted;
   final String? preferredLanguage;
-
+  final List<dynamic>? likedPeople;
   final bool isProfileClickable;
+  final String currentUsername;
   
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage});
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage, required this.likedPeople, required this.currentUsername});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -49,17 +51,20 @@ class _PostWidgetState extends State<PostWidget> {
   bool? isLike;
   bool isProfileLoading = true;
   int? likes;
-  String? profileFileName = "";
   Logging logger = Logging();
 
   TranslatorServer translatorServer = TranslatorServer();
+  DatabaseService databaseService = DatabaseService.instance;
+  FirebaseNotification firebaseNotification = FirebaseNotification.instance;
 
   bool isPostRemoving = false;
   bool isRemovementPermitted = false; 
+  bool isPostOwnerLoading = true;
 
-  List<String>? images;
+  List<dynamic>? images;
+  List<dynamic>? postOwnerTokens;
 
-  bool isLoading = true;
+  // bool isLoading = true;
   bool? isBookMark;
 
   bool isErrorOccurred = false;
@@ -82,8 +87,11 @@ class _PostWidgetState extends State<PostWidget> {
   void initState() {
     super.initState();
 
+    setPostOwner();
+
+    images = widget.image;
     description = widget.description;
-    getImages();
+    // getImages();
     if (this.mounted) {
       setState(() {
         isLike = widget.isLike;
@@ -100,6 +108,17 @@ class _PostWidgetState extends State<PostWidget> {
     super.didChangeDependencies();
 
     calTimeDiff();
+  }
+
+  setPostOwner() {
+    databaseService.getUserToken(widget.postOwnerUId!).then((value) {
+      postOwnerTokens = value;
+      if (this.mounted) {
+        setState(() {
+          isPostOwnerLoading = false;
+        });
+      }
+    });
   }
 
   calTimeDiff() {
@@ -146,18 +165,33 @@ class _PostWidgetState extends State<PostWidget> {
   getOwnerProfile() async {
  
     QuerySnapshot snapshot =
-        await DatabaseService().gettingUserData(widget.email!);
+        await databaseService.getUserData(widget.email!);
 
-    Storage storage = Storage.instance;
     try {
-      await storage.loadProfileFile(widget.email.toString(), snapshot.docs[0]["profilePic"].toString()).then((value) => {
-        image = NetworkImage(value),
+
+      if (snapshot.docs[0]["profilePic"].toString() == "" || snapshot.docs[0]["profilePic"].toString() == null) {
+        if (this.mounted) {
+          setState(() {
+            image = AssetImage('assets/blank.avif');
+            isProfileLoading = false;
+          });
+        }
+      } else {
+        image = NetworkImage(snapshot.docs[0]["profilePic"].toString());
         if (this.mounted) {
           setState(() {
             isProfileLoading = false;
-          })
+          });
         }
-      });
+      }
+      // await storage.loadProfileFile(widget.email.toString(), snapshot.docs[0]["profilePic"].toString()).then((value) => {
+      //   image = NetworkImage(value),
+      //   if (this.mounted) {
+      //     setState(() {
+      //       isProfileLoading = false;
+      //     })
+      //   }
+      // });
     } catch(e) {
       if (this.mounted) {
         setState(() {
@@ -168,24 +202,23 @@ class _PostWidgetState extends State<PostWidget> {
     }
   }
 
-  void getImages() async {
-    try {
-      Storage storage = Storage.instance;
-      await storage.loadPostImages(widget.email!, widget.postID!, widget.image!).then((value) => {
-        images = value,
-        if (this.mounted) {
-          setState(() {
-            isLoading = false;
-          })
-        }
-      });
-    } catch(e) {
-      setState(() {
-        isErrorOccurred = true;
-      });
-    }
-    
-  }
+  // void getImages() async {
+  //   try {
+  //     Storage storage = Storage.instance;
+  //     await storage.loadPostImages(widget.email!, widget.postID!, widget.image!).then((value) => {
+  //       images = value,
+  //       if (this.mounted) {
+  //         setState(() {
+  //           isLoading = false;
+  //         })
+  //       }
+  //     });
+  //   } catch(e) {
+  //     setState(() {
+  //       isErrorOccurred = true;
+  //     });
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -204,7 +237,6 @@ class _PostWidgetState extends State<PostWidget> {
     double iconWidth;
     double postHeight;
 
-    DatabaseService databaseService = DatabaseService(uid: widget.uId);
 
     if(Device.get().isTablet) {
       isTablet = true;
@@ -224,7 +256,7 @@ class _PostWidgetState extends State<PostWidget> {
     }
 
     try {
-      return isErrorOccurred? Container() : (isLoading || isProfileLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
+      return isErrorOccurred? Container() : (isProfileLoading || isPostOwnerLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
         children: [
           SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
           Container(
@@ -409,11 +441,16 @@ class _PostWidgetState extends State<PostWidget> {
                                   });
                                   if (isLike!) {
                                     await postService.postAddLike(widget.postID!);
-                                    await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
+                                    await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
+                                    for (int i = 0; i < postOwnerTokens!.length; i++) {
+                                      if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
+                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i]);
+                                      }
+                                    }
                                   }
                                   else {
                                     await postService.postRemoveLike(widget.postID!);
-                                    await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
+                                    await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                   }
                                 } catch(e) {
                                 }
@@ -448,11 +485,11 @@ class _PostWidgetState extends State<PostWidget> {
 
                                   if (isBookMark!) {
 
-                                    await databaseService.addUserBookMark(widget.postID!);
+                                    await databaseService.addUserBookMark(widget.postID!, widget.uId!);
                                     await postService.addBookMark(widget.postID!, widget.uId!);
 
                                   } else {
-                                    await databaseService.removeUserBookMark(widget.postID!);
+                                    await databaseService.removeUserBookMark(widget.postID!, widget.uId!);
                                     await postService.removeBookMark(widget.postID!, widget.uId!);
                                   }
                                 } catch(e) {
@@ -469,11 +506,16 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text(
-                            likes! > 1 ? 
-                            likes!.toString() + " " + AppLocalizations.of(context)!.likes : 
-                            likes!.toString() + " " +  AppLocalizations.of(context)!.like,
-                            style: TextStyle(fontSize: descriptionSize * 0.8, fontWeight: FontWeight.bold),)
+                          GestureDetector(
+                            onTap: () {
+                              nextScreen(context, PeopleLiked(likedPeople: widget.likedPeople!, uId: widget.uId!));
+                            },
+                            child: Text(
+                              likes! > 1 ? 
+                              likes!.toString() + " " + AppLocalizations.of(context)!.likes : 
+                              likes!.toString() + " " +  AppLocalizations.of(context)!.like,
+                              style: TextStyle(fontSize: descriptionSize * 0.8, fontWeight: FontWeight.bold),)
+                          )
                         ],
                       ),
                       Row(
@@ -530,11 +572,11 @@ class _PostWidgetState extends State<PostWidget> {
                               });
                               if (isLike!) {
                                 await postService.postAddLike(widget.postID!);
-                                await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
+                                await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                               }
                               else {
                                 await postService.postRemoveLike(widget.postID!);
-                                await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
+                                await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                               }
                           } catch(e) {
                           }
@@ -635,11 +677,16 @@ class _PostWidgetState extends State<PostWidget> {
                                   });
                                   if (isLike!) {
                                     await postService.postAddLike(widget.postID!);
-                                    await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
+                                    await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
+                                    for (int i = 0; i < postOwnerTokens!.length; i++) {
+                                      if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
+                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i]);
+                                      }
+                                    }
                                   }
                                   else {
                                     await postService.postRemoveLike(widget.postID!);
-                                    await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
+                                    await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                   }
                                 } catch(e) {
                                 }
@@ -676,11 +723,11 @@ class _PostWidgetState extends State<PostWidget> {
 
                                   if (isBookMark!) {
 
-                                    await databaseService.addUserBookMark(widget.postID!);
+                                    await databaseService.addUserBookMark(widget.postID!, widget.uId!);
                                     await postService.addBookMark(widget.postID!, widget.uId!);
 
                                   } else {
-                                    await databaseService.removeUserBookMark(widget.postID!);
+                                    await databaseService.removeUserBookMark(widget.postID!, widget.uId!);
                                     await postService.removeBookMark(widget.postID!, widget.uId!);
                                   }
                                 } catch(e) {
@@ -698,11 +745,16 @@ class _PostWidgetState extends State<PostWidget> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text(
-                            likes! > 1 ? 
-                            likes!.toString() + " " + AppLocalizations.of(context)!.likes: 
-                            likes!.toString() + " " + AppLocalizations.of(context)!.like
-                            , style: TextStyle(fontSize: descriptionSize * 0.9, fontWeight: FontWeight.bold),)
+                          GestureDetector(
+                            onTap: () {
+                              nextScreen(context, PeopleLiked(likedPeople: widget.likedPeople!, uId: widget.uId!));
+                            },
+                            child: Text(
+                              likes! > 1 ? 
+                              likes!.toString() + " " + AppLocalizations.of(context)!.likes: 
+                              likes!.toString() + " " + AppLocalizations.of(context)!.like
+                              , style: TextStyle(fontSize: descriptionSize * 0.9, fontWeight: FontWeight.bold),)
+                          )
                         ],
                       ),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.003,),
@@ -885,7 +937,6 @@ class _PostWidgetState extends State<PostWidget> {
                   title: Text(AppLocalizations.of(context)!.likeThisPost),  // 'Like this post'
                   onTap: () async{
                     try {
-                      DatabaseService databaseService = DatabaseService(uid: widget.uId);
                       if (this.mounted) {
                         setState(()  {
                           if (!isLike!) {
@@ -901,11 +952,16 @@ class _PostWidgetState extends State<PostWidget> {
                       }
                       if (isLike!) {
                         await postService.postAddLike(widget.postID!);
-                        await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!);
+                        await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
+                        for (int i = 0; i < postOwnerTokens!.length; i++) {
+                          if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
+                            firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i]);
+                          }
+                        }
                       }
                       else {
                         await postService.postRemoveLike(widget.postID!);
-                        await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!);
+                        await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                       }
                     } catch(e) {
                     }
@@ -916,7 +972,6 @@ class _PostWidgetState extends State<PostWidget> {
                   title: Text(AppLocalizations.of(context)!.bookmarkThisPost),
                   onTap: () async{
                     try {
-                      DatabaseService databaseService = DatabaseService(uid: widget.uId);
                       if (this.mounted) {
                         setState(()  {
                           if (isBookMark!) {
@@ -928,11 +983,11 @@ class _PostWidgetState extends State<PostWidget> {
                         });
                       }
                       if (isBookMark!) {
-                        await databaseService.addUserBookMark(widget.postID!);
+                        await databaseService.addUserBookMark(widget.postID!, widget.uId!);
                         await postService.addBookMark(widget.postID!, widget.uId!);
 
                       } else {
-                        await databaseService.removeUserBookMark(widget.postID!);
+                        await databaseService.removeUserBookMark(widget.postID!, widget.uId!);
                         await postService.removeBookMark(widget.postID!, widget.uId!);
                       }
                         

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
-import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
@@ -27,8 +26,8 @@ class _SesarchUserState extends State<SearchUser> {
 
   bool isErrorOccurred = false;
   Logging logger = Logging();
+  DatabaseService databaseService = DatabaseService.instance;
 
-  List<bool> isprofLoadings = [];
   List<String> profileURLs = [];
 
   @override
@@ -44,7 +43,6 @@ class _SesarchUserState extends State<SearchUser> {
 
   Future getUsersBySearchName(String searchedName) async {
     try {
-      DatabaseService databaseService = new DatabaseService();
       databaseService.getUserBySearchedName(searchedName).then((value) => {
         users = value,
         if (this.mounted) {
@@ -68,7 +66,6 @@ class _SesarchUserState extends State<SearchUser> {
   Future getMoreUsersBySearchName(String searchedName, String uId) async {
     try {
       
-      DatabaseService databaseService = new DatabaseService();
       await databaseService.loadMoreUsersBySearchedName(searchedName, uId).then((value) => {
         if (value.length == 0) {
           if (this.mounted) {
@@ -107,11 +104,10 @@ class _SesarchUserState extends State<SearchUser> {
 
   setProfileUrls() async {
     try {
-
       while (profileURLs.length < users!.length) {
-        profileURLs.add("");
-        isprofLoadings.add(true);
-        await getProfileURL(users![profileURLs.length - 1]["email"], users![profileURLs.length - 1]["profilePic"], profileURLs.length - 1);
+        profileURLs.add(users![profileURLs.length]["profilePic"]);
+        // isprofLoadings.add(true);
+        // await getProfileURL(users![profileURLs.length - 1]["email"], users![profileURLs.length - 1]["profilePic"], profileURLs.length - 1);
       }
 
       if (this.mounted) {
@@ -130,27 +126,27 @@ class _SesarchUserState extends State<SearchUser> {
     
   }
 
-  getProfileURL(String email, String profile, int index) async {
+  // getProfileURL(String email, String profile, int index) async {
 
-    Storage storage = Storage.instance;
+  //   Storage storage = Storage.instance;
 
-    try {
-      await storage.loadProfileFile(email, profile).then((value) => {
-        profileURLs[index] = value,
-        if (this.mounted) {
-          setState(() {
-            isprofLoadings[index] = false;
-          })
-        }
-      });
-    } catch(e) {
-      if (this.mounted) {
-        setState(() {
-          isprofLoadings[index] = false;
-        });
-      }
-    }
-  }
+  //   try {
+  //     await storage.loadProfileFile(email, profile).then((value) => {
+  //       profileURLs[index] = value,
+  //       if (this.mounted) {
+  //         setState(() {
+  //           isprofLoadings[index] = false;
+  //         })
+  //       }
+  //     });
+  //   } catch(e) {
+  //     if (this.mounted) {
+  //       setState(() {
+  //         isprofLoadings[index] = false;
+  //       });
+  //     }
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -168,7 +164,6 @@ class _SesarchUserState extends State<SearchUser> {
                       isLoadingMoreUsersPossible = true;
                       isMoreLoading = false;
                       isProfileLoading = true;
-                      isprofLoadings = [];
                       profileURLs = [];
                     }
                   );
@@ -220,9 +215,6 @@ class _SesarchUserState extends State<SearchUser> {
                   child: Wrap(children: List.generate(users!.length, (index) {
                       try {
                         return 
-                          isprofLoadings[index] ? Center(
-                            child: CircularProgressIndicator(),
-                          ) : 
                         InkWell(
                           onTap: () {
                             nextScreen(context, OthersProfilePages(uId: widget.uId, postOwnerUId: users![index]["uid"]));
@@ -234,7 +226,7 @@ class _SesarchUserState extends State<SearchUser> {
                                 height: MediaQuery.of(context).size.height * 0.05,
                                 decoration: BoxDecoration(
                                   color: const Color(0xff7c94b6),
-                                  image: profileURLs[index] == "" ? DecorationImage(
+                                  image: (profileURLs[index] == "" || profileURLs[index] == null) ? DecorationImage(
                                     image:  AssetImage("assets/blank.avif"),
                                     fit: BoxFit.cover,
                                   ) : 
@@ -272,7 +264,6 @@ class _SesarchUserState extends State<SearchUser> {
                                       isLoadingMoreUsersPossible = true;
                                       isMoreLoading = false;
                                       isProfileLoading = true;
-                                      isprofLoadings = [];
                                       profileURLs = [];
                                     }
                                   );
@@ -304,7 +295,6 @@ class _SesarchUserState extends State<SearchUser> {
                       isLoadingMoreUsersPossible = true;
                       isMoreLoading = false;
                       isProfileLoading = true;
-                      isprofLoadings = [];
                       profileURLs = [];
                     }
                   );

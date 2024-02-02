@@ -69,11 +69,6 @@ class _HomePageState extends State<HomePage> {
 
     gettingUserData();
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
-      DatabaseService userService = new DatabaseService();
-      userService.updateMessagingToken(newToken);
-    });     // firebase notification token
-
   }
 
   gettingUserData() async {
@@ -91,6 +86,10 @@ class _HomePageState extends State<HomePage> {
         })
       });
 
+      // await HelperFunctions.getUserUIdFromSF().then((value) {
+      //   listenMsgToken(value!);
+      // });
+
     } catch(e) {
       if (this.mounted) {setState(() {
         isErrorOccurred = true;
@@ -98,6 +97,13 @@ class _HomePageState extends State<HomePage> {
       logger.message_warning("error occurred while getting user data\nerror: " + e.toString());
     }
   }
+
+  // listenMsgToken(String uId) {
+  //   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
+  //     DatabaseService userService = DatabaseService.instance;
+  //     userService.updateMessagingToken(newToken, uId);
+  //   });
+  // }
 
   final PageController _pageController = PageController();
   final ScrollController homeScrollController = ScrollController();

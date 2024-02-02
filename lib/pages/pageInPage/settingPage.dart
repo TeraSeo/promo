@@ -22,7 +22,7 @@ class SettingPage extends StatefulWidget {
 
 class _SettingPageState extends State<SettingPage> {
 
-  DatabaseService databaseService = new DatabaseService();
+  DatabaseService databaseService = DatabaseService.instance;
 
   String? languageTxt;
   bool isLanguageTxtLoading = true;

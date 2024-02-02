@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/widget/post_widget.dart';
 
@@ -24,9 +25,24 @@ class _ShowBookmarkedPostsState extends State<ShowBookmarkedPosts> {
 
   int i = 10;
 
+  String? currentUsername;
+  bool isCurrentUsernameLoading = true;
+  
+  void getCurrentUsername() {
+    HelperFunctions.getUserNameFromSF().then((value) {
+      currentUsername = value;
+      if (this.mounted) {
+        setState(() {
+          isCurrentUsernameLoading = false;
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    getCurrentUsername();
     getLikedPosts().then((value) {
       bookmarkedPosts = value;
       if (this.mounted) {
@@ -52,7 +68,7 @@ class _ShowBookmarkedPostsState extends State<ShowBookmarkedPosts> {
 
   @override
   Widget build(BuildContext context) {
-    return isBookmarkedPostsLoading ? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
+    return (isBookmarkedPostsLoading || isCurrentUsernameLoading) ? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.liked, style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
@@ -107,7 +123,7 @@ class _ShowBookmarkedPostsState extends State<ShowBookmarkedPosts> {
               List.generate(bookmarkedPosts!.length, (index) {
                 try {
                   return Container(
-                    child: PostWidget(email: bookmarkedPosts![index]['email'], postID: bookmarkedPosts![index]['postId'], name: bookmarkedPosts![index]['writer'], image: bookmarkedPosts![index]['images'], description: bookmarkedPosts![index]['description'],isLike: bookmarkedPosts![index]['likes'].contains(widget.uId), likes: bookmarkedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: bookmarkedPosts![index]['uId'], withComment: bookmarkedPosts![index]["withComment"], isBookMark: bookmarkedPosts![index]["bookMarks"].contains(widget.uId), tags: bookmarkedPosts![index]["tags"], posted: bookmarkedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage),
+                    child: PostWidget(email: bookmarkedPosts![index]['email'], postID: bookmarkedPosts![index]['postId'], name: bookmarkedPosts![index]['writer'], image: bookmarkedPosts![index]['images'], description: bookmarkedPosts![index]['description'],isLike: bookmarkedPosts![index]['likes'].contains(widget.uId), likes: bookmarkedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: bookmarkedPosts![index]['uId'], withComment: bookmarkedPosts![index]["withComment"], isBookMark: bookmarkedPosts![index]["bookMarks"].contains(widget.uId), tags: bookmarkedPosts![index]["tags"], posted: bookmarkedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: bookmarkedPosts![index]["likes"], currentUsername: currentUsername!,),
                   );
                 } catch(e) {
                   return Container();

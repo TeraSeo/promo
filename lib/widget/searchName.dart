@@ -55,9 +55,24 @@ class _SearchNameState extends State<SearchName> {
   String? preferredLanguage;
   bool isPreferredLanguageLoading = true;
 
+  String? currentUsername;
+  bool isCurrentUsernameLoading = true;
+  
+  void getCurrentUsername() {
+    HelperFunctions.getUserNameFromSF().then((value) {
+      currentUsername = value;
+      if (this.mounted) {
+        setState(() {
+          isCurrentUsernameLoading = false;
+        });
+      }
+    });
+  }
+
   @override
   void initState() {
 
+    getCurrentUsername();
     Future.delayed(Duration(seconds: 0)).then((value) async {
       await getPostsBySearchName(widget.searchedName);
     });
@@ -200,7 +215,7 @@ class _SearchNameState extends State<SearchName> {
               Text(AppLocalizations.of(context)!.loadFailed, style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : (isPostLoading || isSortItemsLoading || isCategoryItemsLoading || isPreferredLanguageLoading) ? Center(child: CircularProgressIndicator()) : NotificationListener<ScrollNotification>(
+      ) : (isPostLoading || isSortItemsLoading || isCategoryItemsLoading || isPreferredLanguageLoading || isCurrentUsernameLoading) ? Center(child: CircularProgressIndicator()) : NotificationListener<ScrollNotification>(
         onNotification: (scrollNotification) {
           if (scrollNotification.metrics.pixels == scrollNotification.metrics.maxScrollExtent && isLoadingMorePostsPossible && !isMoreLoading) {
 
@@ -298,20 +313,20 @@ class _SearchNameState extends State<SearchName> {
                   if (sort == "related" || sort == "verwandt" || sort == "relacionada" || sort == "en rapport" || sort == "संबंधित" || sort == "関連順" || sort == "관련") {
 
                     if (category == "") {
-                      return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,);
+                      return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!,);
                     } 
                     else if (posts![index]['category'] == HelperFunctions().changeCategoryToEnglish(category)) {
-                      return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!,);
+                      return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(widget.uId), likes: posts![index]['likes'].length, uId: widget.uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(widget.uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!,);
                     }
                     else {
                       return Container();
                     }
                   } else {
                     if (category == "") {
-                      return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!);
+                      return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!,);
                     } 
                     else if (posts![posts!.length - 1 - index]['category'] == HelperFunctions().changeCategoryToEnglish(category)) {
-                      return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!);
+                      return PostWidget(email: posts![posts!.length - 1 - index]['email'], postID: posts![posts!.length - 1 - index]['postId'], name: posts![posts!.length - 1 - index]['writer'], image: posts![posts!.length - 1 - index]['images'], description: posts![posts!.length - 1 - index]['description'],isLike: posts![posts!.length - 1 - index]['likes'].contains(widget.uId), likes: posts![posts!.length - 1 - index]['likes'].length, uId: widget.uId, postOwnerUId: posts![posts!.length - 1 - index]['uId'], withComment: posts![posts!.length - 1 - index]["withComment"], isBookMark: posts![posts!.length - 1 - index]["bookMarks"].contains(widget.uId), tags: posts![posts!.length - 1 - index]["tags"], posted: posts![posts!.length - 1 - index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!,);
                     }
                     else {
                       return Container();
