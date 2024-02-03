@@ -14,8 +14,9 @@ class EditCommentWidget extends StatefulWidget {
   final String? uId;
   final String? description;
   final String? commentId;
+  final String? preferredLanguage;
 
-  const EditCommentWidget({super.key, required this.postId, required this.uId, required this.description, required this.commentId});
+  const EditCommentWidget({super.key, required this.postId, required this.uId, required this.description, required this.commentId, required this.preferredLanguage});
 
   @override
   State<EditCommentWidget> createState() => _EditCommentWidgetState();
@@ -210,7 +211,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
               child: CommentCard(likes: comments![index]["likedUsers"].length, isCommentLike: comments![index]["likedUsers"].contains(widget.uId),
                                  commentOwnerUid: comments![index]["uId"], email: comments![index]["email"], name: comments![index]["username"], 
                                  posted: DateTime.fromMicrosecondsSinceEpoch(comments![index]["posted"].microsecondsSinceEpoch), 
-                                 commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId,),
+                                 commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId, preferredLanguage: widget.preferredLanguage,),
             );
 
             } catch(e) {
@@ -286,7 +287,7 @@ class _EditCommentWidgetState extends State<EditCommentWidget> {
                                   });
                                   await commentService.updateComment(widget.commentId!, content!);
                                   Future.delayed(Duration(seconds: 1)).then((value) => {
-                                    nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
+                                    nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId, preferredLanguage: widget.preferredLanguage,))
                                   });
                                 }
                               }

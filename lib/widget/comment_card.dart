@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/comment_service.dart';
+import 'package:like_app/services/translatorServer.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widget/comment_widget.dart';
 import 'package:like_app/widget/edit_comment_widget.dart';
@@ -22,8 +24,9 @@ class CommentCard extends StatefulWidget {
   final String? commentId;
   final String? uId;
   final String? postId;
+  final String? preferredLanguage;
 
-  const CommentCard({super.key, required this.likes, required this.isCommentLike, required this.commentOwnerUid, required this.email, required this.name, required this.posted, required this.commentId, required this.uId, required this.postId});
+  const CommentCard({super.key, required this.likes, required this.isCommentLike, required this.commentOwnerUid, required this.email, required this.name, required this.posted, required this.commentId, required this.uId, required this.postId, required this.preferredLanguage});
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -37,6 +40,8 @@ class _CommentCardState extends State<CommentCard> {
 
   bool isProfileLoading = true;
 
+  bool isCommentInfoLoading = true;
+
   DateTime? current;
 
   bool? isOwnComment;
@@ -49,15 +54,19 @@ class _CommentCardState extends State<CommentCard> {
 
   DatabaseService databaseService = DatabaseService.instance;
   CommentService commentService = CommentService.instance;
+  TranslatorServer translatorServer = TranslatorServer();
 
   Logging logger = Logging();
   bool isErrorOccurred = false;
+
+  bool? isTranslated;
+  String? translatedTxt;
+  String? description;
 
   @override
   void initState() {
 
     super.initState();
-
     Future.delayed(Duration(seconds: 0)).then((value) async => {
       await getCommentInfo(),
       await getOwnerProfile()
@@ -109,6 +118,8 @@ class _CommentCardState extends State<CommentCard> {
 
       await commentService.getCommentInfo(widget.commentId!).then((value) => {
         commentInfo = value,
+        description = commentInfo!["description"],
+
         if (mounted) {
           setState(() {
 
@@ -117,6 +128,7 @@ class _CommentCardState extends State<CommentCard> {
 
             isOwnComment = widget.uId == widget.commentOwnerUid;
             current = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+            isCommentInfoLoading = false;
 
             calcTime(current!, widget.posted!);
 
@@ -191,32 +203,33 @@ class _CommentCardState extends State<CommentCard> {
     }
 
     try {
-      return isErrorOccurred ? Container() : (isLoading || isProfileLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
-      GestureDetector(
-        onDoubleTap: () async {
-          try {
-          setState(() {
-              if (isCommentLike!) {
-                isCommentLike = false;
-                likes = likes! - 1;
-                commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
-              } else {
-                isCommentLike = true;
-                likes = likes! + 1;
-                commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
-              }
-            });
+      return isErrorOccurred ? Container() : (isLoading || isProfileLoading || isCommentInfoLoading)? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : 
+      // GestureDetector(
+      //   onDoubleTap: () async {
+      //     try {
+      //     setState(() {
+      //         if (isCommentLike!) {
+      //           isCommentLike = false;
+      //           likes = likes! - 1;
+      //           commentService.removeCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
+      //         } else {
+      //           isCommentLike = true;
+      //           likes = likes! + 1;
+      //           commentService.addCommentLikeUser(widget.uId!, widget.commentOwnerUid!, widget.commentId!);
+      //         }
+      //       });
 
-          } catch(e) {
-            if (this.mounted) {
-              setState(() {
-                isErrorOccurred = true;
-              });
-            }
-          }
+      //     } catch(e) {
+      //       if (this.mounted) {
+      //         setState(() {
+      //           isErrorOccurred = true;
+      //         });
+      //       }
+      //     }
             
-        },
-        child: Container(
+      //   },
+      //   child: 
+        Container(
           padding: EdgeInsets.symmetric(
             vertical: MediaQuery.of(context).size.height * 0.023,
             horizontal: MediaQuery.of(context).size.width * 0.03
@@ -271,10 +284,56 @@ class _CommentCardState extends State<CommentCard> {
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, top: MediaQuery.of(context).size.height * 0.005),
-                      child: RichText(text: TextSpan(
-                        style: TextStyle(color: Colors.black, fontSize: fontSize),
-                        text: commentInfo!["description"],
-                      )),
+                      child: Text.rich(
+                            TextSpan(
+                              text: "",
+                              children: <TextSpan>[
+                                TextSpan(
+                                  style: TextStyle(color: Colors.black, fontSize: fontSize),
+                                  text: description,
+                                ),
+                                TextSpan(
+                                  text: '  See translation',
+                                  style: TextStyle(
+                                    color: Colors.grey, // Set the color you desire
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () async {
+                                      if (isTranslated == null) {
+                                        await translatorServer.translate(commentInfo!["description"], widget.preferredLanguage!).then((value) {
+                                          setState(() {
+                                            if (this.mounted) {
+                                              description = value;
+                                              translatedTxt = value;
+                                              isTranslated = true;
+                                            }
+                                          });
+                                        });
+                                      }
+                                      else {
+                                        if (isTranslated!) {
+                                          setState(() {
+                                            if (this.mounted) {
+                                              description = translatedTxt;
+                                              isTranslated = false;
+                                            }
+                                          });
+                                        }
+                                        else {
+                                          setState(() {
+                                            if (this.mounted) {
+                                              description = commentInfo!["description"];
+                                              isTranslated = true;
+                                            }
+                                          });
+                                        }
+                                      }
+                                      
+                                    },
+                                ),
+                              ]
+                            )
+                          )
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: MediaQuery.of(context).size.width * 0.02, top: MediaQuery.of(context).size.height * 0.008),
@@ -365,7 +424,7 @@ class _CommentCardState extends State<CommentCard> {
           ), left: MediaQuery.of(context).size.width * 0.78,)
           ]
         ) 
-        ),
+        // ),
       );
 
     } catch(e) {
@@ -393,7 +452,7 @@ class _CommentCardState extends State<CommentCard> {
                   title: Text(AppLocalizations.of(context)!.editCom),
                   onTap: () {
                     Navigator.pop(context);
-                    nextScreenReplace(context, EditCommentWidget(postId: widget.postId, uId: widget.uId, description: commentInfo!["description"], commentId: widget.commentId,));
+                    nextScreenReplace(context, EditCommentWidget(postId: widget.postId, uId: widget.uId, description: commentInfo!["description"], commentId: widget.commentId, preferredLanguage: widget.preferredLanguage,));
                   },
                 ),
                 ListTile(
@@ -403,7 +462,7 @@ class _CommentCardState extends State<CommentCard> {
                     try {
                       await commentService.removeComment(widget.commentId!, widget.postId!).then((value) {
                         Navigator.pop(context);
-                        nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,));
+                        nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId, preferredLanguage: widget.preferredLanguage,));
                       });
                     } catch(e) {
                       logger.message_warning("Error occurred while removing comments\nerror: " + e.toString());

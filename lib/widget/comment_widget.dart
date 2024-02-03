@@ -13,8 +13,9 @@ class CommentWidget extends StatefulWidget {
 
   final String? postId;
   final String? uId;
+  final String? preferredLanguage;
 
-  const CommentWidget({super.key, required this.postId, required this.uId});
+  const CommentWidget({super.key, required this.postId, required this.uId, required this.preferredLanguage});
 
   @override
   State<CommentWidget> createState() => _CommentWidgetState();
@@ -240,7 +241,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                 child: CommentCard(likes: comments![index]["likedUsers"].length, isCommentLike: comments![index]["likedUsers"].contains(widget.uId),
                                   commentOwnerUid: comments![index]["uId"], email: comments![index]["email"], name: comments![index]["username"], 
                                   posted: DateTime.fromMicrosecondsSinceEpoch(comments![index]["posted"].microsecondsSinceEpoch), 
-                                  commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId,),
+                                  commentId: comments![index]["commentId"], uId: widget.uId, postId: widget.postId, preferredLanguage: widget.preferredLanguage,),
               );
               
             } catch(e){
@@ -316,7 +317,7 @@ class _CommentWidgetState extends State<CommentWidget> {
                                 });
                                 await commentService.postComment(widget.uId!, email, content!, widget.postId!);
                                 Future.delayed(Duration(seconds: 1)).then((value) => {
-                                  nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId,))
+                                  nextScreenReplace(context, CommentWidget(postId: widget.postId, uId: widget.uId, preferredLanguage: widget.preferredLanguage))
                                 });
                               }
                             }
