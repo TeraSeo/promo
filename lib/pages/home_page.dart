@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -15,7 +14,6 @@ import 'package:like_app/pages/pageInPage/postPage/post.dart';
 import 'package:like_app/pages/pageInPage/profilePage/profilePage.dart';
 import 'package:like_app/pages/pageInPage/search.dart';
 import 'package:like_app/services/auth_service.dart';
-import 'package:like_app/services/userService.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:permission_handler/permission_handler.dart';

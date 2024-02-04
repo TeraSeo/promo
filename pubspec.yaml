@@ -77,6 +77,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.13.1"
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/logo.png"
+  adaptive_icon_background: "#ffffff"
 
 dependency_overrides:
   photo_manager: ^3.0.0-dev.2
@@ -87,3 +94,4 @@ flutter:
   uses-material-design: true
   assets:
     - assets/
+
