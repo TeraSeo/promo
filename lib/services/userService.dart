@@ -290,6 +290,8 @@ class DatabaseService {
   Future setUserInfo(String uId, String name, String intro) async {
 
     try {
+      
+      HelperFunctions helperFunctions = HelperFunctions();
 
       final user = FirebaseFirestore.instance.collection("user").doc(uId);
 
@@ -297,7 +299,7 @@ class DatabaseService {
         "intro" : intro
       });
 
-      HelperFunctions.saveUserNameSF(name);
+      helperFunctions.saveUserNameSF(name);
 
     } catch(e) {
       print(e);

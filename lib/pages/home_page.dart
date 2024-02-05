@@ -37,6 +37,7 @@ class _HomePageState extends State<HomePage> {
   AuthServie authServie = AuthServie();
   final picker = ImagePicker();
   Logging logger = Logging();
+  HelperFunctions helperFunctions = HelperFunctions();
 
   String userName = "";
   String email = "";
@@ -72,13 +73,13 @@ class _HomePageState extends State<HomePage> {
   gettingUserData() async {
 
     try {
-      await HelperFunctions.getUserEmailFromSF().then((value) => {
+      await helperFunctions.getUserEmailFromSF().then((value) => {
         setState(() {
           email = value!;
         })
       });
 
-      await HelperFunctions.getUserNameFromSF().then((value) => {
+      await helperFunctions.getUserNameFromSF().then((value) => {
         setState(() {
           userName = value!;
         })

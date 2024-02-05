@@ -29,11 +29,11 @@ class _LoginPageState extends State<OtpScreen> {
   }
 
   bool isVerifying = true;
-
+  HelperFunctions helperFunctions = HelperFunctions();
   
   getData() async{
     try {
-      await HelperFunctions.getUserEmailFromSF().then((value) => {
+      await helperFunctions.getUserEmailFromSF().then((value) => {
         setState(() {
           email = value!;
           print(value);
@@ -269,7 +269,7 @@ class _LoginPageState extends State<OtpScreen> {
                                   color: Theme.of(context).primaryColor
                                 ),
                                 recognizer: TapGestureRecognizer()..onTap = () async {
-                                  await HelperFunctions.saveUserEmailSF ("");
+                                  await helperFunctions.saveUserEmailSF ("");
                                   nextScreenReplace(context, const LoginPage());
                                 }
                               ),
@@ -360,10 +360,10 @@ class _LoginPageState extends State<OtpScreen> {
       QuerySnapshot snapshot =
         await databaseService.getUserData(email);
       
-      await HelperFunctions.saveUserLoggedInStatus(true);
-      await HelperFunctions.saveUserEmailSF(email);
-      await HelperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
-      await HelperFunctions.saveUserUIdSF(FirebaseAuth.instance.currentUser!.uid);
+      await helperFunctions.saveUserLoggedInStatus(true);
+      await helperFunctions.saveUserEmailSF(email);
+      await helperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
+      await helperFunctions.saveUserUIdSF(FirebaseAuth.instance.currentUser!.uid);
 
       nextScreenReplace(context, const HomePage(pageIndex: 0,));
     

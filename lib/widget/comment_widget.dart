@@ -74,8 +74,8 @@ class _CommentWidgetState extends State<CommentWidget> {
 
   getEmail() async {
     try {
-
-      HelperFunctions.getUserEmailFromSF().then((value) => {
+      HelperFunctions helperFunctions = HelperFunctions();
+      helperFunctions.getUserEmailFromSF().then((value) => {
         email = value!,
         if (this.mounted) {
           setState(() {

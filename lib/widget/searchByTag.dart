@@ -54,7 +54,8 @@ class _SearchByTagState extends State<SearchByTag> with SingleTickerProviderStat
 
   void getUId() async{
     try {
-      await HelperFunctions.getUserUIdFromSF().then((value) => {
+      HelperFunctions helperFunctions = HelperFunctions();
+      await helperFunctions.getUserUIdFromSF().then((value) => {
         uId = value,
         if (this.mounted) {
           setState(() {

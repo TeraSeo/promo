@@ -22,6 +22,7 @@ class _ShowLikedPostsState extends State<ShowLikedPosts> {
   bool isMoreLoading = false;
   bool isLoadingMorePostsPossible = true;
   PostService postService = PostService.instance;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   int i = 10;
 
@@ -29,7 +30,7 @@ class _ShowLikedPostsState extends State<ShowLikedPosts> {
   bool isCurrentUsernameLoading = true;
   
   void getCurrentUsername() {
-    HelperFunctions.getUserNameFromSF().then((value) {
+    helperFunctions.getUserNameFromSF().then((value) {
       currentUsername = value;
       if (this.mounted) {
         setState(() {

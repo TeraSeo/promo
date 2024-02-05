@@ -59,7 +59,8 @@ class _SearchNameState extends State<SearchName> {
   bool isCurrentUsernameLoading = true;
   
   void getCurrentUsername() {
-    HelperFunctions.getUserNameFromSF().then((value) {
+    HelperFunctions helperFunctions = HelperFunctions();
+    helperFunctions.getUserNameFromSF().then((value) {
       currentUsername = value;
       if (this.mounted) {
         setState(() {
@@ -89,7 +90,8 @@ class _SearchNameState extends State<SearchName> {
   }
 
   void setPreferredLanguageLoading() {
-    HelperFunctions.getUserLanguageFromSF().then((value) {
+    HelperFunctions helperFunctions = HelperFunctions();
+    helperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
       if (this.mounted) {
         setState(() {

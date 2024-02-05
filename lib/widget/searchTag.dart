@@ -28,6 +28,7 @@ class _SearchTagState extends State<SearchTag> {
   bool isErrorOccurred = false;
   Logging logger = Logging();
   PostService postService = PostService.instance;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   List<String>? categoryItems = [
     '',
@@ -57,7 +58,7 @@ class _SearchTagState extends State<SearchTag> {
   bool isCurrentUsernameLoading = true;
   
   void getCurrentUsername() {
-    HelperFunctions.getUserNameFromSF().then((value) {
+    helperFunctions.getUserNameFromSF().then((value) {
       currentUsername = value;
       if (this.mounted) {
         setState(() {
@@ -85,7 +86,7 @@ class _SearchTagState extends State<SearchTag> {
   }
 
   void setPreferredLanguageLoading() {
-    HelperFunctions.getUserLanguageFromSF().then((value) {
+    helperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
       if (this.mounted) {
         setState(() {

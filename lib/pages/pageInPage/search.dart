@@ -23,6 +23,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   TextEditingController? searchController;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   String? uId = "";
 
@@ -70,7 +71,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
 
   void getUId() async{
     try {
-      await HelperFunctions.getUserUIdFromSF().then((value) => {
+      await helperFunctions.getUserUIdFromSF().then((value) => {
         uId = value,
         if (this.mounted) {
           setState(() {

@@ -177,7 +177,11 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
         super.dispose();
       }
     } catch(e) {
-      
+      if (this.mounted) {
+        setState(() {
+            isErrorOccurred = true;
+        });
+      }
     }
   
   }

@@ -29,6 +29,7 @@ class _LikesRankingState extends State<LikesRanking> {
   bool isUIdLoading = true;
 
   Logging logger = Logging();
+  HelperFunctions helperFunctions = HelperFunctions();
 
   int myRank = 0;
   String myUName = "";
@@ -46,7 +47,7 @@ class _LikesRankingState extends State<LikesRanking> {
 
   void getUId() async{
     try {
-      await HelperFunctions.getUserUIdFromSF().then((value) => {
+      await helperFunctions.getUserUIdFromSF().then((value) => {
         uId = value,
         if (this.mounted) {
           setState(() {

@@ -8,38 +8,46 @@ import 'package:uuid/uuid.dart';
 
 class HelperFunctions {
 
-  static String usersLoggedInKey = "LOGGEDINKEY";
-  static String userNameKey = "USERNAMEKEY";
-  static String userEmailKey = "USEREMAILKEY";
-  static String userUidKey = "USERUIDKEY";
-  static String languageKey = "LANGUAGE";
+  static final HelperFunctions _instance = HelperFunctions._internal();
 
-  static Future<bool> saveUserLoggedInStatus(bool isUserLoggedIn) async {
+  factory HelperFunctions() {
+    return _instance;
+  }
+
+  HelperFunctions._internal();
+
+  String usersLoggedInKey = "LOGGEDINKEY";
+  String userNameKey = "USERNAMEKEY";
+  String userEmailKey = "USEREMAILKEY";
+  String userUidKey = "USERUIDKEY";
+  String languageKey = "LANGUAGE";
+
+  Future<bool> saveUserLoggedInStatus(bool isUserLoggedIn) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return await sf.setBool(usersLoggedInKey, isUserLoggedIn);
   }
 
-  static Future<bool> saveUserNameSF(String userName) async {
+  Future<bool> saveUserNameSF(String userName) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return await sf.setString(userNameKey, userName);
   }
 
-  static Future<bool> saveUserEmailSF(String userEmail) async {
+  Future<bool> saveUserEmailSF(String userEmail) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return await sf.setString(userEmailKey, userEmail);
   }
 
-  static Future<bool> saveUserUIdSF(String uid) async {
+  Future<bool> saveUserUIdSF(String uid) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return await sf.setString(userUidKey, uid);
   }
 
-  static Future<bool> saveUserLanguageSF(String language) async {
+  Future<bool> saveUserLanguageSF(String language) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     return await sf.setString(languageKey, language);
   }
 
-  static Future<String?> getUserNameFromSF() async {
+  Future<String?> getUserNameFromSF() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     dynamic value = sf.get(userNameKey);
     if (value == null) {
@@ -52,7 +60,7 @@ class HelperFunctions {
     }
   }
 
-  static Future<String?> getUserEmailFromSF() async {
+  Future<String?> getUserEmailFromSF() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     dynamic value = sf.get(userEmailKey);
     if (value == null) {
@@ -65,7 +73,7 @@ class HelperFunctions {
     }
   }
 
-  static Future<String?> getUserUIdFromSF() async {
+  Future<String?> getUserUIdFromSF() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     dynamic value = sf.get(userUidKey);
     if (value == null) {
@@ -78,7 +86,7 @@ class HelperFunctions {
     }
   }
 
-  static Future<bool?> getUserLoggedInStatus() async {
+  Future<bool?> getUserLoggedInStatus() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     dynamic value = sf.get(usersLoggedInKey);
     if (value == null) {
@@ -92,7 +100,7 @@ class HelperFunctions {
     }
   }
 
-  static Future<String?> getUserLanguageFromSF() async {
+  Future<String?> getUserLanguageFromSF() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     dynamic value = sf.get(languageKey);
     if (value == null) {

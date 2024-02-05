@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:like_app/firebase_options.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
@@ -12,21 +13,26 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'dart:ui';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  if (kIsWeb) {
-    await Firebase.initializeApp(options: FirebaseOptions(
-      apiKey: Constants.apiKey,
-      appId: Constants.appId, 
-      messagingSenderId: Constants.messagingSenderId, 
-      projectId: Constants.projectId));
-  }
-  else {
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform );
-  }
+  bool result = await InternetConnectionChecker().hasConnection;
+  if(result == true) {
+    WidgetsFlutterBinding.ensureInitialized();
+    if (kIsWeb) {
+      await Firebase.initializeApp(options: FirebaseOptions(
+        apiKey: Constants.apiKey,
+        appId: Constants.appId, 
+        messagingSenderId: Constants.messagingSenderId, 
+        projectId: Constants.projectId));
+    }
+    else {
+      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform );
+    }
 
-  FirebaseNotification.instance.initNotificaiton();
+    FirebaseNotification.instance.initNotificaiton();
 
-  runApp(const MyApp(language: ""));
+    runApp(const MyApp(language: ""));
+  } else {
+    runApp(const NoInternetConnectionApp());
+  } 
 }
 
 class MyApp extends StatefulWidget {
@@ -41,6 +47,8 @@ class _MyAppState extends State<MyApp> {
   bool _isSignedIn = false;
   String? language;
   bool isLanguageLoading = true;
+
+  HelperFunctions helperFunctions = HelperFunctions();
 
   @override
   void initState() {
@@ -60,7 +68,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   getUserLoggedInStatus() async {
-    await HelperFunctions.getUserLoggedInStatus().then((value) {
+    await helperFunctions.getUserLoggedInStatus().then((value) {
       if (value!=null) {
         setState(() {
           _isSignedIn = value;
@@ -71,7 +79,7 @@ class _MyAppState extends State<MyApp> {
 
   getUserLanguageSF() async {
     try {
-      await HelperFunctions.getUserLanguageFromSF().then((value) {
+      await helperFunctions.getUserLanguageFromSF().then((value) {
         if (value!=null) {
           setState(() {
             language = value;
@@ -80,7 +88,7 @@ class _MyAppState extends State<MyApp> {
         }
         else {
           getLocalLanguageCode();
-          HelperFunctions.saveUserLanguageSF(language!);
+          helperFunctions.saveUserLanguageSF(language!);
         }
       });
     } catch(e) {
@@ -150,3 +158,30 @@ class _MyAppState extends State<MyApp> {
     );
   }
 } 
+
+
+class NoInternetConnectionApp extends StatelessWidget {
+  const NoInternetConnectionApp({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        body: Center(
+          child: AlertDialog(
+            title: Text('No Internet Connection'),
+            content: Text('Please check your network connection and try again.'),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  HelperFunctions().restartApp();
+                },
+                child: Text('Exit'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

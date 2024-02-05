@@ -49,9 +49,11 @@ class AuthServie {
   // signOut
   Future signOut() async {
     try {
-      await HelperFunctions.saveUserLoggedInStatus(false);
-      await HelperFunctions.saveUserEmailSF("");
-      await HelperFunctions.saveUserNameSF("");
+      HelperFunctions helperFunctions = HelperFunctions();
+      
+      await helperFunctions.saveUserLoggedInStatus(false);
+      await helperFunctions.saveUserEmailSF("");
+      await helperFunctions.saveUserNameSF("");
     } catch (e) {
       return null;
     }

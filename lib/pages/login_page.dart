@@ -22,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   String password = "";
   bool _isLoading = false;
   AuthServie authServie = AuthServie(); 
+  HelperFunctions helperFunctions = HelperFunctions();
 
   bool isErrorOccurred = false;
 
@@ -235,7 +236,7 @@ class _LoginPageState extends State<LoginPage> {
         await authServie.loginWithUserNameandPassword(email, password)
         .then((value) async {
           if (value == true) {
-            await HelperFunctions.saveUserEmailSF(email);
+            await helperFunctions.saveUserEmailSF(email);
             nextScreen(context, EmailVerification(email: email));
 
           } else {

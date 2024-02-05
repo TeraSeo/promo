@@ -23,6 +23,7 @@ class SettingPage extends StatefulWidget {
 class _SettingPageState extends State<SettingPage> {
 
   DatabaseService databaseService = DatabaseService.instance;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   String? languageTxt;
   bool isLanguageTxtLoading = true;
@@ -53,7 +54,7 @@ class _SettingPageState extends State<SettingPage> {
           });
         }
       });
-      HelperFunctions.getUserLanguageFromSF().then((value) {
+      helperFunctions.getUserLanguageFromSF().then((value) {
         setLanguageText(value!);
       });
     } catch(e) {
@@ -231,7 +232,7 @@ class _SettingPageState extends State<SettingPage> {
   void _changeLanguage(String languageCode) {
     isLanguageTxtLoading = true;
     Future.delayed(Duration(seconds: 0)).then((value) async {
-      await HelperFunctions.saveUserLanguageSF(languageCode).then((value) {
+      await helperFunctions.saveUserLanguageSF(languageCode).then((value) {
         if (this.mounted) {
           setState(() {
               isLanguageTxtLoading = false;

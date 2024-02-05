@@ -28,12 +28,12 @@ class PostService {
   Future post(List<dynamic> images, String description, String category, List<String> tags, bool withComment) async {
   
     try {
-      
-      await HelperFunctions.getUserEmailFromSF().then((value) => {
+      HelperFunctions helperFunctions = HelperFunctions();
+      await helperFunctions.getUserEmailFromSF().then((value) => {
         email = value
       });
 
-      await HelperFunctions.getUserNameFromSF().then((value) => {
+      await helperFunctions.getUserNameFromSF().then((value) => {
         name = value
       });
 
@@ -217,7 +217,7 @@ class PostService {
       return posts;
 
     } catch(e) {
-
+      print(e);
       return new HashMap<int, Map<String, dynamic>>();
 
     }
@@ -388,12 +388,12 @@ class PostService {
   Future postAddLike(String postId) async {
 
       try {
-        
+        HelperFunctions helperFunctions = HelperFunctions();
         String? uId; 
         // String? userName;
         // String? token;
 
-        await HelperFunctions.getUserUIdFromSF().then((value) => {
+        await helperFunctions.getUserUIdFromSF().then((value) => {
           uId = value
         });
 
@@ -433,9 +433,10 @@ class PostService {
   Future postRemoveLike(String postId) async {
 
       try {
+        HelperFunctions helperFunctions = HelperFunctions();
         
         String? uId; 
-        await HelperFunctions.getUserUIdFromSF().then((value) => {
+        await helperFunctions.getUserUIdFromSF().then((value) => {
           uId = value
         });
 
@@ -464,9 +465,10 @@ class PostService {
 
   Future<bool> checkUserLike(String postId) async {
     try {
+      HelperFunctions helperFunctions = HelperFunctions();
 
       String? uId; 
-      await HelperFunctions.getUserUIdFromSF().then((value) => {
+      await helperFunctions.getUserUIdFromSF().then((value) => {
         uId = value
       });
 

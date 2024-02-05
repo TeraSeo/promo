@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:like_app/helper/helper_function.dart';
@@ -26,6 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String passwordCheck = "";
   AuthServie authServie = AuthServie();
   bool exist = true;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   @override
   Widget build(BuildContext context) {
@@ -265,7 +265,7 @@ class _RegisterPageState extends State<RegisterPage> {
             .then((value) async {
             if (value == true) {
               // saving the shared preference state
-              await HelperFunctions.saveUserEmailSF(email);
+              await helperFunctions.saveUserEmailSF(email);
               nextScreenReplace(context, EmailVerification(email: email,));
 
             } else {

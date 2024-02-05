@@ -61,6 +61,7 @@ class _ProfilePageState extends State<ProfilePage> {
   List<DocumentSnapshot<Map<String, dynamic>>>? posts;
 
   CommentService commentService = CommentService.instance;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   String? preferredLanguage;
   bool isPreferredLanguageLoading = true;
@@ -87,7 +88,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   void setPreferredLanguageLoading() {
-    HelperFunctions.getUserLanguageFromSF().then((value) {
+    helperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
       if (this.mounted) {
         setState(() {
@@ -99,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future getUser() async {
     try {
-      await HelperFunctions.getUserUIdFromSF().then((value) => {
+      await helperFunctions.getUserUIdFromSF().then((value) => {
         uID = value,
         if (this.mounted) {
           setState(() {

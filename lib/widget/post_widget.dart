@@ -111,14 +111,24 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   setPostOwner() {
-    databaseService.getUserToken(widget.postOwnerUId!).then((value) {
+    try {
+      databaseService.getUserToken(widget.postOwnerUId!).then((value) {
       postOwnerTokens = value;
       if (this.mounted) {
         setState(() {
           isPostOwnerLoading = false;
         });
       }
-    });
+      });
+
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+            isErrorOccurred = true;
+        });
+      }
+    }
+    
   }
 
   calTimeDiff() {
@@ -163,11 +173,10 @@ class _PostWidgetState extends State<PostWidget> {
   }
 
   getOwnerProfile() async {
- 
-    QuerySnapshot snapshot =
-        await databaseService.getUserData(widget.email!);
 
     try {
+      QuerySnapshot snapshot =
+        await databaseService.getUserData(widget.email!);
 
       if (snapshot.docs[0]["profilePic"].toString() == "" || snapshot.docs[0]["profilePic"].toString() == null) {
         if (this.mounted) {
@@ -222,8 +231,16 @@ class _PostWidgetState extends State<PostWidget> {
 
   @override
   void dispose() {
-    pageController.dispose();
-    super.dispose();
+    try {
+      pageController.dispose();
+      super.dispose();
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+          isErrorOccurred = true;
+        });
+      }
+    }
   }
 
   PostService postService = PostService.instance;

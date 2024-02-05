@@ -29,6 +29,7 @@ class _EmailVerificationState extends State<EmailVerification> {
 
   DatabaseService databaseService = DatabaseService.instance;
   FirebaseNotification firebaseNotification = FirebaseNotification.instance;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   @override
   void initState() {
@@ -47,10 +48,10 @@ class _EmailVerificationState extends State<EmailVerification> {
           if (isEmailVerified) {
             QuerySnapshot snapshot =
               await databaseService.getUserData(widget.email);
-            await HelperFunctions.saveUserLoggedInStatus(true);
-            await HelperFunctions.saveUserEmailSF(widget.email);
-            await HelperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
-            await HelperFunctions.saveUserUIdSF(FirebaseAuth.instance.currentUser!.uid);
+            await helperFunctions.saveUserLoggedInStatus(true);
+            await helperFunctions.saveUserEmailSF(widget.email);
+            await helperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
+            await helperFunctions.saveUserUIdSF(FirebaseAuth.instance.currentUser!.uid);
 
             setState(() {
               isHomePageAble = true;
@@ -64,10 +65,10 @@ class _EmailVerificationState extends State<EmailVerification> {
       Future.delayed(Duration(seconds: 0)).then((value) async {
         QuerySnapshot snapshot =
           await databaseService.getUserData(widget.email);
-        await HelperFunctions.saveUserLoggedInStatus(true);
-        await HelperFunctions.saveUserEmailSF(widget.email);
-        await HelperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
-        await HelperFunctions.saveUserUIdSF(FirebaseAuth.instance.currentUser!.uid);
+        await helperFunctions.saveUserLoggedInStatus(true);
+        await helperFunctions.saveUserEmailSF(widget.email);
+        await helperFunctions.saveUserNameSF(snapshot.docs[0]['name']);
+        await helperFunctions.saveUserUIdSF(FirebaseAuth.instance.currentUser!.uid);
 
         setState(() {
           isHomePageAble = true;
@@ -242,7 +243,7 @@ class _EmailVerificationState extends State<EmailVerification> {
                             color: Theme.of(context).primaryColor
                           ),
                           recognizer: TapGestureRecognizer()..onTap = () async {
-                            await HelperFunctions.saveUserEmailSF ("");
+                            await helperFunctions.saveUserEmailSF ("");
                             nextScreenReplace(context, const LoginPage());
                           }
                         ),

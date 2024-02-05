@@ -31,6 +31,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
 
   DatabaseService databaseService = DatabaseService.instance;
   Storage storage = Storage.instance;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   bool _isImg = true;
   bool _isBackground = true;
@@ -65,7 +66,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   bool isCurrentUsernameLoading = true;
   
   void getCurrentUsername() {
-    HelperFunctions.getUserNameFromSF().then((value) {
+    helperFunctions.getUserNameFromSF().then((value) {
       currentUsername = value;
       if (this.mounted) {
         setState(() {
@@ -91,7 +92,7 @@ class _OthersProfilePagesState extends State<OthersProfilePages> {
   }
 
   void setPreferredLanguageLoading() {
-    HelperFunctions.getUserLanguageFromSF().then((value) {
+    helperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
       if (this.mounted) {
         setState(() {

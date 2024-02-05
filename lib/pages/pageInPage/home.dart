@@ -38,6 +38,7 @@ class _HomeState extends State<Home> {
   bool isPreferredLanguageLoading = true;
 
   PostService postService = PostService.instance;
+  HelperFunctions helperFunctions = HelperFunctions();
 
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("post");
@@ -79,7 +80,7 @@ class _HomeState extends State<Home> {
   }
 
   void setPreferredLanguageLoading() {
-    HelperFunctions.getUserLanguageFromSF().then((value) {
+    helperFunctions.getUserLanguageFromSF().then((value) {
       preferredLanguage = value;
       if (this.mounted) {
         setState(() {
@@ -141,7 +142,7 @@ class _HomeState extends State<Home> {
    void getUId() async{
     try {
 
-      await HelperFunctions.getUserUIdFromSF().then((value) => {
+      await helperFunctions.getUserUIdFromSF().then((value) => {
         uId = value,
         if (this.mounted) {
           setState(() {
@@ -161,7 +162,7 @@ class _HomeState extends State<Home> {
   }
 
   void getCurrentUsername() {
-    HelperFunctions.getUserNameFromSF().then((value) {
+    helperFunctions.getUserNameFromSF().then((value) {
       currentUsername = value;
       if (this.mounted) {
         setState(() {

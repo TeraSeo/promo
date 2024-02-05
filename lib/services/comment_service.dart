@@ -22,8 +22,9 @@ class CommentService {
     String? name = ""; 
     
     try {
+      HelperFunctions helperFunctions = HelperFunctions();
 
-      await HelperFunctions.getUserNameFromSF().then((value) => {
+      await helperFunctions.getUserNameFromSF().then((value) => {
         name = value
       });
 
@@ -141,11 +142,7 @@ class CommentService {
     DatabaseService databaseService = DatabaseService.instance;
     PostService postService = PostService.instance;
 
-    String uId = "";
-
     comment.get().then((value) async => {
-
-      uId = value["uId"],
       await databaseService.removeComment(value["uId"], commentId),
       await postService.removeComment(postId, commentId),
       await comment.delete()
