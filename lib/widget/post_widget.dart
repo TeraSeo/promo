@@ -444,7 +444,7 @@ class _PostWidgetState extends State<PostWidget> {
                                     await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                     for (int i = 0; i < postOwnerTokens!.length; i++) {
                                       if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i]);
+                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
                                       }
                                     }
                                   }
@@ -680,7 +680,7 @@ class _PostWidgetState extends State<PostWidget> {
                                     await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                     for (int i = 0; i < postOwnerTokens!.length; i++) {
                                       if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i]);
+                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
                                       }
                                     }
                                   }
@@ -955,7 +955,7 @@ class _PostWidgetState extends State<PostWidget> {
                         await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                         for (int i = 0; i < postOwnerTokens!.length; i++) {
                           if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                            firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i]);
+                            firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
                           }
                         }
                       }

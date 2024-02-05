@@ -144,5 +144,14 @@
 
 
     "removementAssurance": "¿Estás segura de eliminar esta publicación?",
-    "ok": "DE ACUERDO"
+    "ok": "DE ACUERDO",
+
+
+    "fileSizeLarge": "¡El tamaño del archivo es tan grande!",
+    "nothingSelected": "No hay nada seleccionado",
+    "likedPost": " le gustó tu publicación.",
+    "likeNotification": "Notificación Me gusta",
+    "profileChange": "Cambiar el perfil",
+    "clickToChangeProfile": "Haga clic para cambiar de perfil",
+    "result": "Resultado"
 }

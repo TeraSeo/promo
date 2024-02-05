@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:insta_assets_picker/insta_assets_picker.dart';
 import 'package:like_app/pages/pageInPage/ImagePicker/PickerCropResultScreen.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PickerDescription {
   final String icon;
@@ -31,6 +32,7 @@ mixin InstaPickerInterface on Widget {
   Column pickerColumn({
     String? text,
     required VoidCallback onPressed,
+    required BuildContext context
   }) =>
       Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -38,7 +40,7 @@ mixin InstaPickerInterface on Widget {
           Center(
             child: Text(
               text ??
-                  'Change profile',
+                  AppLocalizations.of(context)!.profileChange,
               textAlign: TextAlign.center,
               style: const TextStyle(fontSize: 18),
             ),
@@ -47,7 +49,7 @@ mixin InstaPickerInterface on Widget {
             onPressed: onPressed,
             child: FittedBox(
               child: Text(
-                'Click to change profile',
+                AppLocalizations.of(context)!.clickToChangeProfile,
                 style: const TextStyle(fontSize: 20),
               ),
             ),
@@ -63,7 +65,7 @@ mixin InstaPickerInterface on Widget {
         appBar: _appBar,
         body: Padding(
           padding: const EdgeInsets.all(16),
-          child: pickerColumn(onPressed: onPressed),
+          child: pickerColumn(onPressed: onPressed, context: context),
         ),
       );
 

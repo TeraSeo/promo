@@ -143,5 +143,14 @@
 
 
     "removementAssurance": "Are you sure to remove this post?",
-    "ok": "OK"
+    "ok": "OK",
+
+
+    "fileSizeLarge": "File size is so large!",
+    "nothingSelected": "Nothing is selected",
+    "likedPost": " liked your post",
+    "likeNotification": "Like Notification",
+    "profileChange": "Change Profile",
+    "clickToChangeProfile": "Click to change profile",
+    "result": "Result"
 }

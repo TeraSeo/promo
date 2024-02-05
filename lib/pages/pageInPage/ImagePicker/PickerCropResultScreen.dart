@@ -5,6 +5,7 @@ import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/storage.dart';
 import 'package:like_app/services/userService.dart';
 import 'package:like_app/widgets/widgets.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class PickerCropResultScreen extends StatelessWidget {
   const PickerCropResultScreen({super.key, required this.cropStream, required this.usage, required this.uID, required this.email});
@@ -19,7 +20,7 @@ class PickerCropResultScreen extends StatelessWidget {
     final height = MediaQuery.of(context).size.height - kToolbarHeight;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Result')),
+      appBar: AppBar(title: Text(AppLocalizations.of(context)!.result)),
       body: StreamBuilder<InstaAssetsExportDetails>(
         stream: cropStream,
         builder: (context, snapshot) {
@@ -105,7 +106,9 @@ class _CropResultViewState extends State<CropResultView> {
       return const SizedBox.shrink();
     }
 
-    return Expanded(
+    return WillPopScope(
+      onWillPop: () async => !isProfileChanging,
+      child: Expanded(
       child: Stack(
         alignment: Alignment.center,
         children: [
@@ -129,7 +132,7 @@ class _CropResultViewState extends State<CropResultView> {
           ),
 
         ],
-      ),
+      ))
     );
   }
 
@@ -144,7 +147,7 @@ class _CropResultViewState extends State<CropResultView> {
           height: widget.croppedFiles.isNotEmpty ? widget.heightFiles : 40.0,
           child: Column(
             children: <Widget>[
-              _buildTitle('Cropped Images', widget.croppedFiles.length),
+              // _buildTitle('Cropped Images', widget.croppedFiles.length),
               _buildCroppedImagesListView(context),
             ],
           ),
@@ -187,7 +190,7 @@ class _CropResultViewState extends State<CropResultView> {
                     borderRadius: BorderRadius.circular(20.0), // Button border radius
                   ),
                 ),
-                child: Text('Change Profile'),
+                child: Text(AppLocalizations.of(context)!.profileChange, style: TextStyle(color: Colors.white),),
               )
             : CircularProgressIndicator()
       ],

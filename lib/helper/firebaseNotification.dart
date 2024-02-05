@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:like_app/services/userService.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class FirebaseNotification {
 
@@ -46,7 +48,7 @@ class FirebaseNotification {
     }
   }
 
-  void sendPushMessage(String username, String token) async {
+  void sendPushMessage(String username, String token, BuildContext context) async {
     try {
       await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
@@ -58,8 +60,8 @@ class FirebaseNotification {
         body: jsonEncode(
           <String, dynamic>{
             'notification': <String, dynamic>{
-              'body': username + " liked you post",
-              'title': "Like Notification",
+              'body': username + AppLocalizations.of(context)!.likedPost,
+              'title': AppLocalizations.of(context)!.likeNotification,
             },
             'priority': 'high',
             'data': <String, dynamic>{

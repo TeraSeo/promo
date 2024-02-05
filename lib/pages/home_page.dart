@@ -84,10 +84,6 @@ class _HomePageState extends State<HomePage> {
         })
       });
 
-      // await HelperFunctions.getUserUIdFromSF().then((value) {
-      //   listenMsgToken(value!);
-      // });
-
     } catch(e) {
       if (this.mounted) {setState(() {
         isErrorOccurred = true;
@@ -203,7 +199,7 @@ class _HomePageState extends State<HomePage> {
           centerTitle: true,
           backgroundColor: Theme.of(context).primaryColor,
           title: Text(
-            "LikeApp",
+            "Promo",
             style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w500, fontSize:  MediaQuery.of(context).size.height * 0.0205
             ),
@@ -438,11 +434,10 @@ class _HomePageState extends State<HomePage> {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
                       if (getFileSize(xfilePick[i]) > 40) {
                         final snackBar = SnackBar(
-                          content: const Text('File size is so large!'),
+                          content: Text(AppLocalizations.of(context)!.fileSizeLarge),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
-                        print("path" + xfilePick[i].path);
                         selectedImages.add(File(xfilePick[i].path));
                       }
                     }
@@ -456,11 +451,10 @@ class _HomePageState extends State<HomePage> {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
                       if (getFileSize(xfilePick[i]) > 40) {
                         final snackBar = SnackBar(
-                          content: const Text('File size is so large!'),
+                          content: Text(AppLocalizations.of(context)!.fileSizeLarge),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
-                        print("path" + xfilePick[i].path);
                         selectedImages.add(File(xfilePick[i].path));
                       }
                     }
@@ -471,7 +465,7 @@ class _HomePageState extends State<HomePage> {
                 }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Nothing is selected')));
+                  SnackBar(content: Text(AppLocalizations.of(context)!.nothingSelected)));
               }
             },
           );
@@ -488,11 +482,10 @@ class _HomePageState extends State<HomePage> {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
                       if (getFileSize(xfilePick[i]) > 40) {
                         final snackBar = SnackBar(
-                          content: const Text('File size is so large!'),
+                          content: Text(AppLocalizations.of(context)!.fileSizeLarge),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
-                        print("path" + xfilePick[i].path);
                         selectedImages.add(File(xfilePick[i].path));
                       }
                     }
@@ -506,11 +499,10 @@ class _HomePageState extends State<HomePage> {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
                       if (getFileSize(xfilePick[i]) > 40) {
                         final snackBar = SnackBar(
-                          content: const Text('File size is so large!'),
+                          content: Text(AppLocalizations.of(context)!.fileSizeLarge),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
-                        print("path" + xfilePick[i].path);
                         selectedImages.add(File(xfilePick[i].path));
                       }
                     }
@@ -521,7 +513,7 @@ class _HomePageState extends State<HomePage> {
                 }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Nothing is selected')));
+                  SnackBar(content: Text(AppLocalizations.of(context)!.nothingSelected)));
               }
             },
           );
@@ -554,11 +546,9 @@ class _HomePageState extends State<HomePage> {
             aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
             uiSettings: [
               AndroidUiSettings(
-                  toolbarTitle: 'Cropper',
                   toolbarColor: Colors.deepOrange,
                   toolbarWidgetColor: Colors.white,),
               IOSUiSettings(
-                title: 'Cropper',
                 aspectRatioLockEnabled: true, 
                 resetAspectRatioEnabled: false,
                 aspectRatioPickerButtonHidden: true,

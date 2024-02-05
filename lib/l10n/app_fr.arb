@@ -144,5 +144,14 @@
 
 
     "removementAssurance": "Êtes-vous sûr de supprimer ce message ?",
-    "ok": "D'ACCORD"
+    "ok": "D'ACCORD",
+
+
+    "fileSizeLarge": "La taille du fichier est si grande !",
+    "nothingSelected": "Rien n'est sélectionné",
+    "likedPost": " a aimé ton message",
+    "likeNotification": "notification d'amour",
+    "profileChange": "Change de profil",
+    "clickToChangeProfile": "Cliquez pour changer de profil",
+    "result": "Résultat"
 }

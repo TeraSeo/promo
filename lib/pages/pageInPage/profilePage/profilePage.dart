@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
   String? currentUsername;
 
   Future pickImage(ImageSource source, String email, String uId, String usage) async {
-    nextScreen(context, SinglePicker(usage: usage, uID: uId, email: email,));
+    nextScreen(context, SinglePicker(usage: usage, uID: uId, email: email, context: context,));
   }
 
   @override
@@ -161,46 +161,6 @@ class _ProfilePageState extends State<ProfilePage> {
       logger.message_warning("Error occurred while getting posts\nerror: " + e.toString());
     }
   }
-
-  // getUserProfile() async {
-  //   try {
-  //     await storage.loadProfileFile(postUser!["email"].toString(), postUser!["profilePic"].toString()).then((value) => {
-  //       img_url = value,
-  //       if (this.mounted) {
-  //         setState(() {
-  //           _isImg = false;
-  //         })
-  //       }
-  //     });
-  //   } catch(e) {
-  //     if (this.mounted) {
-  //       setState(() {
-  //         _isImg = false;
-  //         img_url = 'assets/blank.avif';
-  //       });
-  //     }
-  //   }
-  // }
-
-  // getUserBackground() async {
-  //   try {
-  //     await storage.loadProfileBackground(postUser!["email"].toString(), postUser!["backgroundPic"].toString()).then((value) => {
-  //       background_url = value,
-  //       if (this.mounted) {
-  //         setState(() {
-  //           _isBackground = false;
-  //         })
-  //       }
-  //     });
-  //   } catch(e) {
-  //     if (this.mounted) {
-  //       setState(() {
-  //         _isBackground = false;
-  //         background_url = 'assets/backgroundDef.jpeg';
-  //       });
-  //     }
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

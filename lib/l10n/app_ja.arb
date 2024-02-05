@@ -144,5 +144,14 @@
 
 
     "removementAssurance": "この投稿を削除してもよろしいですか?",
-    "ok": "わかりました"
+    "ok": "わかりました",
+
+
+    "fileSizeLarge": "ファイルサイズがとても大きいです！",
+    "nothingSelected": "何も選択されていません",
+    "likedPost": "ンさんが投稿を愛しています",
+    "likeNotification": "いいねお知らせ",
+    "profileChange": "プロフィールの変更",
+    "clickToChangeProfile": "クリックしてプロフィールを変更します",
+    "result": "結果"
 }

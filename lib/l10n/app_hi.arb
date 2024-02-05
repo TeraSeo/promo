@@ -144,5 +144,14 @@
 
 
     "removementAssurance": "क्या आप निश्चित रूप से इस पोस्ट को हटा देंगे?",
-    "ok": "ठीक है"
+    "ok": "ठीक है",
+
+
+    "fileSizeLarge": "फ़ाइल का आकार बहुत बड़ा है!",
+    "nothingSelected": "कुछ भी चयनित नहीं है",
+    "likedPost": " को आपकी पोस्ट पसंद आयी",
+    "likeNotification": "अधिसूचना की तरह",
+    "profileChange": "प्रोफ़ाइल परिवर्तन",
+    "clickToChangeProfile": "प्रोफ़ाइल बदलने के लिए क्लिक करें",
+    "result": "परिणाम"
 }

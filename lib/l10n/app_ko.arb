@@ -144,5 +144,14 @@
 
 
     "removementAssurance": "이 게시물을 삭제 하시겠습니까?",
-    "ok": "네"
+    "ok": "네",
+
+
+    "fileSizeLarge": "파일 크기가 너무 큽니다!",
+    "nothingSelected": "아무것도 선택되지 않았습니다",
+    "likedPost": "님이 게시물을 좋아합니다",
+    "likeNotification": "좋아요 알림",
+    "profileChange": "프로필 변경",
+    "clickToChangeProfile": "프로필 변경하시려면 클릭하세요",
+    "result": "결과"
 }

@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:like_app/pages/pageInPage/ImagePicker/InstaPickerInterface.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class SinglePicker extends StatelessWidget with InstaPickerInterface {
   final String usage;
   final String uID;
   final String email;
-  const SinglePicker({super.key, required this.usage, required this.uID, required this.email});
+  final BuildContext context;
+  
+  const SinglePicker({super.key, required this.usage, required this.uID, required this.email, required this.context});
 
   @override
-  PickerDescription get description => const PickerDescription(
+  PickerDescription get description => PickerDescription(
         icon: '👋',
-        label: 'Change profile',
-        description: 'Picker to select a single image. '
-            'Selecting a new image will replace the old one.',
+        label: AppLocalizations.of(context)!.profileChange,
       );
 
   @override

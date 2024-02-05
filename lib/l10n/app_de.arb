@@ -144,5 +144,14 @@
 
 
     "removementAssurance": "Möchten Sie diesen Beitrag wirklich entfernen?",
-    "ok": "OK"
+    "ok": "OK",
+
+
+    "fileSizeLarge": "Die Dateigröße ist so groß!",
+    "nothingSelected": "Es ist nichts ausgewählt",
+    "likedPost": " hat deinen Beitrag gefallen",
+    "likeNotification": "Like-Benachrichtigung",
+    "profileChange": "Profil ändern",
+    "clickToChangeProfile": "Klicken Sie hier, um das Profil zu ändern",
+    "result": "Ergebnis"
 }
