@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 const textInputDecoration = InputDecoration(
@@ -20,7 +22,11 @@ void nextScreen(context, page) {
 }
 
 void nextScreenReplace(context, page) {
-  Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => page));
+  try {
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => page));
+  } catch(e) {
+    print(e);
+  }
 }
 
 void showSnackbar(context, color, message) {
