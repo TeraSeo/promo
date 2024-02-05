@@ -2,17 +2,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CommentDBService {
 
-  final String? username;
-  final String? description;
-  final String? commentId;
+  CommentDBService._privateConstructor();
 
-  CommentDBService({this.username, this.description, this.commentId});
+  static final CommentDBService _instance = CommentDBService._privateConstructor();
 
+  static CommentDBService get instance => _instance;
 
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("comment");
 
-  Future savingeCommentDBData(String uID, String email, String postID) async {
+  Future savingeCommentDBData(String uID, String email, String postID, String username, String description, String commentId) async {
     int timestamp = DateTime.now().millisecondsSinceEpoch;
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
     // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();

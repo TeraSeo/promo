@@ -29,6 +29,8 @@ class PostService {
   
     try {
       HelperFunctions helperFunctions = HelperFunctions();
+      PostDBService postDBService = PostDBService.instance;
+
       await helperFunctions.getUserEmailFromSF().then((value) => {
         email = value
       });
@@ -46,9 +48,7 @@ class PostService {
       }
 
       if (filePaths.length == fileNames.length) {
-        PostDBService postDBService = new PostDBService(email: email, userName: name);
-        await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames);
-        
+        await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames, email!, name!);
       }
 
       return true;

@@ -30,8 +30,8 @@ class CommentService {
 
       String commentId = Uuid().v4();
       
-      CommentDBService commentDBService = new CommentDBService(username: name, description: description, commentId: commentId);
-      await commentDBService.savingeCommentDBData(uID, email, postId!);
+      CommentDBService commentDBService = CommentDBService.instance;
+      await commentDBService.savingeCommentDBData(uID, email, postId!, name!, description, commentId);
 
       DatabaseService databaseService = DatabaseService.instance;
       await databaseService.addComment(uID, commentId);

@@ -6,15 +6,17 @@ import 'package:like_app/services/userService.dart';
 import 'package:uuid/uuid.dart';
 
 class PostDBService {
-  
-  final String? email;
-  final String? userName;
-  PostDBService({this.email, this.userName});
+
+  PostDBService._privateConstructor();
+
+  static final PostDBService _instance = PostDBService._privateConstructor();
+
+  static PostDBService get instance => _instance;
 
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("post");
 
-  Future savingePostDBData(String description, String category, List<String> tags, bool withComment, List<String> filePaths, List<String> fileNames) async {
+  Future savingePostDBData(String description, String category, List<String> tags, bool withComment, List<String> filePaths, List<String> fileNames, String email, String userName) async {
 
     HelperFunctions helperFunctions = HelperFunctions();
     Logging logger = Logging();
