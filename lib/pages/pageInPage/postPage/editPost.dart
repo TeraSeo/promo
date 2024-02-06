@@ -400,7 +400,10 @@ class _EditPostState extends State<EditPost> {
                               ],
                             )
                     ),
-                  )
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.07,
+                  ),
                 ]            
               ),
             ),

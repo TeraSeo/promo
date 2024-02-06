@@ -51,6 +51,7 @@ class AuthServie {
     try {
       HelperFunctions helperFunctions = HelperFunctions();
       
+      await firebaseAuth.signOut();
       await helperFunctions.saveUserLoggedInStatus(false);
       await helperFunctions.saveUserEmailSF("");
       await helperFunctions.saveUserNameSF("");

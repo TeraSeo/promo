@@ -425,7 +425,7 @@ class _HomePageState extends State<HomePage> {
     try {
         if (await Permission.photos.request().isGranted) {
           final pickedFile = await picker.pickMultiImage(
-          imageQuality: 85, maxHeight: 1000, maxWidth: 1000);
+          imageQuality: 95, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {
@@ -473,7 +473,7 @@ class _HomePageState extends State<HomePage> {
         } 
         else if (await Permission.storage.request().isGranted) {
           final pickedFile = await picker.pickMultiImage(
-          imageQuality: 85, maxHeight: 1000, maxWidth: 1000);
+          imageQuality: 95, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {

@@ -19,29 +19,34 @@ class DatabaseService {
   Storage storage = Storage.instance;
 
   Future savingeUserData(String name, String email, String uid) async {
-    int timestamp = DateTime.now().millisecondsSinceEpoch;
-    DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+    try {
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
 
-    final fcmToken = await FirebaseMessaging.instance.getToken();
+      final fcmToken = await FirebaseMessaging.instance.getToken();
 
-    return await userCollection.doc(uid).set({
-      "name" : name,
-      "email" : email,
-      "token" : [fcmToken],
-      "profilePic" : "",
-      "backgroundPic" : "",
-      "uid" : uid,
-      "likes" : [],
-      "registered" : tsdate,
-      "intro" : "",
-      "posts" : [],
-      "bookmarks" : [],
-      "comments" : [],
-      "commentLikes" : 0,
-      "wholeLikes" : 0,
-      "language" : "en",
-      "isEmailVisible" : false
-    });
+      return await userCollection.doc(uid).set({
+        "name" : name,
+        "email" : email,
+        "token" : [fcmToken],
+        "profilePic" : "",
+        "backgroundPic" : "",
+        "uid" : uid,
+        "likes" : [],
+        "registered" : tsdate,
+        "intro" : "",
+        "posts" : [],
+        "bookmarks" : [],
+        "comments" : [],
+        "commentLikes" : 0,
+        "wholeLikes" : 0,
+        "language" : "en",
+        "isEmailVisible" : false
+      });
+    } catch(e) {
+      print(e);
+    }
+    
   }
 
   Future<Map<dynamic, dynamic>> getLikedUser(List<dynamic> likedPeopleUId) async {
@@ -104,16 +109,15 @@ class DatabaseService {
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
 
-      print(newToken + "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-
       user.get().then((value) {
 
         List<dynamic> tokens = value["token"];
-        tokens.add(newToken);
-        user.update({
-          "token" : tokens
-        });
-
+        if (!tokens.contains(newToken)) {
+          tokens.add(newToken);
+          user.update({
+            "token" : tokens
+          });
+        }
       });
 
     } catch(e) {

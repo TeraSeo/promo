@@ -292,7 +292,7 @@ class _RegisterPageState extends State<RegisterPage> {
   showAlertDialog(BuildContext context) {
 
     Widget okButton = TextButton(
-      child: Text("OK"),
+      child: Text(AppLocalizations.of(context)!.ok),
       onPressed: () {
         nextScreenReplace(context, const RegisterPage());
       },

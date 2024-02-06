@@ -43,7 +43,7 @@ class _EmailVerificationState extends State<EmailVerification> {
 
       sendVerificationEmail();
 
-      timer = Timer.periodic(Duration(seconds: 7), (timer) async {
+      timer = Timer.periodic(Duration(seconds: 3), (timer) async {
           checkEmailVerified();
           if (isEmailVerified) {
             QuerySnapshot snapshot =
@@ -61,7 +61,6 @@ class _EmailVerificationState extends State<EmailVerification> {
 
     }
     else {
-
       Future.delayed(Duration(seconds: 0)).then((value) async {
         QuerySnapshot snapshot =
           await databaseService.getUserData(widget.email);
