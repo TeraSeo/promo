@@ -17,25 +17,29 @@ import 'package:image/image.dart' as img;
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 
-class EditPost extends StatefulWidget {
+class PostEditPage extends StatefulWidget {
   final String postId;
   final String email;
-  const EditPost({super.key, required this.postId, required this.email});
+  final String category;
+  const PostEditPage({super.key, required this.postId, required this.email, required this.category});
 
   @override
-  State<EditPost> createState() => _EditPostState();
+  State<PostEditPage> createState() => _PostEditPageState();
 }
 
-class _EditPostState extends State<EditPost> {
+class _PostEditPageState extends State<PostEditPage> {
 
   DatabaseService? databaseService;
   PostService postService = PostService.instance;
   DocumentSnapshot<Map<String, dynamic>>? post;
-  bool isPostLoading = true;
+  HelperFunctions helperFunctions = HelperFunctions();
+
+  bool isPstLoading = true;
 
   bool isErrorOccurred = false;
+  bool isCategoryItemsLoading = true;
 
-  List<File> selectedImages = [];
+  List<dynamic> selectedImages = [];
   List<dynamic> images = [];
   final picker = ImagePicker();
 
@@ -46,37 +50,94 @@ class _EditPostState extends State<EditPost> {
   void initState() {
   
     super.initState();
-
     getPost();
-    _controllerTag = TextfieldTagsController();
+    _controllerTag = new TextfieldTagsController();
     _controllerDescription = new TextEditingController();
 
   }
+  
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setCategoryContents();
+  }
+
+  void setCategoryContents() {
+    if (this.mounted) {
+      setState(() {
+        if (items == null) {
+          items = [
+            AppLocalizations.of(context)!.news,
+            AppLocalizations.of(context)!.entertainment,
+            AppLocalizations.of(context)!.sports,
+            AppLocalizations.of(context)!.food,
+            AppLocalizations.of(context)!.economy,
+            AppLocalizations.of(context)!.stock,
+            AppLocalizations.of(context)!.shopping,
+            AppLocalizations.of(context)!.science,
+            AppLocalizations.of(context)!.etc
+          ];
+        }
+        if (category == null) {
+          String cat = helperFunctions.changeCategoryToEnglish(widget.category);
+          if (cat == "News") {
+            category = AppLocalizations.of(context)!.news;
+          }
+          else if (cat == "Entertainment") {
+            category = AppLocalizations.of(context)!.entertainment;
+          }
+          else if (cat == "Sports") {
+            category = AppLocalizations.of(context)!.sports;
+          }
+          else if (cat == "Food") {
+            category = AppLocalizations.of(context)!.food;
+          }
+          else if (cat == "Economy") {
+            category = AppLocalizations.of(context)!.economy;
+          }
+          else if (cat == "Stock") {
+            category = AppLocalizations.of(context)!.stock;
+          }
+          else if (cat == "Shopping") {
+            category = AppLocalizations.of(context)!.shopping;
+          }
+          else if (cat == "Science") {
+            category = AppLocalizations.of(context)!.science;
+          }
+          else {
+            category = AppLocalizations.of(context)!.etc;
+          }
+        }
+        
+        isCategoryItemsLoading = false;
+      });
+    }
+  }
+
 
   getPost() async {
     try {
-    await postService.getSpecificPost(widget.postId).then((value) => {
-      post = value,
-      if (this.mounted) {
-        setState(() {
-          _controllerDescription.text = post!["description"];
-          description = post!["description"];
-          category = post!["category"];
-          for (int i = 0; i < post!["tags"].length; i++) {
-            tags.add(post!["tags"][i]);
-          }
-          withComment = post!["withComment"];
-          isPostLoading = false;
-          images = post!["images"];
-        })
+      await postService.getSpecificPost(widget.postId).then((value) => {
+        post = value,
+        if (this.mounted) {
+          setState(() {
+            _controllerDescription.text = post!["description"];
+            description = post!["description"];
+            for (int i = 0; i < post!["tags"].length; i++) {
+              tags.add(post!["tags"][i]);
+            }
+            withComment = post!["withComment"];
+            isPstLoading = false;
+            images = post!["images"];
+          })
+        }
+      });} catch(e) {
+        if (this.mounted) {
+          setState(() {
+            isErrorOccurred = true;
+          });
+        }
       }
-    });} catch(e) {
-      if (this.mounted) {
-        setState(() {
-          isErrorOccurred = true;
-        });
-      }
-    }
   }
 
   final formKey = GlobalKey<FormState>();
@@ -84,20 +145,10 @@ class _EditPostState extends State<EditPost> {
   late TextfieldTagsController _controllerTag;
   late TextEditingController _controllerDescription;
 
-  final items = [
-    'News',
-    'Entertainment',
-    'Sports',
-    'Food',
-    'Economy',
-    'Stock',
-    'Shopping',
-    'Science',
-    'Etc.'
-  ];
+  List<String>? items;
 
   String description = "";
-  String category = "";
+  String? category;
   List<String> tags = [];
   bool withComment = true;
 
@@ -144,11 +195,16 @@ class _EditPostState extends State<EditPost> {
       ),
     ],
   ),
-) : isPostLoading? WillPopScope(
+) : 
+isPstLoading? 
+WillPopScope(
   onWillPop: () async => false,
-  child: Center(child: CircularProgressIndicator(color: Colors.white,),)) : !isPostAble? WillPopScope(
+  child: 
+ Center(child: CircularProgressIndicator(color: Colors.white,),)) : 
+  !isPostAble? WillPopScope(
   onWillPop: () async => false,
-  child: Center(child: CircularProgressIndicator(color: Colors.white,),)) : AbsorbPointer(
+  child: Center(child: CircularProgressIndicator(color: Colors.white,),)) : 
+  AbsorbPointer(
          absorbing: isImagesLoading || !isPostAble,
         child: Scaffold(
       appBar: AppBar(
@@ -242,10 +298,14 @@ class _EditPostState extends State<EditPost> {
                     child: DropdownButton<String>(
                       value: category,
                       isExpanded: true,
-                      items: items.map(buildMenuItem).toList(),
-                      onChanged: (value) => setState(() => {
-                        category = value!
-                      }),
+                      items: items!.map(buildMenuItem).toList(),
+                      onChanged: (value) {
+                        if (this.mounted) {
+                          setState(() {
+                            category = value;
+                          });
+                        }
+                      },
                     ),
                   ),
                   SizedBox(
@@ -422,19 +482,20 @@ class _EditPostState extends State<EditPost> {
                           }
                         });
                         tags = _controllerTag.getTags!;
+                        String cat = helperFunctions.changeCategoryToEnglish(category!);
                         if (!selectedImages.isEmpty) {
-                          await postService.updatePost(selectedImages, description, category, tags, withComment, widget.postId, widget.email);
+                          await postService.updatePost(selectedImages, description, cat, tags, withComment, widget.postId, widget.email);
                           nextScreen(context, HomePage(pageIndex: 0,));
                         }
                         else {
 
                           if (images.isEmpty) {
-                            await postService.updatePost([], description, category, tags, withComment, widget.postId, widget.email);
+                            await postService.updatePost([], description, cat, tags, withComment, widget.postId, widget.email);
                             nextScreen(context, HomePage(pageIndex: 0,));
                           }
 
                           else {
-                            await postService.updatePostWithOutImages(description, category, tags, withComment, widget.postId);
+                            await postService.updatePostWithOutImages(description, cat, tags, withComment, widget.postId);
                             nextScreen(context, HomePage(pageIndex: 0,));
                           }
                           
@@ -567,7 +628,7 @@ class _EditPostState extends State<EditPost> {
                       }
                     });
                     await getImages();
-                    await cropImages(selectedImages);
+                    selectedImages = await cropImages(selectedImages);
                     setState(() {
                       if (this.mounted) {
                         isImagesLoading = false;
@@ -596,15 +657,9 @@ class _EditPostState extends State<EditPost> {
   Future getImages() async {
     selectedImages = [];
     try {
-        PermissionStatus? status;
-        if (Platform.isAndroid) {
-          status = await Permission.storage.request();
-        } else if (Platform.isIOS) {
-          status = await Permission.photos.request();
-        }
-        if (status!.isGranted) {
-          final pickedFile = await picker.pickMultipleMedia(
-          imageQuality: 90, maxHeight: 1000, maxWidth: 1000);
+        if (await Permission.photos.request().isGranted) {
+          final pickedFile = await picker.pickMultiImage(
+          imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {
@@ -614,7 +669,7 @@ class _EditPostState extends State<EditPost> {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
                       if (getFileSize(xfilePick[i]) > 40) {
                         final snackBar = SnackBar(
-                          content: const Text('File size is so large!'),
+                          content: Text(AppLocalizations.of(context)!.fileSizeLarge),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
@@ -631,7 +686,7 @@ class _EditPostState extends State<EditPost> {
                     if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
                       if (getFileSize(xfilePick[i]) > 40) {
                         final snackBar = SnackBar(
-                          content: const Text('File size is so large!'),
+                          content: Text(AppLocalizations.of(context)!.fileSizeLarge),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
                       } else {
@@ -645,7 +700,55 @@ class _EditPostState extends State<EditPost> {
                 }
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Nothing is selected')));
+                   SnackBar(content: Text(AppLocalizations.of(context)!.nothingSelected)));
+              }
+            },
+          );
+        } 
+        else if (await Permission.storage.request().isGranted) {
+          final pickedFile = await picker.pickMultiImage(
+          imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
+          List<XFile> xfilePick = pickedFile;
+          setState(
+            () {
+              if (xfilePick.isNotEmpty) {
+                if (xfilePick.length > 8) {
+                  for (var i = 0; i < 8; i++) {
+                    if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                      if (getFileSize(xfilePick[i]) > 40) {
+                        final snackBar = SnackBar(
+                          content: Text(AppLocalizations.of(context)!.fileSizeLarge),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                    else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                  }
+                }
+                else {
+                  for (var i = 0; i < xfilePick.length; i++) {
+                    if (HelperFunctions().isVideoFile(File(xfilePick[i].path))) {
+                      if (getFileSize(xfilePick[i]) > 40) {
+                        final snackBar = SnackBar(
+                          content: Text(AppLocalizations.of(context)!.fileSizeLarge),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        selectedImages.add(File(xfilePick[i].path));
+                      }
+                    }
+                    else {
+                      selectedImages.add(File(xfilePick[i].path));
+                    }
+                  }
+                }
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                   SnackBar(content: Text(AppLocalizations.of(context)!.nothingSelected)));
               }
             },
           );
@@ -667,7 +770,7 @@ class _EditPostState extends State<EditPost> {
     return File(file.path).lengthSync() / (1024 * 1024);
   }
 
-  Future<List<dynamic>> cropImages(List<File> medias) async {
+  Future<List<dynamic>> cropImages(List<dynamic> medias) async {
     try {
 
       List<dynamic> files = [];
@@ -678,7 +781,7 @@ class _EditPostState extends State<EditPost> {
           bool isHorizontal = await isImageHorizontal(media);
           var croppedFile = await ImageCropper().cropImage(
             sourcePath: media.path,
-            aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
+            // aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
             uiSettings: [
               AndroidUiSettings(
                   toolbarTitle: 'Cropper',

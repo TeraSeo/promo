@@ -425,7 +425,7 @@ class _HomePageState extends State<HomePage> {
     try {
         if (await Permission.photos.request().isGranted) {
           final pickedFile = await picker.pickMultiImage(
-          imageQuality: 95, maxHeight: 1000, maxWidth: 1000);
+          imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {
@@ -473,7 +473,7 @@ class _HomePageState extends State<HomePage> {
         } 
         else if (await Permission.storage.request().isGranted) {
           final pickedFile = await picker.pickMultiImage(
-          imageQuality: 95, maxHeight: 1000, maxWidth: 1000);
+          imageQuality: 100, maxHeight: 1000, maxWidth: 1000);
           List<XFile> xfilePick = pickedFile;
           setState(
             () {
@@ -544,7 +544,6 @@ class _HomePageState extends State<HomePage> {
           bool isHorizontal = await isImageHorizontal(media);
           var croppedFile = await ImageCropper().cropImage(
             sourcePath: media.path,
-            aspectRatio: isHorizontal? CropAspectRatio(ratioX: 1200, ratioY: 1200) : CropAspectRatio(ratioX: 900, ratioY: 1200),
             uiSettings: [
               AndroidUiSettings(
                   toolbarColor: Colors.deepOrange,
@@ -632,7 +631,6 @@ class _HomePageState extends State<HomePage> {
 
                       if (this.mounted) {
                         setState(() {
-                          print(value);
                           _widgetOptions[2] = Post(images: value);
                           selectedIndex = 2;
                         });

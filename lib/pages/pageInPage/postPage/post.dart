@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/services/post_service.dart';
@@ -25,10 +26,41 @@ class _PostState extends State<Post> {
   Logging logger = Logging();
 
   bool isErrorOccurred = false;
+  bool isCategoryItemsLoading = true;
 
   @override
   void initState() {
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    setCategoryContents();
+  }
+
+  void setCategoryContents() {
+    if (this.mounted) {
+      setState(() {
+        if (items == null) {
+          items = [
+            AppLocalizations.of(context)!.news,
+            AppLocalizations.of(context)!.entertainment,
+            AppLocalizations.of(context)!.sports,
+            AppLocalizations.of(context)!.food,
+            AppLocalizations.of(context)!.economy,
+            AppLocalizations.of(context)!.stock,
+            AppLocalizations.of(context)!.shopping,
+            AppLocalizations.of(context)!.science,
+            AppLocalizations.of(context)!.etc
+          ];
+        }
+        if (category == "" || category == null) {
+          category = AppLocalizations.of(context)!.etc;
+        }
+        isCategoryItemsLoading = false;
+      });
+    }
   }
 
   final formKey = GlobalKey<FormState>();
@@ -36,20 +68,10 @@ class _PostState extends State<Post> {
   TextfieldTagsController _controllerTag = TextfieldTagsController();
   TextEditingController _controllerDescription = new TextEditingController();
 
-  final items = [
-    'News',
-    'Entertainment',
-    'Sports',
-    'Food',
-    'Economy',
-    'Stock',
-    'Shopping',
-    'Science',
-    'Etc.'
-  ];
+  List<String>? items;
 
   String description = "";
-  String category = "Etc.";
+  String? category;
   List<String> tags = [];
 
   bool withComment = true;
@@ -90,6 +112,8 @@ class _PostState extends State<Post> {
           ],
         ),
       ) :
+      isCategoryItemsLoading ? 
+      Center(child: CircularProgressIndicator()) :
      GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
@@ -151,10 +175,14 @@ class _PostState extends State<Post> {
                     child: DropdownButton<String>(
                       value: category,
                       isExpanded: true,
-                      items: items.map(buildMenuItem).toList(),
-                      onChanged: (value) => setState(() {
-                        category = value!;
-                      }),
+                      items: items!.map(buildMenuItem).toList(),
+                      onChanged: (value) {
+                        if (this.mounted) {
+                          setState(() {
+                            category = value!;
+                          });
+                        }
+                      }
                     ),
                   ),
                   SizedBox(
@@ -236,9 +264,6 @@ class _PostState extends State<Post> {
                                                   style: const TextStyle(
                                                       color: Colors.white),
                                                 ),
-                                                onTap: () {
-                                                  print("$tag selected");
-                                                },
                                               ),
                                               const SizedBox(width: 4.0),
                                               InkWell(
@@ -320,7 +345,9 @@ class _PostState extends State<Post> {
                         });
                         tags = _controllerTag.getTags!;
                         PostService postService = PostService.instance;
-                        await postService.post(widget.images, description, category, tags, withComment);
+                        HelperFunctions helperFunctions = HelperFunctions();
+                        String cat = helperFunctions.changeCategoryToEnglish(category!);
+                        await postService.post(widget.images, description, cat, tags, withComment);
                         Future.delayed(Duration(seconds: 2)).then((value) => {
                           nextScreenReplace(context, HomePage(pageIndex: 0,))
                         });

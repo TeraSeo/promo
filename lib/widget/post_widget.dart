@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/gestures.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/home_page.dart';
-import 'package:like_app/pages/pageInPage/postPage/editPost.dart';
+import 'package:like_app/pages/pageInPage/postPage/postEditPage.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/pages/peopleLiked.dart';
 import 'package:like_app/services/translatorServer.dart';
@@ -38,8 +39,8 @@ class PostWidget extends StatefulWidget {
   final List<dynamic>? likedPeople;
   final bool isProfileClickable;
   final String currentUsername;
-  
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage, required this.likedPeople, required this.currentUsername});
+  final String category; 
+  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage, required this.likedPeople, required this.currentUsername, required this.category});
 
   @override
   State<PostWidget> createState() => _PostWidgetState();
@@ -261,7 +262,7 @@ class _PostWidgetState extends State<PostWidget> {
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
       logoSize = MediaQuery.of(context).size.width * 0.035;
       iconWidth = MediaQuery.of(context).size.width * 0.07;
-      postHeight = MediaQuery.of(context).size.height * 1.1;
+      postHeight = MediaQuery.of(context).size.height * 1.5;
     }
     else {
       isTablet = false;
@@ -269,7 +270,7 @@ class _PostWidgetState extends State<PostWidget> {
       descriptionSize = MediaQuery.of(context).size.height * 0.02;
       logoSize = MediaQuery.of(context).size.width * 0.053;
       iconWidth = MediaQuery.of(context).size.width * 0.093;
-      postHeight = MediaQuery.of(context).size.height * 0.8;
+      postHeight = MediaQuery.of(context).size.height;
     }
 
     try {
@@ -374,60 +375,65 @@ class _PostWidgetState extends State<PostWidget> {
                 images!.length == 0 ? Column(
                   children: [
                     SizedBox(height: MediaQuery.of(context).size.height * 0.012,),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.06,
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.06,
+                            ),
+                            Flexible(child: Text(description!, style: TextStyle(fontSize: descriptionSize), ),)
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            GestureDetector(
+                          onTap: () async {
+                            if (isTranslated == null) {
+                              await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
+                                setState(() {
+                                  if (this.mounted) {
+                                    description = value;
+                                    translatedTxt = value;
+                                    isTranslated = true;
+                                  }
+                                });
+                              });
+                            }
+                            else {
+                              if (isTranslated!) {
+                                if (this.mounted) {
+                                  setState(() {
+                                      description = widget.description;
+                                      isTranslated = false;
+                                    }
+                                  );
+                                }
+                              }
+                              else {
+                                if (this.mounted) {
+                                  setState(() {
+                                      description = translatedTxt;
+                                      isTranslated = true;
+                                  });
+                                } 
+                              }
+                            }
+                          },
+                          child: Text(
+                            '  See translation',
+                            style: TextStyle(
+                              color: Colors.grey, // Set the color you desire
+                              fontSize: descriptionSize * 0.8
+                            ),
                           ),
-                          Text.rich(
-                            TextSpan(
-                              text: "",
-                              children: <TextSpan>[
-                                TextSpan(text: description, style: TextStyle(fontSize: descriptionSize),),
-                                TextSpan(
-                                  text: '  See translation',
-                                  style: TextStyle(
-                                    color: Colors.grey, // Set the color you desire
-                                  ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () async {
-                                      if (isTranslated == null) {
-                                        await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
-                                          setState(() {
-                                            if (this.mounted) {
-                                              description = value;
-                                              translatedTxt = value;
-                                              isTranslated = true;
-                                            }
-                                          });
-                                        });
-                                      }
-                                      else {
-                                        if (isTranslated!) {
-                                          setState(() {
-                                            if (this.mounted) {
-                                              description = widget.description;
-                                              isTranslated = false;
-                                            }
-                                          });
-                                        }
-                                        else {
-                                          setState(() {
-                                            if (this.mounted) {
-                                              description = translatedTxt;
-                                              isTranslated = true;
-                                            }
-                                          });
-                                        }
-                                      }
-                                      
-                                    },
-                                ),
-                              ]
-                            )
-                          )
-                        ],
-                      ),
+                        ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.03,
+                        ),
                       SizedBox(height: MediaQuery.of(context).size.height * 0.04,),
                       Stack(
                         children: [
@@ -774,60 +780,65 @@ class _PostWidgetState extends State<PostWidget> {
                           )
                         ],
                       ),
-                      SizedBox(height: MediaQuery.of(context).size.height * 0.003,),
+                      SizedBox(height: MediaQuery.of(context).size.height * 0.01,),
                       Row(
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.06,
                           ),
-                          Text.rich(
-                            TextSpan(
-                              text: "",
-                              children: <TextSpan>[
-                                TextSpan(text: description, style: TextStyle(fontSize: descriptionSize),),
-                                TextSpan(
-                                  text: '  See translation',
-                                  style: TextStyle(
-                                    color: Colors.grey, // Set the color you desire
-                                  ),
-                                  recognizer: TapGestureRecognizer()
-                                    ..onTap = () async {
-                                      if (isTranslated == null) {
-                                        await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
-                                          setState(() {
-                                            if (this.mounted) {
-                                              description = value;
-                                              translatedTxt = value;
-                                              isTranslated = true;
-                                            }
-                                          });
-                                        });
-                                      }
-                                      else {
-                                        if (isTranslated!) {
-                                          if (this.mounted) {
-                                            setState(() {
-                                                description = widget.description;
-                                                isTranslated = false;
-                                              }
-                                            );
-                                          }
-                                        }
-                                        else {
-                                          if (this.mounted) {
-                                            setState(() {
-                                                description = translatedTxt;
-                                                isTranslated = true;
-                                            });
-                                          } 
-                                        }
-                                      }
-                                    },
-                                ),
-                              ]
-                            )
-                          )
+                          Flexible(child: Text(description!, style: TextStyle(fontSize: descriptionSize), ),)
                         ],
+                      ),
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.04,
+                          ),
+                          GestureDetector(
+                        onTap: () async {
+                          if (isTranslated == null) {
+                            await translatorServer.translate(widget.description!, widget.preferredLanguage!).then((value) {
+                              setState(() {
+                                if (this.mounted) {
+                                  description = value;
+                                  translatedTxt = value;
+                                  isTranslated = true;
+                                }
+                              });
+                            });
+                          }
+                          else {
+                            if (isTranslated!) {
+                              if (this.mounted) {
+                                setState(() {
+                                    description = widget.description;
+                                    isTranslated = false;
+                                  }
+                                );
+                              }
+                            }
+                            else {
+                              if (this.mounted) {
+                                setState(() {
+                                    description = translatedTxt;
+                                    isTranslated = true;
+                                });
+                              } 
+                            }
+                          }
+                        },
+                        child: Text(
+                          '  See translation',
+                          style: TextStyle(
+                            color: Colors.grey, // Set the color you desire
+                            fontSize: descriptionSize * 0.8
+                          ),
+                        ),
+                      ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.03,
                       ),
                       Row(
                         children: [
@@ -897,7 +908,7 @@ class _PostWidgetState extends State<PostWidget> {
                   title: Text(AppLocalizations.of(context)!.editThisPost),
                   onTap: () {
                     if (!isPostRemoving) {
-                      nextScreen(context, EditPost(postId: widget.postID!, email: widget.email!,));
+                      nextScreen(context, PostEditPage(postId: widget.postID!, email: widget.email!, category: widget.category));
                     }
                   },
                 ),

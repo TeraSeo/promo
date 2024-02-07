@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:collection';
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
@@ -59,7 +58,7 @@ class PostService {
 
   }
 
-  Future updatePost(List<File> images, String description, String category, List<String> tags, bool withComment, String postId, String email) async {
+  Future updatePost(List<dynamic> images, String description, String category, List<String> tags, bool withComment, String postId, String email) async {
 
     try {
 
@@ -81,18 +80,19 @@ class PostService {
         await storage.deletePostImages(email, postId);
         for (int i = 0; i < filePaths.length; i++) {
           await storage.uploadPostImage(filePaths[i], fileNames[i], email, postId);
-        }          
+        }
       }
 
       await storage.loadPostImages(email, postId, fileNames).then((value) {
+        print(value);
         post.update({
-        "images" : value,
-        "description" : description,
-        "category" : category,
-        "tags" : tags,
-        "withComment" : withComment,
-        "posted" : tsdate
-      });
+          "images" : value,
+          "description" : description,
+          "category" : category,
+          "tags" : tags,
+          "withComment" : withComment,
+          "posted" : tsdate
+        });
       });
 
     } catch(e) {
@@ -530,7 +530,7 @@ class PostService {
   // }
 
   Future<DocumentSnapshot<Map<String, dynamic>>> getSpecificPost(String postId) async {
-
+    print(postId);
     final post = FirebaseFirestore.instance.collection("post").doc(postId);
     DocumentSnapshot<Map<String, dynamic>> thePost = await post.get();
 

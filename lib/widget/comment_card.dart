@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
+import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/pages/pageInPage/profilePage/othersProfilePage.dart';
 import 'package:like_app/services/comment_service.dart';
@@ -384,7 +385,7 @@ class _CommentCardState extends State<CommentCard> {
                 }, icon: isCommentLike!? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
               ),
               IconButton(onPressed: () {
-                _showOptionMenu();
+                _showOWnOptionMenu();
               }, 
                 icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.04)
               ), 
@@ -420,6 +421,11 @@ class _CommentCardState extends State<CommentCard> {
                   
                 }, icon: isCommentLike!? Icon(Icons.favorite, size: iconSize, color: Colors.red,) : Icon(Icons.favorite_border_outlined, size: iconSize)), 
               ),
+              IconButton(onPressed: () {
+                _showOthersOptionMenu();
+              }, 
+                icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.04)
+              ), 
             ],
           ), left: MediaQuery.of(context).size.width * 0.78,)
           ]
@@ -433,7 +439,7 @@ class _CommentCardState extends State<CommentCard> {
     
   }
 
-  void _showOptionMenu() {
+  void _showOWnOptionMenu() {
     showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -478,4 +484,79 @@ class _CommentCardState extends State<CommentCard> {
       );
     
   }
+
+
+  void _showOthersOptionMenu() {
+    showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(25.0)
+          )
+        ),
+        builder: (BuildContext context) {
+          return Container(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: Icon(Icons.report, color: Colors.red,),
+                  title: Text(AppLocalizations.of(context)!.report),
+                  onTap: () {
+                    HelperFunctions().reportComment(widget.commentId!).then((value) {
+                      if (value) {
+                        showReportSucceededMsg();
+                      }
+                      else {
+                        showReportFailedMsg();
+                      }
+                    });
+                  },
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.02,)
+              ],
+            ),
+          );
+        }
+      );
+    
+  }
+
+  Future showReportSucceededMsg() => showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.report),
+          content: Text(AppLocalizations.of(context)!.reportS),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.ok),
+            ),
+          ],
+        );
+      },
+    ); 
+
+    Future showReportFailedMsg() =>
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(AppLocalizations.of(context)!.report),
+          content: Text(AppLocalizations.of(context)!.reportF),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.ok),
+            ),
+          ],
+        );
+      },
+    );
 }

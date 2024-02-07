@@ -216,4 +216,31 @@ class HelperFunctions {
     }
   } 
 
+
+  Future<bool> reportComment(String commentId) async {
+    try {
+
+      final CollectionReference userCollection = 
+        FirebaseFirestore.instance.collection("report");
+
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+      String reportId = Uuid().v4();
+
+      await userCollection.doc(reportId).set({
+        "reportId": reportId,
+        "commentId" : commentId,
+        "reported" : tsdate
+      });
+
+      return true;
+
+    } catch (e) {
+      Logger logger = new Logger();
+      logger.log(Level.error, "failed to report\n" + e.toString());
+      return false;
+    }
+  } 
+
 }

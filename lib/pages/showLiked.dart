@@ -124,7 +124,7 @@ class _ShowLikedPostsState extends State<ShowLikedPosts> {
               List.generate(likedPosts!.length, (index) {
                 try {
                   return Container(
-                    child: PostWidget(email: likedPosts![index]['email'], postID: likedPosts![index]['postId'], name: likedPosts![index]['writer'], image: likedPosts![index]['images'], description: likedPosts![index]['description'],isLike: likedPosts![index]['likes'].contains(widget.uId), likes: likedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: likedPosts![index]['uId'], withComment: likedPosts![index]["withComment"], isBookMark: likedPosts![index]["bookMarks"].contains(widget.uId), tags: likedPosts![index]["tags"], posted: likedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: likedPosts![index]["likes"], currentUsername: currentUsername!,),
+                    child: PostWidget(email: likedPosts![index]['email'], postID: likedPosts![index]['postId'], name: likedPosts![index]['writer'], image: likedPosts![index]['images'], description: likedPosts![index]['description'],isLike: likedPosts![index]['likes'].contains(widget.uId), likes: likedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: likedPosts![index]['uId'], withComment: likedPosts![index]["withComment"], isBookMark: likedPosts![index]["bookMarks"].contains(widget.uId), tags: likedPosts![index]["tags"], posted: likedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: likedPosts![index]["likes"], currentUsername: currentUsername!, category: likedPosts![index]["category"]),
                   );
                 } catch(e) {
                   return Container();
