@@ -361,7 +361,7 @@ WillPopScope(
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 25,
+                      maxLength: 200,
                       maxLines: 1,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerPlayStoreURL,
@@ -378,7 +378,7 @@ WillPopScope(
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 25,
+                      maxLength: 200,
                       maxLines: 1,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerAppStoreURL,
@@ -420,7 +420,7 @@ WillPopScope(
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 25,
+                      maxLength: 200,
                       maxLines: 1,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerWebUrl,
@@ -462,7 +462,7 @@ WillPopScope(
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 25,
+                      maxLength: 200,
                       maxLines: 1,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerEtcUrl,

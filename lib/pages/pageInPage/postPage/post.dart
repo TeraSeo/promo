@@ -216,7 +216,7 @@ class _PostState extends State<Post> {
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 25,
+                      maxLength: 200,
                       maxLines: 1,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerPlayStoreURL,
@@ -233,7 +233,7 @@ class _PostState extends State<Post> {
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 25,
+                      maxLength: 200,
                       maxLines: 1,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerAppStoreURL,
@@ -275,7 +275,7 @@ class _PostState extends State<Post> {
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 25,
+                      maxLength: 200,
                       maxLines: 1,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerWebUrl,
@@ -317,7 +317,7 @@ class _PostState extends State<Post> {
                   Container(
                       width: MediaQuery.of(context).size.width * 0.85,
                       child: TextFormField(
-                      maxLength: 25,
+                      maxLength: 200,
                       maxLines: 1,
                       style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
                       controller: _controllerEtcUrl,
