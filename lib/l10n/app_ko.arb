@@ -170,5 +170,10 @@
 
 
     "etcName": "이름",
-    "etcUrl": "주소"
+    "etcUrl": "주소",
+
+
+    "loadUrlFailed": "url 불러오기 실패",
+    "failedToLoadUrl": "url을 불러오는데 실패했습니다",
+    "loadUrl": "url을 불러올까요?"
 }

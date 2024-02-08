@@ -633,7 +633,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
                                           return GestureDetector(
                                             onTap: () async {
                                               if (widget.webUrl != null || widget.webUrl != "") {
-                                                await _launchUrl(widget.webUrl);
+                                                await askLaunchUrl(widget.webUrl);
                                               }
                                             },
                                             child: Image(
@@ -1153,8 +1153,8 @@ class _WebPostWidgetState extends State<WebPostWidget> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Load url failed"),
-          content: Text("Failed to load url"),
+          title: Text(AppLocalizations.of(context)!.loadUrlFailed),
+          content: Text(AppLocalizations.of(context)!.failedToLoadUrl),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -1166,5 +1166,30 @@ class _WebPostWidgetState extends State<WebPostWidget> {
         );
       },
     );
+
+  Future askLaunchUrl(String url) => 
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.url),
+            content: Text(AppLocalizations.of(context)!.loadUrl),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () async {
+                  await _launchUrl(url);
+                },
+                child: Text(AppLocalizations.of(context)!.yes),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(AppLocalizations.of(context)!.no),
+              ),
+            ],
+          );
+        },
+      );
 
 }

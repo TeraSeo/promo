@@ -170,5 +170,10 @@
 
 
     "etcName": "Name",
-    "etcUrl": "Url"
+    "etcUrl": "Url",
+
+
+    "loadUrlFailed": "Échec du chargement de l'URL",
+    "failedToLoadUrl": "Échec du chargement de l'URL",
+    "loadUrl": "Voulez-vous charger l'URL ?"
 }

@@ -1186,4 +1186,29 @@ class _PostWidgetState extends State<PostWidget> {
       },
     );
 
+  Future askLaunchUrl() =>
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("URL"),
+          content: Text("load url?"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.yes),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(AppLocalizations.of(context)!.no),
+            ),
+          ],
+        );
+      },
+    );
+
 }

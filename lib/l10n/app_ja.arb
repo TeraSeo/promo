@@ -170,5 +170,10 @@
 
 
     "etcName": "名前",
-    "etcUrl": "URL"
+    "etcUrl": "URL",
+
+
+    "loadUrlFailed": "URLの読み込みに失敗しました",
+    "failedToLoadUrl": "URLの読み込みに失敗しました",
+    "loadUrl": "URLをロードしますか？"
 }

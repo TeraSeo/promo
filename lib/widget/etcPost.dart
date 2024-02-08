@@ -633,7 +633,7 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
                                           return GestureDetector(
                                             onTap: () async {
                                               if (widget.etcUrl != null || widget.etcUrl != "") {
-                                                await _launchUrl(widget.etcUrl);
+                                                await askLaunchUrl(widget.etcUrl);
                                               }
                                             },
                                             child: Image(
@@ -1152,8 +1152,8 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Load url failed"),
-          content: Text("Failed to load url"),
+          title: Text(AppLocalizations.of(context)!.loadUrlFailed),
+          content: Text(AppLocalizations.of(context)!.failedToLoadUrl),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -1165,5 +1165,30 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
         );
       },
     );
+
+  Future askLaunchUrl(String url) => 
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.url),
+            content: Text(AppLocalizations.of(context)!.loadUrl),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () async {
+                  await _launchUrl(url);
+                },
+                child: Text(AppLocalizations.of(context)!.yes),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(AppLocalizations.of(context)!.no),
+              ),
+            ],
+          );
+        },
+      );
 
 }

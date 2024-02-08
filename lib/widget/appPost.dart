@@ -637,12 +637,12 @@ class _AppPostWidgetState extends State<AppPostWidget> {
                                             onTap: () async {
                                               if (Platform.isIOS) {
                                                 if (widget.aUrl != null || widget.aUrl != "") {
-                                                  await _launchUrl();
+                                                  await askLaunchUrl(widget.aUrl);
                                                 }
                                               }
                                               else if (Platform.isAndroid) {
                                                 if (widget.pUrl != null || widget.pUrl != "") {
-                                                  await _launchUrl();
+                                                  await askLaunchUrl(widget.pUrl);
                                                 }
                                               }
                                             },
@@ -1147,9 +1147,9 @@ class _AppPostWidgetState extends State<AppPostWidget> {
       },
     );
     
-  Future _launchUrl() async {
+  Future _launchUrl(String url) async {
     try {
-      if (!await launchUrl(generateURLByDeviceType())) {
+      if (!await launchUrl(Uri.parse(url))) {
         throw Exception('Could not launch');
       }
     } catch(e) {
@@ -1158,22 +1158,13 @@ class _AppPostWidgetState extends State<AppPostWidget> {
     }
   }
 
-  Uri generateURLByDeviceType() {
-    if(Platform.isIOS){
-        return Uri.parse(widget.aUrl);
-    }else if(Platform.isAndroid){
-        return Uri.parse(widget.pUrl);
-    }
-    return Uri.parse("");
-  }
-
   Future showLaunchFailedMsg() =>
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Load url failed"),
-          content: Text("Failed to load url"),
+          title: Text(AppLocalizations.of(context)!.loadUrlFailed),
+          content: Text(AppLocalizations.of(context)!.failedToLoadUrl),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -1186,4 +1177,28 @@ class _AppPostWidgetState extends State<AppPostWidget> {
       },
     );
 
+    Future askLaunchUrl(String url) => 
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(AppLocalizations.of(context)!.url),
+            content: Text(AppLocalizations.of(context)!.loadUrl),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () async {
+                  await _launchUrl(url);
+                },
+                child: Text(AppLocalizations.of(context)!.yes),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(AppLocalizations.of(context)!.no),
+              ),
+            ],
+          );
+        },
+      );
 }
