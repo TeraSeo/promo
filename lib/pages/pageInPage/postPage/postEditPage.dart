@@ -21,7 +21,8 @@ class PostEditPage extends StatefulWidget {
   final String postId;
   final String email;
   final String category;
-  const PostEditPage({super.key, required this.postId, required this.email, required this.category});
+  final String type;
+  const PostEditPage({super.key, required this.postId, required this.email, required this.category, required this.type});
 
   @override
   State<PostEditPage> createState() => _PostEditPageState();
@@ -46,15 +47,42 @@ class _PostEditPageState extends State<PostEditPage> {
   Logging logger = Logging();
   bool isImagesLoading = false;
 
+  String appName = "";
+  String aUrl = "";
+  String pUrl = "";
+
+  String webName = "";
+  String webUrl = "";
+
+  String etcName = "";
+  String etcUrl = "";
+
+  String? type;
+
+  final postType = [
+    "App",
+    "Web",
+    "Etc."
+  ];
+
   @override
   void initState() {
   
     super.initState();
+    type = widget.type;
     getPost();
     _controllerTag = new TextfieldTagsController();
     _controllerDescription = new TextEditingController();
 
   }
+
+  TextEditingController _controllerAppName = new TextEditingController();
+  TextEditingController _controllerPlayStoreURL = new TextEditingController();
+  TextEditingController _controllerAppStoreURL = new TextEditingController();
+  TextEditingController _controllerWebName = new TextEditingController();
+  TextEditingController _controllerWebUrl = new TextEditingController();
+  TextEditingController _controllerEtcName = new TextEditingController();
+  TextEditingController _controllerEtcUrl = new TextEditingController();
   
   @override
   void didChangeDependencies() {
@@ -123,6 +151,26 @@ class _PostEditPageState extends State<PostEditPage> {
           setState(() {
             _controllerDescription.text = post!["description"];
             description = post!["description"];
+            if (type == "App") {
+              appName = post!["appName"];
+              _controllerAppName.text = post!["appName"];
+              pUrl = post!["pUrl"];
+              _controllerPlayStoreURL.text = post!["pUrl"];
+              aUrl = post!["aUrl"];
+              _controllerAppStoreURL.text = post!["aUrl"];
+            } 
+            else if (type == "Web") {
+              webName = post!["webName"];
+              _controllerWebName.text = post!["webName"];
+              webUrl = post!["webUrl"];
+              _controllerWebUrl.text = post!["webUrl"];
+            }
+            else {
+              etcName = post!["etcName"];
+              _controllerEtcName.text = post!["etcName"];
+              etcUrl = post!["etcUrl"];
+              _controllerEtcUrl.text = post!["etcUrl"];
+            }
             for (int i = 0; i < post!["tags"].length; i++) {
               tags.add(post!["tags"][i]);
             }
@@ -156,11 +204,20 @@ class _PostEditPageState extends State<PostEditPage> {
 
   @override
   void dispose() {
-    super.dispose();
-
-    _controllerTag.dispose();
-    _controllerDescription.dispose();
-    
+    try {
+      super.dispose();
+      _controllerTag.dispose();
+      _controllerDescription.dispose();
+      _controllerAppName.dispose();
+      _controllerPlayStoreURL.dispose();
+      _controllerAppStoreURL.dispose();
+      _controllerWebName.dispose();
+      _controllerWebUrl.dispose();
+      _controllerEtcName.dispose();
+      _controllerEtcUrl.dispose();
+    } catch(e) {
+      print(e);
+    }
   }
 
   @override
@@ -252,7 +309,170 @@ WillPopScope(
                     )
                   ),
                   SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                    width: MediaQuery.of(context).size.width * 0.4,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(10)),
+                      border: Border.all(width: MediaQuery.of(context).size.height * 0.004)
+                    ),
+                    child: DropdownButton<String>(
+                      value: type,
+                      isExpanded: true,
+                      items: postType.map(buildMenuItem).toList(),
+                      onChanged: (value) {
+                        if (this.mounted) {
+                          setState(() {
+                            type = value!;
+                          });
+                        }
+                      }
+                    ),
+                  ),
+                  type == "App" ? Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  getLabel(title: AppLocalizations.of(context)!.appName),
+                  SizedBox(
                     height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                      maxLength: 25,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
+                      controller: _controllerAppName,
+                      onChanged: (val) {
+                        appName = val;
+                      },
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.appName, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.title), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                    ),
+                  ),
+                  getLabel(title: AppLocalizations.of(context)!.appURLP),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                      maxLength: 25,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
+                      controller: _controllerPlayStoreURL,
+                      onChanged: (val) {
+                        pUrl = val;
+                      },
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.url, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.app_registration), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                    ),
+                  ),
+                  getLabel(title: AppLocalizations.of(context)!.appURLA),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                      maxLength: 25,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
+                      controller: _controllerAppStoreURL,
+                      onChanged: (val) {
+                        aUrl = val;
+                      },
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.url, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.app_registration), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                    ),
+                  ),
+                    ],
+                  ) :
+                  type == "Web" ?Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  getLabel(title: AppLocalizations.of(context)!.webName),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                      maxLength: 25,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
+                      controller: _controllerWebName,
+                      onChanged: (val) {
+                        webName = val;
+                      },
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.webName, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.title), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                    ),
+                  ),
+                  getLabel(title: AppLocalizations.of(context)!.webURL),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                      maxLength: 25,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
+                      controller: _controllerWebUrl,
+                      onChanged: (val) {
+                        webUrl = val;
+                      },
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.webURL, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.app_registration), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                    ),
+                  ),
+                    ],
+                  ) :
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  getLabel(title: AppLocalizations.of(context)!.etcName),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                      maxLength: 25,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
+                      controller: _controllerEtcName,
+                      onChanged: (val) {
+                        etcName = val;
+                      },
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.etcName, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.title), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                    ),
+                  ),
+                  getLabel(title: AppLocalizations.of(context)!.etcUrl),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.01,
+                  ),
+                  Container(
+                      width: MediaQuery.of(context).size.width * 0.85,
+                      child: TextFormField(
+                      maxLength: 25,
+                      maxLines: 1,
+                      style: TextStyle(fontSize: MediaQuery.of(context).size.height * 0.018),
+                      controller: _controllerEtcUrl,
+                      onChanged: (val) {
+                        etcUrl = val;
+                      },
+                      decoration: InputDecoration(hintText: AppLocalizations.of(context)!.etcUrl, labelStyle: TextStyle(color: Colors.black), prefixIcon: Icon(Icons.app_registration), enabledBorder: myinputborder(context), focusedBorder: myfocusborder(context), prefixIconColor: Theme.of(context).primaryColor),
+                    ),
+                  ),
+                    ],
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.02,
@@ -324,7 +544,6 @@ WillPopScope(
                     letterCase: LetterCase.normal,
                     validator: (String tag) {
                       try {
-
                         if (_controllerTag.getTags!.contains(tag)) {
                           return AppLocalizations.of(context)!.tagExist;
                         }
@@ -398,9 +617,6 @@ WillPopScope(
                                                   style: const TextStyle(
                                                       color: Colors.white),
                                                 ),
-                                                onTap: () {
-                                                  print("$tag selected");
-                                                },
                                               ),
                                               const SizedBox(width: 4.0),
                                               InkWell(
@@ -484,21 +700,18 @@ WillPopScope(
                         tags = _controllerTag.getTags!;
                         String cat = helperFunctions.changeCategoryToEnglish(category!);
                         if (!selectedImages.isEmpty) {
-                          await postService.updatePost(selectedImages, description, cat, tags, withComment, widget.postId, widget.email);
+                          await postService.updatePost(selectedImages, description, cat, tags, withComment, widget.postId, widget.email, appName, pUrl, aUrl, type!, webName, webUrl, etcName,etcUrl);
                           nextScreen(context, HomePage(pageIndex: 0,));
                         }
                         else {
-
                           if (images.isEmpty) {
-                            await postService.updatePost([], description, cat, tags, withComment, widget.postId, widget.email);
+                            await postService.updatePost([], description, cat, tags, withComment, widget.postId, widget.email, appName, pUrl, aUrl, type!, webName, webUrl, etcName,etcUrl);
                             nextScreen(context, HomePage(pageIndex: 0,));
                           }
-
                           else {
-                            await postService.updatePostWithOutImages(description, cat, tags, withComment, widget.postId);
+                            await postService.updatePostWithOutImages(description, cat, tags, withComment, widget.postId, appName, pUrl, aUrl, type!, webName, webUrl, etcName,etcUrl);
                             nextScreen(context, HomePage(pageIndex: 0,));
                           }
-                          
                         }
 
                       }

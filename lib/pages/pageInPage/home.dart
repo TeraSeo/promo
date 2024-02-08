@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/post_service.dart';
-import 'package:like_app/widget/post_widget.dart';
+import 'package:like_app/widget/appPost.dart';
+import 'package:like_app/widget/etcPost.dart';
+import 'package:like_app/widget/webPost.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -302,7 +304,12 @@ class _HomeState extends State<Home> {
             List.generate(posts!.length, (index) {
               try {
                 return Container(
-                  child: PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!, category: posts![index]["category"]),
+                  child: 
+                  posts![index]["type"] == "App" ? 
+                  AppPostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!, category: posts![index]["category"], appName: posts![index]["appName"], pUrl: posts![index]["pUrl"], aUrl: posts![index]["aUrl"],type: posts![index]["type"]) :
+                  posts![index]["type"] == "Web" ? 
+                  WebPostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!, category: posts![index]["category"], webName: posts![index]["webName"], webUrl: posts![index]["webUrl"], type: posts![index]["type"]) :
+                  EtcPostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uId), likes: posts![index]['likes'].length, uId: uId, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: posts![index]["bookMarks"].contains(uId), tags: posts![index]["tags"], posted: posts![index]["posted"],isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!, category: posts![index]["category"], etcName: posts![index]["etcName"], etcUrl: posts![index]["etcUrl"], type: posts![index]["type"])
                 );
               } catch(e) {
                 return Center(

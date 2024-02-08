@@ -54,6 +54,10 @@
 	<true/>
 	<key>FirebaseMessagingAutoInitEnabled</key>
 	<string>NO</string>
-	
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>sms</string>
+	<string>tel</string>
+	</array>
 </dict>
 </plist>

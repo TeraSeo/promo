@@ -10,11 +10,13 @@ import 'package:like_app/pages/pageInPage/settingPage.dart';
 import 'package:like_app/services/comment_service.dart';
 import 'package:like_app/services/post_service.dart';
 import 'package:like_app/services/storage.dart';
+import 'package:like_app/widget/appPost.dart';
 import 'package:like_app/widget/background_widget.dart';
+import 'package:like_app/widget/etcPost.dart';
 import 'package:like_app/widget/numbers_widget.dart';
-import 'package:like_app/widget/post_widget.dart';
 import 'package:like_app/widget/profile_widget.dart';
 import 'package:like_app/services/userService.dart';
+import 'package:like_app/widget/webPost.dart';
 import 'package:like_app/widgets/widgets.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
@@ -290,7 +292,11 @@ class _ProfilePageState extends State<ProfilePage> {
                   List.generate(posts!.length, (index) {
                     try {
 
-                    return PostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!, category: posts![index]["category"]);
+                    return posts![index]["type"] == "App" ?
+                      AppPostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!, category: posts![index]["category"], appName: posts![index]["appName"], pUrl: posts![index]["pUrl"], aUrl: posts![index]["aUrl"], type: posts![index]["type"]) :
+                      posts![index]["type"] == "Web" ?
+                      WebPostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!, category: posts![index]["category"], webName: posts![index]["webName"], webUrl: posts![index]["webUrl"], type: posts![index]["type"]) :
+                      EtcPostWidget(email: posts![index]['email'], postID: posts![index]['postId'], name: posts![index]['writer'], image: posts![index]['images'], description: posts![index]['description'],isLike: posts![index]['likes'].contains(uID), likes: posts![index]['likes'].length, uId: uID, postOwnerUId: posts![index]['uId'], withComment: posts![index]["withComment"], isBookMark: postUser!["bookmarks"].contains(posts![index]["postId"]), tags: posts![index]["tags"], posted: posts![index]["posted"], isProfileClickable: true, preferredLanguage: preferredLanguage!, likedPeople: posts![index]["likes"], currentUsername: currentUsername!, category: posts![index]["category"], etcName: posts![index]["etcName"], etcUrl: posts![index]["etcUrl"], type: posts![index]["type"]);
                     } catch(e) {
 
                       return Center(

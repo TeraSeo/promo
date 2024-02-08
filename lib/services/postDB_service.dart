@@ -16,7 +16,7 @@ class PostDBService {
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("post");
 
-  Future savingePostDBData(String description, String category, List<String> tags, bool withComment, List<String> filePaths, List<String> fileNames, String email, String userName) async {
+  Future savingePostDBData(String description, String category, List<String> tags, bool withComment, List<String> filePaths, List<String> fileNames, String email, String userName, String appName, String pUrl, String aUrl, String type, String webName, String webUrl, String etcName, String etcUrl) async {
 
     HelperFunctions helperFunctions = HelperFunctions();
     Logging logger = Logging();
@@ -68,7 +68,15 @@ class PostDBService {
         'postNumber' : size!,
         'uId' : uId,
         'bookMarks' : [],
-        'wholeLikes' : 0
+        'wholeLikes' : 0,
+        'appName': appName,
+        'pUrl': pUrl,
+        'aUrl': aUrl,
+        "type": type,
+        "webName": webName,
+        "webUrl": webUrl,
+        "etcName": etcName,
+        "etcUrl": etcUrl
       });
 
     } catch(e) {

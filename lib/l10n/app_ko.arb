@@ -153,5 +153,22 @@
     "likeNotification": "좋아요 알림",
     "profileChange": "프로필 변경",
     "clickToChangeProfile": "프로필 변경하시려면 클릭하세요",
-    "result": "결과"
+    "result": "결과",
+
+
+    "appName": "앱 이름",
+    "appURLP": "앱 주소 (플레이 스토어)",
+    "appURLA": "앱 주소 (앱 스토어)",
+    "url": "주소",
+    "appNameEmpty": "앱 아름이 비어있습니다",
+    "pStoreURLEmpty": "플레이스토어 주소가 비어있습니다",
+    "aStoreURLEmpty": "앱 스토어 주소가 비어있습니다",
+
+
+    "webName": "웹 이름",
+    "webURL": "웹 주소",
+
+
+    "etcName": "이름",
+    "etcUrl": "주소"
 }

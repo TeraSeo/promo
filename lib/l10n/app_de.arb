@@ -153,5 +153,22 @@
     "likeNotification": "Like-Benachrichtigung",
     "profileChange": "Profil ändern",
     "clickToChangeProfile": "Klicken Sie hier, um das Profil zu ändern",
-    "result": "Ergebnis"
+    "result": "Ergebnis",
+
+
+    "appName": "App Name",
+    "appURLP": "App url (Play Store)",
+    "appURLA": "App url (App Store)",
+    "url": "URL",
+    "appNameEmpty": "App name leer",
+    "pStoreURLEmpty": "Play store url leer",
+    "aStoreURLEmpty": "App store url leer",
+
+
+    "webName": "Web Name",
+    "webURL": "Web url",
+
+
+    "etcName": "Name",
+    "etcUrl": "Url"
 }

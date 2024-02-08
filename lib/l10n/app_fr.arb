@@ -153,5 +153,22 @@
     "likeNotification": "notification d'amour",
     "profileChange": "Change de profil",
     "clickToChangeProfile": "Cliquez pour changer de profil",
-    "result": "Résultat"
+    "result": "Résultat",
+
+
+    "appName": "App Name",
+    "appURLP": "App url (Play Store)",
+    "appURLA": "App url (App Store)",
+    "url": "URL",
+    "appNameEmpty": "App name vide",
+    "pStoreURLEmpty": "Play store url vide",
+    "aStoreURLEmpty": "App store url vide",
+
+
+    "webName": "Web Name",
+    "webURL": "Web url",
+
+
+    "etcName": "Name",
+    "etcUrl": "Url"
 }

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/post_service.dart';
-import 'package:like_app/widget/post_widget.dart';
+import 'package:like_app/widget/appPost.dart';
+import 'package:like_app/widget/etcPost.dart';
+import 'package:like_app/widget/webPost.dart';
 
 class ShowBookmarkedPosts extends StatefulWidget {
 
@@ -124,7 +126,12 @@ class _ShowBookmarkedPostsState extends State<ShowBookmarkedPosts> {
               List.generate(bookmarkedPosts!.length, (index) {
                 try {
                   return Container(
-                    child: PostWidget(email: bookmarkedPosts![index]['email'], postID: bookmarkedPosts![index]['postId'], name: bookmarkedPosts![index]['writer'], image: bookmarkedPosts![index]['images'], description: bookmarkedPosts![index]['description'],isLike: bookmarkedPosts![index]['likes'].contains(widget.uId), likes: bookmarkedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: bookmarkedPosts![index]['uId'], withComment: bookmarkedPosts![index]["withComment"], isBookMark: bookmarkedPosts![index]["bookMarks"].contains(widget.uId), tags: bookmarkedPosts![index]["tags"], posted: bookmarkedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: bookmarkedPosts![index]["likes"], currentUsername: currentUsername!, category: bookmarkedPosts![index]["category"]),
+                    child:
+                      bookmarkedPosts![index]["type"] == "App" ?
+                     AppPostWidget(email: bookmarkedPosts![index]['email'], postID: bookmarkedPosts![index]['postId'], name: bookmarkedPosts![index]['writer'], image: bookmarkedPosts![index]['images'], description: bookmarkedPosts![index]['description'],isLike: bookmarkedPosts![index]['likes'].contains(widget.uId), likes: bookmarkedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: bookmarkedPosts![index]['uId'], withComment: bookmarkedPosts![index]["withComment"], isBookMark: bookmarkedPosts![index]["bookMarks"].contains(widget.uId), tags: bookmarkedPosts![index]["tags"], posted: bookmarkedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: bookmarkedPosts![index]["likes"], currentUsername: currentUsername!, category: bookmarkedPosts![index]["category"], appName: bookmarkedPosts![index]["appName"], pUrl: bookmarkedPosts![index]["pUrl"], aUrl: bookmarkedPosts![index]["aUrl"], type: bookmarkedPosts![index]["type"]) :
+                      bookmarkedPosts![index]["type"] == "Web" ?
+                     WebPostWidget(email: bookmarkedPosts![index]['email'], postID: bookmarkedPosts![index]['postId'], name: bookmarkedPosts![index]['writer'], image: bookmarkedPosts![index]['images'], description: bookmarkedPosts![index]['description'],isLike: bookmarkedPosts![index]['likes'].contains(widget.uId), likes: bookmarkedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: bookmarkedPosts![index]['uId'], withComment: bookmarkedPosts![index]["withComment"], isBookMark: bookmarkedPosts![index]["bookMarks"].contains(widget.uId), tags: bookmarkedPosts![index]["tags"], posted: bookmarkedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: bookmarkedPosts![index]["likes"], currentUsername: currentUsername!, category: bookmarkedPosts![index]["category"], webName: bookmarkedPosts![index]["webName"], webUrl: bookmarkedPosts![index]["webUrl"], type: bookmarkedPosts![index]["type"]) :
+                     EtcPostWidget(email: bookmarkedPosts![index]['email'], postID: bookmarkedPosts![index]['postId'], name: bookmarkedPosts![index]['writer'], image: bookmarkedPosts![index]['images'], description: bookmarkedPosts![index]['description'],isLike: bookmarkedPosts![index]['likes'].contains(widget.uId), likes: bookmarkedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: bookmarkedPosts![index]['uId'], withComment: bookmarkedPosts![index]["withComment"], isBookMark: bookmarkedPosts![index]["bookMarks"].contains(widget.uId), tags: bookmarkedPosts![index]["tags"], posted: bookmarkedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: bookmarkedPosts![index]["likes"], currentUsername: currentUsername!, category: bookmarkedPosts![index]["category"], etcName: bookmarkedPosts![index]["etcName"], etcUrl: bookmarkedPosts![index]["etcUrl"], type: bookmarkedPosts![index]["type"]) 
                   );
                 } catch(e) {
                   return Container();

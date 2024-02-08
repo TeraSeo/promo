@@ -153,5 +153,22 @@
     "likeNotification": "いいねお知らせ",
     "profileChange": "プロフィールの変更",
     "clickToChangeProfile": "クリックしてプロフィールを変更します",
-    "result": "結果"
+    "result": "結果",
+
+
+    "appName": "アプリ名",
+    "appURLP": "アプリのURL (Play Store)",
+    "appURLA": "アプリのURL (App Store)",
+    "url": "URL",
+    "appNameEmpty": "アプリ名が空です",
+    "pStoreURLEmpty": "Play store URLが空です",
+    "aStoreURLEmpty": "App store URLが空です",
+
+
+    "webName": "ウェブ名",
+    "webURL": "ウェブURL",
+
+
+    "etcName": "名前",
+    "etcUrl": "URL"
 }

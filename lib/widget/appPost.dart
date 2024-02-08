@@ -24,7 +24,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PostWidget extends StatefulWidget {
+class AppPostWidget extends StatefulWidget {
   final String? email;
   final String? postID;
   final String? name;
@@ -47,13 +47,13 @@ class PostWidget extends StatefulWidget {
   final String pUrl;
   final String aUrl;
   final String type;
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage, required this.likedPeople, required this.currentUsername, required this.category, required this.appName, required this.pUrl, required this.aUrl, required this.type});
+  const AppPostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage, required this.likedPeople, required this.currentUsername, required this.category, required this.appName, required this.pUrl, required this.aUrl, required this.type});
 
   @override
-  State<PostWidget> createState() => _PostWidgetState();
+  State<AppPostWidget> createState() => _AppPostWidgetState();
 }
 
-class _PostWidgetState extends State<PostWidget> {
+class _AppPostWidgetState extends State<AppPostWidget> {
 
   bool isLikeAnimation = false;
   bool? isLike;

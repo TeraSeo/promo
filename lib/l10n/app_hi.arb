@@ -153,5 +153,22 @@
     "likeNotification": "अधिसूचना की तरह",
     "profileChange": "प्रोफ़ाइल परिवर्तन",
     "clickToChangeProfile": "प्रोफ़ाइल बदलने के लिए क्लिक करें",
-    "result": "परिणाम"
+    "result": "परिणाम",
+
+
+    "appName": "एप्लिकेशन का नाम",
+    "appURLP": "ऐप यूआरएल (Play Store)",
+    "appURLA": "ऐप यूआरएल (App Store)",
+    "url": "यूआरएल",
+    "appNameEmpty": "ऐप का नाम खाली",
+    "pStoreURLEmpty": "Play store यूआरएल खाली",
+    "aStoreURLEmpty": "App store यूआरएल खाली",
+
+
+    "webName": "वेब नाम",
+    "webURL": "वेब यूआरएल",
+
+
+    "etcName": "नाम",
+    "etcUrl": "यूआरएल"
 }

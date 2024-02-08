@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +22,7 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class PostWidget extends StatefulWidget {
+class EtcPostWidget extends StatefulWidget {
   final String? email;
   final String? postID;
   final String? name;
@@ -43,17 +41,16 @@ class PostWidget extends StatefulWidget {
   final bool isProfileClickable;
   final String currentUsername;
   final String category; 
-  final String appName; 
-  final String pUrl;
-  final String aUrl;
+  final String etcName; 
+  final String etcUrl;
   final String type;
-  const PostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage, required this.likedPeople, required this.currentUsername, required this.category, required this.appName, required this.pUrl, required this.aUrl, required this.type});
+  const EtcPostWidget({super.key, required this.email, required this.postID, required this.name, required this.image, required this.description, required this.isLike, required this.likes, required this.uId, required this.postOwnerUId, required this.withComment, required this.isBookMark, required this.tags, required this.posted, required this.isProfileClickable, required this.preferredLanguage, required this.likedPeople, required this.currentUsername, required this.category, required this.etcName, required this.etcUrl, required this.type});
 
   @override
-  State<PostWidget> createState() => _PostWidgetState();
+  State<EtcPostWidget> createState() => _EtcPostWidgetState();
 }
 
-class _PostWidgetState extends State<PostWidget> {
+class _EtcPostWidgetState extends State<EtcPostWidget> {
 
   bool isLikeAnimation = false;
   bool? isLike;
@@ -384,8 +381,8 @@ class _PostWidgetState extends State<PostWidget> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.06,
                     ),
-                    (widget.appName == null || widget.appName == "") ? Container() : Text("name: ", style: TextStyle(color: Colors.black, fontSize: descriptionSize * 0.8, letterSpacing: 1,)),
-                    (widget.appName == null || widget.appName == "") ? Container() : Text(widget.appName, style: TextStyle(color: Colors.black, fontSize: descriptionSize * 1.05, fontWeight: FontWeight.bold, letterSpacing: 1,)),
+                    (widget.etcName == null || widget.etcName == "") ? Container() : Text("name: ", style: TextStyle(color: Colors.black, fontSize: descriptionSize * 0.8, letterSpacing: 1,)),
+                    (widget.etcName == null || widget.etcName == "") ? Container() : Text(widget.etcName, style: TextStyle(color: Colors.black, fontSize: descriptionSize * 1.05, fontWeight: FontWeight.bold, letterSpacing: 1,)),
                   ],
                 ),
                 images!.length == 0 ? Column(
@@ -635,15 +632,8 @@ class _PostWidgetState extends State<PostWidget> {
                                         if (!HelperFunctions().isVideoFileWString(images![index])) {
                                           return GestureDetector(
                                             onTap: () async {
-                                              if (Platform.isIOS) {
-                                                if (widget.aUrl != null || widget.aUrl != "") {
-                                                  await _launchUrl();
-                                                }
-                                              }
-                                              else if (Platform.isAndroid) {
-                                                if (widget.pUrl != null || widget.pUrl != "") {
-                                                  await _launchUrl();
-                                                }
+                                              if (widget.etcUrl != null || widget.etcUrl != "") {
+                                                await _launchUrl(widget.etcUrl);
                                               }
                                             },
                                             child: Image(
@@ -1147,24 +1137,14 @@ class _PostWidgetState extends State<PostWidget> {
       },
     );
     
-  Future _launchUrl() async {
+  Future _launchUrl(String url) async {
     try {
-      if (!await launchUrl(generateURLByDeviceType())) {
+      if (!await launchUrl(Uri.parse(url))) {
         throw Exception('Could not launch');
       }
     } catch(e) {
-      print(e);
       showLaunchFailedMsg();
     }
-  }
-
-  Uri generateURLByDeviceType() {
-    if(Platform.isIOS){
-        return Uri.parse(widget.aUrl);
-    }else if(Platform.isAndroid){
-        return Uri.parse(widget.pUrl);
-    }
-    return Uri.parse("");
   }
 
   Future showLaunchFailedMsg() =>

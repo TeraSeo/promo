@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/services/post_service.dart';
-import 'package:like_app/widget/post_widget.dart';
+import 'package:like_app/widget/appPost.dart';
+import 'package:like_app/widget/etcPost.dart';
+import 'package:like_app/widget/webPost.dart';
 
 class ShowLikedPosts extends StatefulWidget {
 
@@ -124,7 +126,13 @@ class _ShowLikedPostsState extends State<ShowLikedPosts> {
               List.generate(likedPosts!.length, (index) {
                 try {
                   return Container(
-                    child: PostWidget(email: likedPosts![index]['email'], postID: likedPosts![index]['postId'], name: likedPosts![index]['writer'], image: likedPosts![index]['images'], description: likedPosts![index]['description'],isLike: likedPosts![index]['likes'].contains(widget.uId), likes: likedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: likedPosts![index]['uId'], withComment: likedPosts![index]["withComment"], isBookMark: likedPosts![index]["bookMarks"].contains(widget.uId), tags: likedPosts![index]["tags"], posted: likedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: likedPosts![index]["likes"], currentUsername: currentUsername!, category: likedPosts![index]["category"]),
+                    child:
+                    likedPosts![index]["type"] == "App" ?
+                     AppPostWidget(email: likedPosts![index]['email'], postID: likedPosts![index]['postId'], name: likedPosts![index]['writer'], image: likedPosts![index]['images'], description: likedPosts![index]['description'],isLike: likedPosts![index]['likes'].contains(widget.uId), likes: likedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: likedPosts![index]['uId'], withComment: likedPosts![index]["withComment"], isBookMark: likedPosts![index]["bookMarks"].contains(widget.uId), tags: likedPosts![index]["tags"], posted: likedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: likedPosts![index]["likes"], currentUsername: currentUsername!, category: likedPosts![index]["category"], appName: likedPosts![index]["appName"], pUrl: likedPosts![index]["pUrl"], aUrl: likedPosts![index]["aUrl"], type: likedPosts![index]["type"]) :
+                     likedPosts![index]["type"] == "Web" ?
+                     WebPostWidget(email: likedPosts![index]['email'], postID: likedPosts![index]['postId'], name: likedPosts![index]['writer'], image: likedPosts![index]['images'], description: likedPosts![index]['description'],isLike: likedPosts![index]['likes'].contains(widget.uId), likes: likedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: likedPosts![index]['uId'], withComment: likedPosts![index]["withComment"], isBookMark: likedPosts![index]["bookMarks"].contains(widget.uId), tags: likedPosts![index]["tags"], posted: likedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: likedPosts![index]["likes"], currentUsername: currentUsername!, category: likedPosts![index]["category"], webName: likedPosts![index]["webName"], webUrl: likedPosts![index]["webUrl"], type: likedPosts![index]["type"]) :
+                     EtcPostWidget(email: likedPosts![index]['email'], postID: likedPosts![index]['postId'], name: likedPosts![index]['writer'], image: likedPosts![index]['images'], description: likedPosts![index]['description'],isLike: likedPosts![index]['likes'].contains(widget.uId), likes: likedPosts![index]['likes'].length, uId: widget.uId, postOwnerUId: likedPosts![index]['uId'], withComment: likedPosts![index]["withComment"], isBookMark: likedPosts![index]["bookMarks"].contains(widget.uId), tags: likedPosts![index]["tags"], posted: likedPosts![index]["posted"],isProfileClickable: true, preferredLanguage: widget.preferredLanguage, likedPeople: likedPosts![index]["likes"], currentUsername: currentUsername!, category: likedPosts![index]["category"], etcName: likedPosts![index]["etcName"], etcUrl: likedPosts![index]["etcUrl"], type: likedPosts![index]["type"])
+
                   );
                 } catch(e) {
                   return Container();

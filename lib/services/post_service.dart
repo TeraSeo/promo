@@ -24,7 +24,7 @@ class PostService {
   final CollectionReference postCollection = 
         FirebaseFirestore.instance.collection("post");
 
-  Future post(List<dynamic> images, String description, String category, List<String> tags, bool withComment) async {
+  Future post(List<dynamic> images, String description, String category, List<String> tags, bool withComment, String appName, String pUrl, String aUrl, String type, String webName, String webUrl, String etcName, String etcUrl)async {
   
     try {
       HelperFunctions helperFunctions = HelperFunctions();
@@ -47,7 +47,14 @@ class PostService {
       }
 
       if (filePaths.length == fileNames.length) {
-        await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames, email!, name!);
+        if (type == "App") {
+          await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames, email!, name!, appName, pUrl, aUrl, type, "", "", "", "");
+        } else if (type == "Web") {
+          await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames, email!, name!, "", "", "", type, webName, webUrl, "", "");
+        }
+        else {
+          await postDBService.savingePostDBData(description, category, tags, withComment, filePaths, fileNames, email!, name!, "", "", "", type, "", "", etcName, etcUrl);
+        }
       }
 
       return true;
@@ -58,7 +65,24 @@ class PostService {
 
   }
 
-  Future updatePost(List<dynamic> images, String description, String category, List<String> tags, bool withComment, String postId, String email) async {
+  Future updatePost(List<dynamic> images, String description, String category, List<String> tags, bool withComment, String postId, String email, String appName, String pUrl, String aUrl, String type, String webName, String webUrl, String etcName, String etcUrl) async {
+
+    try {
+      if (type == "App") {
+        await updateAppPost(images, description, category, tags, withComment, postId, email, appName, pUrl, aUrl);
+      } else if (type == "Web") {
+        await updateWebPost(images, description, category, tags, withComment, postId, email, webName, webUrl);
+      } else {
+        await updateEtcPost(images, description, category, tags, withComment, postId, email, etcName, etcUrl);
+      }
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future updateAppPost(List<dynamic> images, String description, String category, List<String> tags, bool withComment, String postId, String email, String appName, String pUrl, String aUrl) async {
 
     try {
 
@@ -82,7 +106,7 @@ class PostService {
           await storage.uploadPostImage(filePaths[i], fileNames[i], email, postId);
         }
       }
-
+      
       await storage.loadPostImages(email, postId, fileNames).then((value) {
         print(value);
         post.update({
@@ -91,7 +115,116 @@ class PostService {
           "category" : category,
           "tags" : tags,
           "withComment" : withComment,
-          "posted" : tsdate
+          "posted" : tsdate,
+          'appName': appName,
+          'pUrl': pUrl,
+          'aUrl': aUrl,
+          "type": "App",
+          "webName": "",
+          "webUrl": "",
+          "etcName": "",
+          "etcUrl": ""
+        });
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future updateWebPost(List<dynamic> images, String description, String category, List<String> tags, bool withComment, String postId, String email, String webName, String webUrl) async {
+
+    try {
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+      List<String> filePaths = [];
+      List<String> fileNames = [];
+
+      for (int i = 0; i < images.length; i++) {
+        filePaths.add(images[i].path.toString());
+        fileNames.add(images[i].path.split('/').last);
+      }
+
+      Storage storage = Storage.instance;
+      if (filePaths.length == fileNames.length) {
+        await storage.deletePostImages(email, postId);
+        for (int i = 0; i < filePaths.length; i++) {
+          await storage.uploadPostImage(filePaths[i], fileNames[i], email, postId);
+        }
+      }
+      
+      await storage.loadPostImages(email, postId, fileNames).then((value) {
+        print(value);
+        post.update({
+          "images" : value,
+          "description" : description,
+          "category" : category,
+          "tags" : tags,
+          "withComment" : withComment,
+          "posted" : tsdate,
+          'appName': "",
+          'pUrl': "",
+          'aUrl': "",
+          "type": "Web",
+          "webName": webName,
+          "webUrl": webUrl,
+          "etcName": "",
+          "etcUrl": ""
+        });
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future updateEtcPost(List<dynamic> images, String description, String category, List<String> tags, bool withComment, String postId, String email, String etcName, String etcUrl) async {
+
+    try {
+      
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+
+      List<String> filePaths = [];
+      List<String> fileNames = [];
+
+      for (int i = 0; i < images.length; i++) {
+        filePaths.add(images[i].path.toString());
+        fileNames.add(images[i].path.split('/').last);
+      }
+
+      Storage storage = Storage.instance;
+      if (filePaths.length == fileNames.length) {
+        await storage.deletePostImages(email, postId);
+        for (int i = 0; i < filePaths.length; i++) {
+          await storage.uploadPostImage(filePaths[i], fileNames[i], email, postId);
+        }
+      }
+      
+      await storage.loadPostImages(email, postId, fileNames).then((value) {
+        post.update({
+          "images" : value,
+          "description" : description,
+          "category" : category,
+          "tags" : tags,
+          "withComment" : withComment,
+          "posted" : tsdate,
+          'appName': "",
+          'pUrl': "",
+          'aUrl': "",
+          "type": "Etc.",
+          "webName": "",
+          "webUrl": "",
+          "etcName": etcName,
+          "etcUrl": etcUrl
         });
       });
 
@@ -139,7 +272,24 @@ class PostService {
 
   }
 
-  Future updatePostWithOutImages(String description, String category, List<String> tags, bool withComment, String postId) async {
+  Future updatePostWithOutImages(String description, String category, List<String> tags, bool withComment, String postId, String appName, String pUrl, String aUrl, String type, String webName, String webUrl, String etcName, String etcUrl) async {
+
+    try {
+      if (type == "App") {
+        await updateAppPostWithOutImages(description, category, tags, withComment, postId, appName, pUrl, aUrl);
+      } else if (type == "Web") {
+        await updateWebPostWithOutImages(description, category, tags, withComment, postId, webName, webUrl);
+      } else {
+        await updateEtcPostWithOutImages(description, category, tags, withComment, postId, etcName, etcUrl);
+      }
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future updateAppPostWithOutImages(String description, String category, List<String> tags, bool withComment, String postId, String appName, String pUrl, String aUrl) async {
 
     try {
 
@@ -154,7 +304,79 @@ class PostService {
         "category" : category,
         "tags" : tags,
         "withComment" : withComment,
-        "posted" : tsdate
+        "posted" : tsdate,
+        'appName': appName,
+        'pUrl': pUrl,
+        'aUrl': aUrl,
+        "type": "App",
+        "webName": "",
+        "webUrl": "",
+        "etcName": "",
+        "etcUrl": ""
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future updateWebPostWithOutImages(String description, String category, List<String> tags, bool withComment, String postId, String webName, String webUrl) async {
+
+    try {
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+      // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+
+      post.update({
+        "description" : description,
+        "category" : category,
+        "tags" : tags,
+        "withComment" : withComment,
+        "posted" : tsdate,
+        'appName': "",
+        'pUrl': "",
+        'aUrl': "",
+        "type": "Web",
+        "webName": webName,
+        "webUrl": webUrl,
+        "etcName": "",
+        "etcUrl": ""
+      });
+
+    } catch(e) {
+      print(e);
+    }
+
+  }
+
+  Future updateEtcPostWithOutImages(String description, String category, List<String> tags, bool withComment, String postId, String etcName, String etcUrl) async {
+
+    try {
+
+      final post = FirebaseFirestore.instance.collection("post").doc(postId);
+
+      int timestamp = DateTime.now().millisecondsSinceEpoch;
+      DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(timestamp);
+      // String datetime = tsdate.year.toString() + "/" + tsdate.month.toString() + "/" + tsdate.day.toString() + "/" + tsdate.hour.toString() + ":" + tsdate.minute.toString();
+
+      post.update({
+        "description" : description,
+        "category" : category,
+        "tags" : tags,
+        "withComment" : withComment,
+        "posted" : tsdate,
+        'appName': "",
+        'pUrl': "",
+        'aUrl': "",
+        "type": "Etc.",
+        "webName": "",
+        "webUrl": "",
+        "etcName": etcName,
+        "etcUrl": etcUrl
       });
 
     } catch(e) {
