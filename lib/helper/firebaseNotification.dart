@@ -55,7 +55,7 @@ class FirebaseNotification {
         headers: <String, String>{
           'Content-Type': 'application/json',
           'Authorization':
-              'key=AAAA3VXtIw8:APA91bGhNfy0YZbTtzBvUrH5CNi-Ci7Bf2wn77kJCdFCkhJM0IHedEr4UvuK9jLiHgemwzYIjt4vSbxX4DBaQZZ5CaELh-Ekz8d1mmAcSKnucX-HYw2p6j07MN7H3ntk8lhqpcr4hCcj',
+              'key=',
         },
         body: jsonEncode(
           <String, dynamic>{
