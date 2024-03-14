@@ -4,13 +4,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
-import 'package:like_app/firebase_options.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/pages/home_page.dart';
 import 'package:like_app/pages/login_page.dart';
 import 'package:like_app/shared/constants.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'firebase_options.dart';
 import 'dart:ui';
 
 void main() async {
@@ -25,7 +25,9 @@ void main() async {
         projectId: Constants.projectId));
     }
     else {
-      await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform );
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
     }
     await MobileAds.instance.initialize();
     FirebaseNotification.instance.initNotificaiton();
