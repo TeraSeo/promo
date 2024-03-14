@@ -517,8 +517,7 @@ class PostService {
     int i = 0;
     await FirebaseFirestore.instance.collection("post").
       orderBy("description", descending: false).
-      // orderBy("postNumber", descending: true).
-      limit(40).get().then((value) => {
+      limit(20).get().then((value) => {
       value.docs.forEach((element) {
         Map<String, dynamic> post = element.data() as Map<String, dynamic>;
         if (post['description'].contains(searchedName)) {

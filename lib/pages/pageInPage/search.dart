@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:like_app/ads/BannerAdPage.dart';
 import 'package:like_app/helper/helper_function.dart';
 import 'package:like_app/helper/logger.dart';
 import 'package:like_app/shared/constants.dart';
@@ -132,7 +133,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
       Scaffold(
         appBar: AppBar(
           iconTheme: IconThemeData(color: Constants().iconColor),
-          toolbarHeight: MediaQuery.of(context).size.height * 0.07,
+          toolbarHeight: MediaQuery.of(context).size.height * 0.15,
           backgroundColor: Theme.of(context).primaryColor,
           title: TextFormField(
               style: TextStyle(color: Colors.white),
@@ -159,7 +160,12 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                 }
               },
             ),
-            bottom: TabBar(
+            bottom: PreferredSize(
+              preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.06),
+              child: Column(
+                children: [
+              BannerAdPage(),
+                  TabBar(
                 controller: _tabController,
                 labelColor: Colors.white,
                 indicatorColor: Colors.white,
@@ -169,13 +175,16 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
                   Tab(text: AppLocalizations.of(context)!.acc),
                   Tab(text: AppLocalizations.of(context)!.tag)
                 ],
+              ),
+                ],
               )
+            )
           ),
         body:
-        IndexedStack(
-          index: _currentIndex,
-          children: _tabContent,
-        ),
+          IndexedStack(
+            index: _currentIndex,
+            children: _tabContent,
+          )
       );
 
     } catch(e) {

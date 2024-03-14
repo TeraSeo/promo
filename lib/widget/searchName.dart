@@ -247,7 +247,6 @@ class _SearchNameState extends State<SearchName> {
                 });
               }
             }
-            
           },
           child: SingleChildScrollView(
             child: Column(children: [
@@ -371,7 +370,7 @@ class _SearchNameState extends State<SearchName> {
                         )
                     );
                 }
-            }))
+            })),
             ],)
           )
         ));

@@ -1,7 +1,9 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -242,5 +244,25 @@ class HelperFunctions {
       return false;
     }
   } 
+
+  showInterstitialAd() async {
+
+    final String androidTestUnitId = "ca-app-pub-3940256099942544/1033173712";
+    final String iosTestUnitId = "ca-app-pub-3940256099942544/4411468910";
+
+    InterstitialAd.load(
+      adUnitId: Platform.isIOS? iosTestUnitId : androidTestUnitId, 
+      request: AdRequest(), 
+      adLoadCallback: InterstitialAdLoadCallback(
+        onAdLoaded: (ad) {
+          ad.show();
+        },
+        onAdFailedToLoad: (LoadAdError error) {
+          debugPrint('InterstitialAd failed to load: $error');
+        },
+      )
+    );
+
+  }
 
 }

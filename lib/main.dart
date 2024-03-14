@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:like_app/firebase_options.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
@@ -26,9 +27,9 @@ void main() async {
     else {
       await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform );
     }
-
+    await MobileAds.instance.initialize();
     FirebaseNotification.instance.initNotificaiton();
-
+    
     runApp(const MyApp(language: ""));
   } else {
     runApp(const NoInternetConnectionApp());
