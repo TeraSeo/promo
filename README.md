@@ -4,12 +4,12 @@
 
 <h2>Project brief</h2>
 
-This app is promotion app written by flutter. 
+<li>This app is promotion app written by flutter.</li>
 <br>
-This app is for promoting app or web.
+<li>This app is for promoting app or web.</li>
 <br>
-This app provides app or web freindly promoting functions.
+<li>This app provides app or web freindly promoting functions.</li>
 <br>
-It manages data using firebase.
+<li>It manages data using firebase.</li>
 <br>
-It provides multi langaguages, such as english, german, spanish, japanes, korea, etc.
+<li>It provides multi langaguages, such as english, german, spanish, japanes, korea, etc.</li>
