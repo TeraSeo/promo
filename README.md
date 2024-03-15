@@ -13,3 +13,28 @@
 <li>It manages data using firebase.</li>
 <br>
 <li>It provides multi langaguages, such as english, german, spanish, japanes, korea, etc.</li>
+
+<br>
+
+<h2>Techs</h2>
+
+<h3>BACK-END</h3>
+<li>Dart(Flutter)</li>
+<li>Firebase</li>
+
+<br>
+
+<h3>FRONT-END</h3>
+<li>Dart(Flutter)</li>
+
+<br>
+
+<h3>Database</h3>
+<li>FireStore</li>
+<li>Cloud Storage(Firebase)</li>
+
+<h3>ENVIRONMENT/TOOL</h3>
+<li>VSCode</li>
+<li>GitHub</li>
+
+<br>
