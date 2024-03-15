@@ -33,8 +33,13 @@
 <li>Cloud FireStore(Firebase)</li>
 <li>Cloud Storage(Firebase)</li>
 
+<br>
+
 <h3>ENVIRONMENT/TOOL</h3>
 <li>VSCode</li>
 <li>GitHub</li>
 
 <br>
+
+<h3>Functionalities</h3>
+
