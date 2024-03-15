@@ -30,7 +30,7 @@
 <br>
 
 <h3>Database</h3>
-<li>FireStore</li>
+<li>Cloud FireStore(Firebase)</li>
 <li>Cloud Storage(Firebase)</li>
 
 <h3>ENVIRONMENT/TOOL</h3>
