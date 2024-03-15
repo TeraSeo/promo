@@ -40,6 +40,7 @@
 <li>GitHub</li>
 
 <br>
+<br>
 
-<h3>Functionalities</h3>
+<h2>Functionalities</h2>
 
