@@ -66,21 +66,31 @@
 <li>Profile/background image can be cropped</li>
 <li>Profile information can be changed</li>
 
+<br>
+
 <h3>Search</h3>
 <li>Able to be searched by posts, account, tags</li>
+
+<br>
 
 <h3>Comment</h3>
 <li>Comments can be edited or removed</li>
 <li>Comments can be reported</li>
 
+<br>
+
 <h3>Settings</h3>
 <li>Language for app can be set</li>
 <li>Posts that are liked or bookmarked are collected separately</li>
+
+<br>
 
 <h3>Likes</h3>
 <li>Users are ranked by number of likes they got</li>
 <li>Posts/Comments can be liked</li>
 <li>Like has animation when liked</li>
+
+<br>
 
 <h2>Screenshots</h2>
 
