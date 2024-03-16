@@ -90,6 +90,11 @@
 <li>Posts/Comments can be liked</li>
 <li>Like has animation when liked</li>
 
+<h3>Translation</h3>
+<li>posts introduction or comments can be translated</li>
+<li>Translation service was made using google translater api</li>
+<li>In flutter, it has version conflict to use the api, so it was built in <a href="https://github.com/TeraSeo/translator-rest-api">spring boot(java)</a></li>
+
 <br>
 
 <h2>Screenshots</h2>
