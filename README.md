@@ -43,7 +43,20 @@
 <br>
 <br>
 
-<h2>Functionalities</h2>
+<h2>Features</h2>
+
+<h3>Login&SignUp</h3>
+<li>Login&SignUp user firebase authentication</li>
+<li>Provides email authentication</li>
+
+
+<h2>Screenshots</h2>
+
+<img width="328" alt="Screenshot 2024-03-17 at 12 15 53 AM" src="https://github.com/TeraSeo/promo/assets/96968917/13bdfc6f-90dd-429a-a08b-a4a361f7ddee">
+<img width="323" alt="Screenshot 2024-03-16 at 11 54 45 PM" src="https://github.com/TeraSeo/promo/assets/96968917/b32c80a0-7d40-4895-8c72-1e0605963ce7">
+<img width="324" alt="Screenshot 2024-03-16 at 11 52 06 PM" src="https://github.com/TeraSeo/promo/assets/96968917/73790516-3a77-41e8-9d2e-66eac6146331">
+34f">
+
 
 <img width="338" alt="Screenshot 2024-03-16 at 10 58 56 AM" src="https://github.com/TeraSeo/promo/assets/96968917/a5893f2d-02c2-4be6-abc7-7131cc131a0e">
 <img width="327" alt="Screenshot 2024-03-16 at 10 59 33 AM" src="https://github.com/TeraSeo/promo/assets/96968917/cc5bd466-6190-43a5-97b7-4a589d089d04">
@@ -59,7 +72,8 @@
 
 
 <img width="329" alt="Screenshot 2024-03-16 at 11 17 19 AM" src="https://github.com/TeraSeo/promo/assets/96968917/b5559739-8683-4af5-bdc2-b7052b1a9bbf">
-<img width="329" alt="Screenshot 2024-03-16 at 11 17 31 AM" src="https://github.com/TeraSeo/promo/assets/96968917/f3eff8d8-f798-4449-abcc-81d6df76434f">
+<img width="329" alt="Screenshot 2024-03-16 at 11 17 31 AM" src="https://github.com/TeraSeo/promo/assets/96968917/f3eff8d8-f798-4449-abcc-81d6df764">
+
 
 
 
