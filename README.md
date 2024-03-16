@@ -58,12 +58,29 @@
 <li>Can be sorted by period or popularity</li>
 <li>Search tag by clicking the tag</li>
 <li>Post can be reported</li>
+
 <br>
 
 <h3>Profile</h3>
 <li>Profile/background image can be changed</li>
 <li>Profile/background image can be cropped</li>
 <li>Profile information can be changed</li>
+
+<h3>Search</h3>
+<li>Able to be searched by posts, account, tags</li>
+
+<h3>Comment</h3>
+<li>Comments can be edited or removed</li>
+<li>Comments can be reported</li>
+
+<h3>Settings</h3>
+<li>Language for app can be set</li>
+<li>Posts that are liked or bookmarked are collected separately</li>
+
+<h3>Likes</h3>
+<li>Users are ranked by number of likes they got</li>
+<li>Posts/Comments can be liked</li>
+<li>Like has animation when liked</li>
 
 <h2>Screenshots</h2>
 
@@ -94,22 +111,24 @@
 <br>
 <br>
 
-<img width="327" alt="Screenshot 2024-03-16 at 10 59 33 AM" src="https://github.com/TeraSeo/promo/assets/96968917/cc5bd466-6190-43a5-97b7-4a589d089d04">
-<img width="333" alt="Screenshot 2024-03-16 at 11 07 29 AM" src="https://github.com/TeraSeo/promo/assets/96968917/ae60fe33-9247-4895-a592-89101a49b3f0">
-<img width="334" alt="Screenshot 2024-03-16 at 11 00 18 AM" src="https://github.com/TeraSeo/promo/assets/96968917/55d145eb-0907-4b45-9dea-cc225a0428ea">
-<img width="327" alt="Screenshot 2024-03-16 at 11 08 05 AM" src="https://github.com/TeraSeo/promo/assets/96968917/81bd38bd-0c26-48d0-9036-8547a6325f59">
-<img width="330" alt="Screenshot 2024-03-16 at 11 08 42 AM" src="https://github.com/TeraSeo/promo/assets/96968917/2582efe2-9aeb-45e2-81b2-9664a75be390">
-<img width="331" alt="Screenshot 2024-03-16 at 11 09 25 AM" src="https://github.com/TeraSeo/promo/assets/96968917/b93dc045-3510-4c7e-95f8-2dc69effe653">
-<img width="331" alt="Screenshot 2024-03-16 at 11 10 19 AM" src="https://github.com/TeraSeo/promo/assets/96968917/9edccc4a-738c-47c9-b336-63eaa76f8330">
-<img width="332" alt="Screenshot 2024-03-16 at 11 11 55 AM" src="https://github.com/TeraSeo/promo/assets/96968917/a639029a-31a9-4dbc-8407-c0d5feec2a7f">
-<img width="324" alt="Screenshot 2024-03-16 at 11 12 17 AM" src="https://github.com/TeraSeo/promo/assets/96968917/91eb4269-14ee-4d11-85f6-136a1a0f1917">
-<img width="334" alt="Screenshot 2024-03-16 at 11 13 26 AM" src="https://github.com/TeraSeo/promo/assets/96968917/e802e3da-2c15-4052-9b06-21458ba38f09">
+<img width="337" alt="Screenshot 2024-03-17 at 12 44 41 AM" src="https://github.com/TeraSeo/promo/assets/96968917/2764c6df-6f60-49bf-8b9a-3c13883a8c95">
+<img width="336" alt="Screenshot 2024-03-17 at 12 45 21 AM" src="https://github.com/TeraSeo/promo/assets/96968917/f6180fd2-0c93-472c-b4a7-a12d381cc1d0">
+<img width="324" alt="Screenshot 2024-03-17 at 12 45 58 AM" src="https://github.com/TeraSeo/promo/assets/96968917/5fa1dab3-dd7e-4bf0-9db5-794dffb2ac38">
 
+<br>
+<br>
 
-<img width="329" alt="Screenshot 2024-03-16 at 11 17 19 AM" src="https://github.com/TeraSeo/promo/assets/96968917/b5559739-8683-4af5-bdc2-b7052b1a9bbf">
-<img width="329" alt="Screenshot 2024-03-16 at 11 17 31 AM" src="https://github.com/TeraSeo/promo/assets/96968917/f3eff8d8-f798-4449-abcc-81d6df764">
+<img width="331" alt="Screenshot 2024-03-17 at 12 51 59 AM" src="https://github.com/TeraSeo/promo/assets/96968917/a6a9930f-ca9c-4b87-b618-3d31cb11da9b">
+<img width="333" alt="Screenshot 2024-03-17 at 12 48 14 AM" src="https://github.com/TeraSeo/promo/assets/96968917/377d94a8-4233-4554-9454-b99a899891af">
 
+<br>
+<br>
 
+<img width="332" alt="Screenshot 2024-03-17 at 12 53 43 AM" src="https://github.com/TeraSeo/promo/assets/96968917/5a87d2e8-7126-4021-a11f-39d8906fcfa9">
 
+<br>
+<br>
 
+<img width="329" alt="Screenshot 2024-03-17 at 12 55 30 AM" src="https://github.com/TeraSeo/promo/assets/96968917/ae0d20c4-2dfb-49d7-987f-43d55d448729">
+<img width="332" alt="Screenshot 2024-03-17 at 12 56 19 AM" src="https://github.com/TeraSeo/promo/assets/96968917/238fc912-b5e5-4980-bdf4-af26b2c45518">
 
