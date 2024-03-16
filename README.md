@@ -64,14 +64,12 @@
 <img width="328" alt="Screenshot 2024-03-17 at 12 15 53 AM" src="https://github.com/TeraSeo/promo/assets/96968917/13bdfc6f-90dd-429a-a08b-a4a361f7ddee">
 <img width="323" alt="Screenshot 2024-03-16 at 11 54 45 PM" src="https://github.com/TeraSeo/promo/assets/96968917/b32c80a0-7d40-4895-8c72-1e0605963ce7">
 <img width="324" alt="Screenshot 2024-03-16 at 11 52 06 PM" src="https://github.com/TeraSeo/promo/assets/96968917/73790516-3a77-41e8-9d2e-66eac6146331">
-34f">
 
 <br>
+<br>
 
-<img width="330" alt="Screenshot 2024-03-17 at 12 17 57 AM" src="https://github.com/TeraSeo/promo/assets/96968917/4d1510a2-cabf-45f8-83e3-c6e3ffab64ca">
 <img width="334" alt="Screenshot 2024-03-17 at 12 18 20 AM" src="https://github.com/TeraSeo/promo/assets/96968917/7374448a-cdbe-4d41-b8e4-ac76a5b4c588">
 <img width="325" alt="Screenshot 2024-03-17 at 12 18 44 AM" src="https://github.com/TeraSeo/promo/assets/96968917/11e5dda0-0d40-4693-8705-51aec5cb6475">
-<img width="330" alt="Screenshot 2024-03-17 at 12 20 09 AM" src="https://github.com/TeraSeo/promo/assets/96968917/c1ea6880-1dbd-4567-ac45-eb5a4e9d05d3">
 <img width="326" alt="Screenshot 2024-03-17 at 12 23 37 AM" src="https://github.com/TeraSeo/promo/assets/96968917/9961a1e8-1ba5-4124-af19-a78b2eaef526">
 <img width="326" alt="Screenshot 2024-03-17 at 12 24 32 AM" src="https://github.com/TeraSeo/promo/assets/96968917/cc55dc72-97ea-4a57-a7e8-abc7a206d28d">
 <img width="335" alt="Screenshot 2024-03-17 at 12 25 17 AM" src="https://github.com/TeraSeo/promo/assets/96968917/91654e0e-18a9-4816-a06b-b17e433f71aa">
