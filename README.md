@@ -49,6 +49,7 @@
 <li>Login&SignUp user firebase authentication</li>
 <li>Provides email authentication</li>
 
+<br>
 
 <h2>Screenshots</h2>
 
