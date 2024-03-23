@@ -2,6 +2,19 @@
 
 <br>
 
+<ul>
+  <li>This app is built for promoting. Users can promote their own works, such as mobile app, web, etc. <br> This app provides post format for mobile app and web.</li>
+</ul>
+
+<br>
+<ul>
+<br>
+  <li>Period: 14th Dec 2024 ~ 14th Dec 2024</li>
+<br>
+  <li>Participant: 1</li>
+<br>
+</ul>
+
 <h2>Project brief</h2>
 
 <li>This app is promotion app written by flutter.</li>
