@@ -10,11 +10,13 @@
 <br>
 <ul>
 <br>
-  <li>Period: 14th Dec 2024 ~ 14th Dec 2024</li>
+  <li>Period: Aug 2023 ~ 2024 Feb</li>
 <br>
   <li>Participant: 1</li>
 <br>
 </ul>
+
+<br>
 
 <h2>Project brief</h2>
 
