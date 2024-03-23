@@ -2,6 +2,7 @@
 
 <br>
 
+<h2>Introduction</h2>
 <ul>
   <li>This app is built for promoting. Users can promote their own works, such as mobile app, web, etc. <br> This app provides post format for mobile app and web.</li>
 </ul>
