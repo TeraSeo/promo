@@ -222,6 +222,7 @@ class _HomePageState extends State<HomePage> {
               child: Text("LOGOUT"),
               onPressed: () {
                 authServie.signOut();
+                helperFunctions.saveVerifiedSF(false);
                 nextScreen(context, const LoginPage());
               },)
             ],

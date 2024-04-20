@@ -618,6 +618,8 @@ class PostService {
           uId = value
         });
 
+        logger.message_info("post add like");
+
         // final user = FirebaseFirestore.instance.collection("user").doc(uId);
 
         // user.get().then((value) => {
@@ -640,6 +642,8 @@ class PostService {
           });
 
         });
+
+        logger.message_info("succeeded to update post like");
 
         // FireStoreNotification().sendPushMessage("$userName liked your post!", "Like notification", token!);
 

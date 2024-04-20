@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:like_app/helper/helper_function.dart';
+import 'package:like_app/helper/logger.dart';
 import 'package:like_app/services/storage.dart';
 
 class DatabaseService {
@@ -15,6 +16,8 @@ class DatabaseService {
   
   final CollectionReference userCollection = 
         FirebaseFirestore.instance.collection("user");
+
+  Logging logger = Logging();
 
   Storage storage = Storage.instance;
 
@@ -87,10 +90,31 @@ class DatabaseService {
       await userCollection.doc(uId).get().then((value) {
         name = value["token"];
       });
+
+      logger.message_info("succeeded to get token values");
       return name!;
 
     } catch(e) {
       return [];
+    }
+    
+  }
+
+  Future<String> getUserLanguage(String uId) async {
+
+    try {
+
+      String? language;
+      await userCollection.doc(uId).get().then((value) {
+        language = value["language"];
+      });
+
+      logger.message_info("succeeded to get language values");
+      return language!;
+
+    } catch(e) {
+      logger.message_warning("failed to get language values");
+      return "";
     }
     
   }
@@ -108,6 +132,8 @@ class DatabaseService {
   Future updateMessagingToken(String newToken, String uid) async {
     try {
       final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      print(newToken);
 
       user.get().then((value) {
 
@@ -165,19 +191,21 @@ class DatabaseService {
           });
 
           postUser.get().then((value) {
-          int wholeLikes = value["wholeLikes"];
+              int wholeLikes = value["wholeLikes"];
 
-          postUser.update({
-            "wholeLikes" : wholeLikes + 1
+              postUser.update({
+                "wholeLikes" : wholeLikes + 1
+              });
+
           });
-
-      });
         }
 
       });
 
+      logger.message_info("succeeded to add user like");      
+
     } catch(e) {
-      print(e);
+      logger.message_warning("failed to add user like\n" + e.toString());    
     }
   }
 
@@ -217,6 +245,31 @@ class DatabaseService {
 
     } catch(e) {
       print(e);
+    }
+  }
+
+  Future removeUserTokenFromList(String fcmToken, String uid) async {
+    try {
+      final user = FirebaseFirestore.instance.collection("user").doc(uid);
+
+      await user.get().then((value) {
+        
+        List<dynamic> tokens = value['token'];
+
+        if (tokens.contains(fcmToken)) {
+          tokens.remove(fcmToken);
+
+          user.update({
+            "token" : tokens,
+          });
+        }
+
+      });
+
+      logger.message_info("remove fcm token succeeded");
+
+    } catch(e) {
+      logger.message_warning(e.toString());
     }
   }
 

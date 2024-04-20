@@ -259,8 +259,8 @@ class _RegisterPageState extends State<RegisterPage> {
       setState(() {
         _isLoading = true;
       });
-      existing(name).then((value) async {
-        if (value == true) {
+      // existing(name).then((value) async {
+        // if (value == true) {
           await authServie.registerUserWithEmailandPassword(name, email, password)
             .then((value) async {
             if (value == true) {
@@ -275,11 +275,11 @@ class _RegisterPageState extends State<RegisterPage> {
               });
             }
           });
-        }
-        else {
-          showAlertDialog(context);
-        }
-      });
+        // }
+        // else {
+        //   showAlertDialog(context);
+        // }
+      // });
       
     }
   }

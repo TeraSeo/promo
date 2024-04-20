@@ -232,7 +232,8 @@ class _SettingPageState extends State<SettingPage> {
   void _changeLanguage(String languageCode) {
     isLanguageTxtLoading = true;
     Future.delayed(Duration(seconds: 0)).then((value) async {
-      await helperFunctions.saveUserLanguageSF(languageCode).then((value) {
+      await helperFunctions.saveUserLanguageSF(languageCode);
+      await databaseService.setUserLanguage(widget.uId, languageCode).then((value) {
         if (this.mounted) {
           setState(() {
               isLanguageTxtLoading = false;

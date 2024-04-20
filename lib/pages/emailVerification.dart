@@ -194,6 +194,8 @@ class _EmailVerificationState extends State<EmailVerification> {
                             ),
                             onPressed: () {
                               firebaseNotification.addMsgTokenToUser(FirebaseAuth.instance.currentUser!.uid);
+                              HelperFunctions helperFunctions = HelperFunctions();
+                              helperFunctions.saveVerifiedSF(true);
                               nextScreenReplace(context, const HomePage(pageIndex: 0,));
                             },
                           )

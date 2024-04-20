@@ -96,9 +96,11 @@ class _EditInfoState extends State<EditInfo> {
               Text("failed to load", style: TextStyle(fontSize: MediaQuery.of(context).size.width * 0.05, color: Colors.blueGrey))
             ],
           )
-      ) : WillPopScope(
-  onWillPop: () async => false,
-  child: Scaffold(
+      ) : 
+  //     WillPopScope(
+  // onWillPop: () async => false,
+  // child:
+   Scaffold(
       appBar: AppBar(backgroundColor: Theme.of(context).primaryColor, 
       toolbarHeight: MediaQuery.of(context).size.height * 0.08,
       title: Text(AppLocalizations.of(context)!.editInfo, style: TextStyle(color: Colors.white),)),
@@ -213,7 +215,7 @@ class _EditInfoState extends State<EditInfo> {
             ),
           ],
         ),
-        )
+        // )
       ))
     );} catch(e) {
       return Center(

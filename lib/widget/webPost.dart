@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
@@ -88,10 +86,14 @@ class _WebPostWidgetState extends State<WebPostWidget> {
   bool? isTranslated;
   String? translatedTxt;
 
+  String? postOwnerLanguage;
+  bool isPostOwnerLanguageLoading = true;
+
   @override
   void initState() {
     super.initState();
 
+    setPostOwner();
     setPostOwner();
 
     images = widget.image;
@@ -134,6 +136,26 @@ class _WebPostWidgetState extends State<WebPostWidget> {
       }
     }
     
+  }
+
+  setPostOwnerLanguage() {
+    try {
+      databaseService.getUserLanguage(widget.postOwnerUId!).then((value) {
+      postOwnerLanguage = value;
+      if (this.mounted) {
+        setState(() {
+          isPostOwnerLanguageLoading = false;
+        });
+      }
+      });
+
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+            isErrorOccurred = true;
+        });
+      }
+    }
   }
 
   calTimeDiff() {
@@ -278,7 +300,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
     }
 
     try {
-      return isErrorOccurred? Container() : (isProfileLoading || isPostOwnerLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
+      return isErrorOccurred? Container() : (isProfileLoading || isPostOwnerLoading || isPostOwnerLanguageLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
         children: [
           SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
           Container(
@@ -480,7 +502,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
                                     await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                     for (int i = 0; i < postOwnerTokens!.length; i++) {
                                       if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
+                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context, postOwnerLanguage!);
                                       }
                                     }
                                   }
@@ -489,6 +511,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
                                     await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                   }
                                 } catch(e) {
+                                  logger.message_warning(e.toString());
                                 }
                               }, 
                                 icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -722,7 +745,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
                                     await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                     for (int i = 0; i < postOwnerTokens!.length; i++) {
                                       if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
+                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context, postOwnerLanguage!);
                                       }
                                     }
                                   }
@@ -731,6 +754,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
                                     await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                   }
                                 } catch(e) {
+                                  logger.message_warning(e.toString());
                                 }
                               }, 
                                 icon: isLike!? Icon(Icons.favorite, size: logoSize, color: Colors.red,) : Icon(Icons.favorite_outline, size: logoSize)
@@ -1002,7 +1026,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
                         await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                         for (int i = 0; i < postOwnerTokens!.length; i++) {
                           if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                            firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
+                            firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context, postOwnerLanguage!);
                           }
                         }
                       }
@@ -1011,6 +1035,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
                         await databaseService.removeUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                       }
                     } catch(e) {
+                      logger.message_warning(e.toString());
                     }
                   },
                 ),
@@ -1173,7 +1198,7 @@ class _WebPostWidgetState extends State<WebPostWidget> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(AppLocalizations.of(context)!.url),
-            content: Text(AppLocalizations.of(context)!.loadUrl),
+            content: Text(AppLocalizations.of(context)!.loadUrl + "\n" + url),
             actions: <Widget>[
               TextButton(
                 onPressed: () async {

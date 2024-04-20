@@ -49,7 +49,6 @@ class Storage {
     return compressFile;
   }
 
-
   Future<void> uploadProfileBackground(String filePath, String fileName, String email) async {
     File file = File(filePath);
 

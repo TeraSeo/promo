@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_device_type/flutter_device_type.dart';
 import 'package:like_app/animation/likeAnimation.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
@@ -76,6 +74,9 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
 
   String? description;
 
+  String? postOwnerLanguage;
+  bool isPostOwnerLanguageLoading = true;
+
   var image;
 
   final pageController = PageController(
@@ -93,6 +94,7 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
     super.initState();
 
     setPostOwner();
+    setPostOwnerLanguage();
 
     images = widget.image;
     description = widget.description;
@@ -134,6 +136,26 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
       }
     }
     
+  }
+
+  setPostOwnerLanguage() {
+    try {
+      databaseService.getUserLanguage(widget.postOwnerUId!).then((value) {
+      postOwnerLanguage = value;
+      if (this.mounted) {
+        setState(() {
+          isPostOwnerLanguageLoading = false;
+        });
+      }
+      });
+
+    } catch(e) {
+      if (this.mounted) {
+        setState(() {
+            isErrorOccurred = true;
+        });
+      }
+    }
   }
 
   calTimeDiff() {
@@ -278,7 +300,7 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
     }
 
     try {
-      return isErrorOccurred? Container() : (isProfileLoading || isPostOwnerLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
+      return isErrorOccurred? Container() : (isProfileLoading || isPostOwnerLoading || isPostOwnerLanguageLoading) ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,),) : Column(
         children: [
           SizedBox(height: MediaQuery.of(context).size.height * 0.02,),
           Container(
@@ -480,7 +502,7 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
                                     await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                     for (int i = 0; i < postOwnerTokens!.length; i++) {
                                       if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
+                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context, postOwnerLanguage!);
                                       }
                                     }
                                   }
@@ -722,7 +744,7 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
                                     await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                                     for (int i = 0; i < postOwnerTokens!.length; i++) {
                                       if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
+                                        firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context, postOwnerLanguage!);
                                       }
                                     }
                                   }
@@ -1002,7 +1024,7 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
                         await databaseService.addUserLike(widget.postID!, widget.postOwnerUId!, widget.uId!);
                         for (int i = 0; i < postOwnerTokens!.length; i++) {
                           if (postOwnerTokens![i] != "" && postOwnerTokens![i] != null) {
-                            firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context);
+                            firebaseNotification.sendPushMessage(widget.currentUsername, postOwnerTokens![i], context, postOwnerLanguage!);
                           }
                         }
                       }
@@ -1172,7 +1194,7 @@ class _EtcPostWidgetState extends State<EtcPostWidget> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text(AppLocalizations.of(context)!.url),
-            content: Text(AppLocalizations.of(context)!.loadUrl),
+            content: Text(AppLocalizations.of(context)!.loadUrl + "\n" + url),
             actions: <Widget>[
               TextButton(
                 onPressed: () async {

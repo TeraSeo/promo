@@ -357,7 +357,7 @@ class _CommentCardState extends State<CommentCard> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.04,
+                width: MediaQuery.of(context).size.width * 0.06,
                 child: IconButton(onPressed: () async {
                   try {
 
@@ -390,12 +390,12 @@ class _CommentCardState extends State<CommentCard> {
                 icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.04)
               ), 
             ],
-          ), left: MediaQuery.of(context).size.width * 0.78,) :
+          ), left: MediaQuery.of(context).size.width * 0.72,) :
           Positioned(child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.08,
+                width: MediaQuery.of(context).size.width * 0.06,
                 child: IconButton(onPressed: () async {
                   try {
                     setState(() {
@@ -427,7 +427,7 @@ class _CommentCardState extends State<CommentCard> {
                 icon: Icon(Icons.more_vert_rounded, size: MediaQuery.of(context).size.width * 0.04)
               ), 
             ],
-          ), left: MediaQuery.of(context).size.width * 0.78,)
+          ), left: MediaQuery.of(context).size.width * 0.72,)
           ]
         ) 
         // ),

@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:logger/logger.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
@@ -23,6 +23,8 @@ class HelperFunctions {
   String userEmailKey = "USEREMAILKEY";
   String userUidKey = "USERUIDKEY";
   String languageKey = "LANGUAGE";
+  String verifiedKey = "VERIFIED";
+  String fcmTokenKey = "FCMTOKEN";
 
   Future<bool> saveUserLoggedInStatus(bool isUserLoggedIn) async {
     SharedPreferences sf = await SharedPreferences.getInstance();
@@ -49,6 +51,11 @@ class HelperFunctions {
     return await sf.setString(languageKey, language);
   }
 
+  Future<bool> saveUserFCMTokenSF(String fcmToken) async {
+    SharedPreferences sf = await SharedPreferences.getInstance();
+    return await sf.setString(fcmTokenKey, fcmToken);
+  }
+
   Future<String?> getUserNameFromSF() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     dynamic value = sf.get(userNameKey);
@@ -60,6 +67,11 @@ class HelperFunctions {
     } else {
       throw Exception('Invalid value type for key $userNameKey');
     }
+  }
+
+  Future<bool> saveVerifiedSF(bool isVerified) async {
+    SharedPreferences sf = await SharedPreferences.getInstance();
+    return await sf.setBool(verifiedKey, isVerified);
   }
 
   Future<String?> getUserEmailFromSF() async {
@@ -102,6 +114,20 @@ class HelperFunctions {
     }
   }
 
+  Future<bool?> getUserVerifiedStatus() async {
+    SharedPreferences sf = await SharedPreferences.getInstance();
+    dynamic value = sf.get(verifiedKey);
+    if (value == null) {
+      return null;
+    } else if (value is bool) {
+      return value;
+    } else if (value is String) {
+      return value.toLowerCase() == 'true';
+    } else {
+      throw Exception('Invalid value type for key $verifiedKey');
+    }
+  }
+
   Future<String?> getUserLanguageFromSF() async {
     SharedPreferences sf = await SharedPreferences.getInstance();
     dynamic value = sf.get(languageKey);
@@ -111,7 +137,20 @@ class HelperFunctions {
     else if (value is String) {
       return value;
     } else {
-      throw Exception('Invalid value type for key $userEmailKey');
+      throw Exception('Invalid value type for key $languageKey');
+    }
+  }
+
+  Future<String?> getUserFCMTokenFromSF() async {
+    SharedPreferences sf = await SharedPreferences.getInstance();
+    dynamic value = sf.get(fcmTokenKey);
+    if (value == null) {
+      return null;
+    } 
+    else if (value is String) {
+      return value;
+    } else {
+      throw Exception('Invalid value type for key $fcmTokenKey');
     }
   }
   
@@ -235,7 +274,7 @@ class HelperFunctions {
         "commentId" : commentId,
         "reported" : tsdate
       });
-
+  
       return true;
 
     } catch (e) {
@@ -250,18 +289,18 @@ class HelperFunctions {
     final String androidTestUnitId = "ca-app-pub-3940256099942544/1033173712";
     final String iosTestUnitId = "ca-app-pub-3940256099942544/4411468910";
 
-    InterstitialAd.load(
-      adUnitId: Platform.isIOS? iosTestUnitId : androidTestUnitId, 
-      request: AdRequest(), 
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          ad.show();
-        },
-        onAdFailedToLoad: (LoadAdError error) {
-          debugPrint('InterstitialAd failed to load: $error');
-        },
-      )
-    );
+    // InterstitialAd.load(
+    //   adUnitId: Platform.isIOS? iosTestUnitId : androidTestUnitId, 
+    //   request: AdRequest(), 
+    //   adLoadCallback: InterstitialAdLoadCallback(
+    //     onAdLoaded: (ad) {
+    //       ad.show();
+    //     },
+    //     onAdFailedToLoad: (LoadAdError error) {
+    //       debugPrint('InterstitialAd failed to load: $error');
+    //     },
+    //   )
+    // );
 
   }
 

@@ -164,7 +164,7 @@ class _SearchState extends State<Search> with SingleTickerProviderStateMixin {
               preferredSize: Size.fromHeight(MediaQuery.of(context).size.height * 0.06),
               child: Column(
                 children: [
-              BannerAdPage(),
+              // BannerAdPage(),
                   TabBar(
                 controller: _tabController,
                 labelColor: Colors.white,

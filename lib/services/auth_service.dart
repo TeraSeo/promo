@@ -50,11 +50,17 @@ class AuthServie {
   Future signOut() async {
     try {
       HelperFunctions helperFunctions = HelperFunctions();
-      
+      DatabaseService databaseService = DatabaseService.instance;
+
+      String? uId = await helperFunctions.getUserUIdFromSF();
+      String? fcmToken = await helperFunctions.getUserFCMTokenFromSF();
+
+      await databaseService.removeUserTokenFromList(fcmToken!, uId!);
       await firebaseAuth.signOut();
       await helperFunctions.saveUserLoggedInStatus(false);
       await helperFunctions.saveUserEmailSF("");
       await helperFunctions.saveUserNameSF("");
+      
     } catch (e) {
       return null;
     }

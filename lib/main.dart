@@ -2,7 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
+// import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:internet_connection_checker/internet_connection_checker.dart';
 import 'package:like_app/helper/firebaseNotification.dart';
 import 'package:like_app/helper/helper_function.dart';
@@ -17,19 +17,10 @@ void main() async {
   bool result = await InternetConnectionChecker().hasConnection;
   if(result == true) {
     WidgetsFlutterBinding.ensureInitialized();
-    if (kIsWeb) {
-      await Firebase.initializeApp(options: FirebaseOptions(
-        apiKey: Constants.apiKey,
-        appId: Constants.appId, 
-        messagingSenderId: Constants.messagingSenderId, 
-        projectId: Constants.projectId));
-    }
-    else {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    }
-    await MobileAds.instance.initialize();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    // await MobileAds.instance.initialize();
     FirebaseNotification.instance.initNotificaiton();
     
     runApp(const MyApp(language: ""));
@@ -48,6 +39,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool _isSignedIn = false;
+  bool _isVerified = false;
   String? language;
   bool isLanguageLoading = true;
 
@@ -57,6 +49,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     getUserLoggedInStatus();
+    getVerifiedStatus();
     if (widget.language == "") {
       getUserLanguageSF();
     }
@@ -75,6 +68,16 @@ class _MyAppState extends State<MyApp> {
       if (value!=null) {
         setState(() {
           _isSignedIn = value;
+        });
+      }
+    });
+  }
+
+  getVerifiedStatus() async {
+    await helperFunctions.getUserVerifiedStatus().then((value) {
+      if (value!=null) {
+        setState(() {
+          _isVerified = value;
         });
       }
     });
@@ -157,7 +160,7 @@ class _MyAppState extends State<MyApp> {
         Locale('ko'),
       ],
       debugShowCheckedModeBanner: false,
-      home: _isSignedIn ? const HomePage(pageIndex: 0) : const LoginPage(),
+      home: (_isSignedIn && _isVerified) ? const HomePage(pageIndex: 0) : const LoginPage(),
     );
   }
 } 

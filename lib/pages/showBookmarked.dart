@@ -73,7 +73,7 @@ class _ShowBookmarkedPostsState extends State<ShowBookmarkedPosts> {
   Widget build(BuildContext context) {
     return (isBookmarkedPostsLoading || isCurrentUsernameLoading) ? Center(child: CircularProgressIndicator(color: Colors.white,),) : Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.liked, style: TextStyle(color: Colors.white)),
+        title: Text(AppLocalizations.of(context)!.bookmarked, style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.black,
       ),
       body: NotificationListener<ScrollNotification>(
