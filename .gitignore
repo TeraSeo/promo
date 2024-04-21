@@ -42,4 +42,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/google-services.json
 pubspec.lock
+
+/ios/Runner/Info.plist
+/ios/Runner/GoogleService-Info.plist
+
+/lib/firebase_options.dart
+/lib/services/translatorServer.dart
