@@ -10,7 +10,7 @@ class TranslatorServer {
     return _instance;
   }
 
-  final url = "http://promotranslator-env.eba-rtxumjzs.us-east-1.elasticbeanstalk.com/translator";
+  final url = "";
 
   Future<String> translate(String description, String targetLang) async {
     Response response;
